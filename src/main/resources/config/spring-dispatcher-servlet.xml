@@ -6,9 +6,9 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="com.amorn"/>
+    <context:component-scan base-package="com.yamorn"/>
 
-    <mvc:annotation-driven conversion-service="conversionService"/>
+    <mvc:annotation-driven/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
@@ -19,11 +19,4 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="com.amorn.convert.StringToAttachmentList"/>
-            </set>
-        </property>
-    </bean>
 </beans>

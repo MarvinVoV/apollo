@@ -5,4 +5,98 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config/jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="autoCommitOnClose" value="true"/>
+        <property name="checkoutTimeout" value="${cpool.checkoutTimeout}"/>
+        <property name="initialPoolSize" value="${cpool.minPoolSize}"/>
+        <property name="minPoolSize" value="${cpool.minPoolSize}"/>
+        <property name="maxPoolSize" value="${cpool.maxPoolSize}"/>
+        <property name="maxIdleTime" value="${cpool.maxIdleTime}"/>
+        <property name="acquireIncrement" value="${cpool.acquireIncrement}"/>
+        <property name="maxIdleTimeExcessConnections" value="${cpool.maxIdleTimeExcessConnections}"/>
+    </bean>
+
+    <bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="10" />
+        <property name="maxPoolSize" value="100" />
+        <property name="queueCapacity" value="500" />
+    </bean>
+
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:config/quartz.properties"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="schedulerContextAsMap">
+            <map>
+                <entry key="demoJob" value-ref="jobDetail"/>
+            </map>
+        </property>
+        <property name="overwriteExistingJobs" value="true"/>
+        <property name="startupDelay" value="5"/>
+        <property name="taskExecutor" ref="executor"/>
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger"/>
+            </list>
+        </property>
+        <property name="jobDetails">
+            <list>
+                <ref bean="jobDetail"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- Cron Trigger, run every 5 seconds -->
+        <property name="cronExpression" value="0/5 * * * * ?"/>
+        <property name="jobDetail" ref="jobDetail"/>
+    </bean>
+
+
+    <bean id="demoTask" class="com.yamorn.job.DemoTask">
+
+    </bean>
+
+
+    <!--<bean id="myJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">-->
+        <!--<property name="jobClass" value="com.yamorn.job.RunMeJob"/>-->
+        <!--<property name="durability" value="true"/>-->
+        <!--<property name="jobDataAsMap">-->
+            <!--<map>-->
+                <!--<entry key="demoTask" value-ref="demoTask" />-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="com.yamorn.job.QuartzJobScheduleManager"/>
+        <property name="durability" value="true"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value-ref="demoTask"/>
+                <entry key="targetMethod" value="test"/>
+            </map>
+        </property>
+    </bean>
+
+
 </beans>

@@ -1,4 +1,4 @@
-package com.amorn.convert.entity;
+package com.yamorn.entity;
 
 /**
  * Created by sunyameng on 2014/5/12.

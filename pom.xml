@@ -11,9 +11,10 @@
 
     <properties>
         <java-version>1.7</java-version>
-        <spring.version>4.0.0.RELEASE</spring.version>
+        <spring.version>4.1.6.RELEASE</spring.version>
         <org.aspectj-version>1.7.4</org.aspectj-version>
     </properties>
+
     <dependencies>
         <!--Spring -->
         <dependency>
@@ -34,6 +35,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
         <dependency>
@@ -67,17 +73,13 @@
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <!--Spring Security -->
+
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>3.2.3.RELEASE</version>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>3.2.3.RELEASE</version>
-        </dependency>
+
         <!-- AspectJ -->
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -88,12 +90,6 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${org.aspectj-version}</version>
-        </dependency>
-        <!-- @Inject -->
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
         </dependency>
 
         <!--servlet & jsp & jstl-->
@@ -120,30 +116,7 @@
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
-        <!--Hibernate -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>4.3.4.Final</version>
-        </dependency>
-        <!-- JSR 303 with Hibernate Validator -->
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>1.1.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>5.1.0.Final</version>
-        </dependency>
-        <!-- FreeMarker-->
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>2.3.20</version>
-        </dependency>
-        <!-- enable Hibernate to use its proxy model-->
+
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
@@ -160,7 +133,7 @@
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
-            <version>0.9.5-pre7</version>
+            <version>0.9.5</version>
         </dependency>
         <!-- Test -->
         <dependency>
@@ -199,12 +172,6 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.2</version>
-        </dependency>
-        <!--jBPM -->
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm</artifactId>
-            <version>6.0.0.Final</version>
         </dependency>
 
         <!-- log -->
@@ -246,41 +213,13 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                    <junitArtifactName>junit:junit</junitArtifactName>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>install</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>sources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
@@ -294,16 +233,5 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>spring4demo-releases</id>
-            <name>spring4demo Release Repository</name>
-            <url>file://${basedir}/target/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>spring4demo-snapshots</id>
-            <name>spring4demo Snapshot Repository</name>
-            <url>file://${basedir}/target/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+
 </project>

@@ -1,4 +1,4 @@
-package com.amorn.convert.entity;
+package com.yamorn.entity;
 
 import java.util.ArrayList;
 import java.util.List;
