@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="yamorn-blog:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="yamorn-blog.war">
-      <element id="artifact" artifact-name="yamorn-blog:war exploded" />
-    </root>
-  </artifact>
-</component>
