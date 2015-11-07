@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <security:http pattern="/authentication/*" security="none"/>
+    <security:http pattern="/error/**" security="none"/>
+    <security:http use-expressions="true" auto-config="false">
+        <security:intercept-url pattern="/**" access="authenticated"/>
+        <security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')" requires-channel="any"/>
+        <security:form-login
+                login-page="/authentication/login?login"
+                default-target-url="/admin/index" always-use-default-target="true"
+                authentication-failure-url="/authentication/login?error"
+                username-parameter="username"
+                password-parameter="password"
+                authentication-success-handler-ref="loginSuccessHandler"/>
+        <security:access-denied-handler error-page="/error/403"/>
+        <security:logout/>
+        <security:http-basic/>
+        <security:csrf disabled="true"/>
+        <security:session-management>
+            <security:concurrency-control max-sessions="1" expired-url="/error/expire"/>
+        </security:session-management>
+
+    </security:http>
+
+    <security:authentication-manager>
+        <!--<security:authentication-provider user-service-ref="appUserDetailService"/>-->
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="yamorn" password="admin" authorities="ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+
+</beans>

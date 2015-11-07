@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - blog@localhost" uuid="e56cb7cc-9916-40a8-b57d-5afdee0d60cd">
+    <database-info product="MySQL" version="5.6.25-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <schema name="" catalog="blog"/>
+    <table name="roles" schema="" catalog="blog" type="TABLE">
+      <column name="role_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="role_name" sqlType="VARCHAR" precision="100" scale="0" nullable="true" jdbcType="12"/>
+      <index name="role_id" unique="true" columns="role_id"/>
+    </table>
+    <table name="user" schema="" catalog="blog" type="TABLE">
+      <column name="user_id" sqlType="VARCHAR" precision="100" scale="0" nullable="false" jdbcType="12"/>
+      <column name="user_name" sqlType="VARCHAR" precision="100" scale="0" nullable="true" jdbcType="12"/>
+      <column name="user_pwd" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="create_date" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
+      <column name="enable" sqlType="BIT" precision="1" scale="0" nullable="true" jdbcType="-7"/>
+      <index name="user_id" unique="true" columns="user_id"/>
+    </table>
+    <table name="user_roles" schema="" catalog="blog" type="TABLE">
+      <column name="user_id" sqlType="VARCHAR" precision="100" scale="0" nullable="true" jdbcType="12"/>
+      <column name="role_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+    </table>
+  </data-source>
+</component>
