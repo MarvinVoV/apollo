@@ -30,12 +30,12 @@
     </security:http>
 
     <security:authentication-manager>
-        <!--<security:authentication-provider user-service-ref="appUserDetailService"/>-->
-        <security:authentication-provider>
-            <security:user-service>
-                <security:user name="yamorn" password="admin" authorities="ROLE_ADMIN"/>
-            </security:user-service>
-        </security:authentication-provider>
+        <security:authentication-provider user-service-ref="appUserDetailService"/>
+        <!--<security:authentication-provider>-->
+            <!--<security:user-service>-->
+                <!--<security:user name="yamorn" password="admin" authorities="ROLE_ADMIN"/>-->
+            <!--</security:user-service>-->
+        <!--</security:authentication-provider>-->
     </security:authentication-manager>
 
 

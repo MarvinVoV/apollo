@@ -20,7 +20,7 @@
     </bean>
 
     <!-- DataSource -->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    <bean id="realDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="${ds.driverClass}" />
         <property name="jdbcUrl" value="${ds.url}" />
         <property name="user" value="${ds.username}" />
@@ -32,6 +32,10 @@
         <property name="maxIdleTime" value="${ds.pool.maxIdleTime}"/>
         <property name="acquireIncrement" value="${ds.pool.acquireIncrement}"/>
         <property name="maxIdleTimeExcessConnections" value="${ds.pool.maxIdleTimeExcessConnections}"/>
+    </bean>
+
+    <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+        <constructor-arg ref="realDataSource"/>
     </bean>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
