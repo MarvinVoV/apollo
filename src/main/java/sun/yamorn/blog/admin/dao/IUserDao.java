@@ -12,5 +12,5 @@ public interface IUserDao {
     /**
      * Query user by unique userID
      */
-    IUser query(String userId);
+    public IUser query(String userId);
 }

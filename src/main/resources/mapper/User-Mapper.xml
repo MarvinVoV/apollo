@@ -31,7 +31,7 @@
 
     <!-- Role Domain Mapping -->
     <resultMap id="roleResultMapper" type="sun.yamorn.blog.admin.domain.auth.Role">
-        <result property="roleId" column="roleId" javaType="int" jdbcType="INTEGER"/>
+        <result property="roleId" column="role_id" javaType="int" jdbcType="INTEGER"/>
         <result property="roleName" column="role_name" javaType="String" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -42,8 +42,8 @@
             f.function_name,
             u.user_id
         FROM
-            USER u,
-            FUNCTION f,
+            user u,
+            function f,
             roles r,
             user_roles ur,
             function_roles fr
@@ -65,8 +65,8 @@
             f.function_name,
             u.user_id
         FROM
-            USER u,
-            FUNCTION f,
+            user u,
+            function f,
             roles r,
             user_roles ur,
             function_roles fr
@@ -102,7 +102,7 @@
             u.user_name,
             u.user_pwd,
             u.create_date,
-            u.ENABLE
+            u.enable
         FROM
             USER u
         WHERE
