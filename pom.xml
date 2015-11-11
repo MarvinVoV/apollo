@@ -7,7 +7,11 @@
     <groupId>sun.yamorn.blog</groupId>
     <artifactId>yamorn-blog</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <modules>
+        <module>blog-framework-cache</module>
+        <module>blog-web</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <properties>
         <jdk.version>1.7</jdk.version>
@@ -112,11 +116,19 @@
         </dependency>
 
         <!-- JSON Process Lib -->
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-databind</artifactId>-->
+            <!--<version>2.6.3</version>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.6.3</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.4</version>
         </dependency>
+
+
 
         <!-- AOP -->
         <dependency>
@@ -217,12 +229,6 @@
 
     <build>
         <finalName>yamorn-blog</finalName>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
 
         <plugins>
             <plugin>
@@ -252,22 +258,6 @@
                     <port>8080</port>
                     <path>/</path>
                     <uriEncoding>UTF-8</uriEncoding>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.juvenxu.portable-config-maven-plugin</groupId>
-                <artifactId>portable-config-maven-plugin</artifactId>
-                <version>1.1.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>replace-package</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <portableConfig>src/main/portable/product.xml</portableConfig>
                 </configuration>
             </plugin>
         </plugins>
