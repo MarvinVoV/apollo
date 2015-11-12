@@ -1,4 +1,4 @@
-# yamorn-blog
+# focusblog
 A blog website for programmers
 
 ## Initialization
