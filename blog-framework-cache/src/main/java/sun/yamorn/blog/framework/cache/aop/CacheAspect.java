@@ -13,10 +13,14 @@ import sun.yamorn.blog.framework.cache.annotation.Cacheable;
 import sun.yamorn.blog.framework.cache.redis.StringCacheStorage;
 
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by yamorn on 2015/11/10.
- *
+ * <p/>
+ * Cache aspect used to intercept method which has @Cacheable annotation on it.
+ * Then do the cache job.
  */
 
 @Aspect
@@ -24,6 +28,8 @@ import java.lang.reflect.Method;
 public class CacheAspect {
     private static final String NAMESPACE_SPLIT = "_";
     private static final String KEY_SPLIT = ":";
+
+    private static final Logger logger = Logger.getLogger(CacheAspect.class.getName());
 
     @Autowired
     private StringCacheStorage cacheStorage;
@@ -34,7 +40,7 @@ public class CacheAspect {
 
     @Around("cacheAdvice()")
     public Object cache(ProceedingJoinPoint pjp) throws Throwable {
-        Object retObj = null;
+        Object retObj;
 
         Method method = getMethod(pjp);
         assert method != null;
@@ -47,12 +53,17 @@ public class CacheAspect {
         Class returnType = ((MethodSignature) pjp.getSignature()).getReturnType();
 
         retObj = cacheStorage.get(cacheKey, returnType);
-        if(retObj == null){
-            try{
+        if (retObj == null) {
+            try {
                 retObj = pjp.proceed();
-                cacheStorage.set(cacheKey, retObj);
-            }catch (Throwable e){
-                e.printStackTrace();
+                int expire = cacheable.expire();
+                if (expire > 0) {
+                    cacheStorage.setEx(cacheKey, retObj, expire);
+                } else {
+                    cacheStorage.set(cacheKey, retObj);
+                }
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getLocalizedMessage());
             }
         }
         return retObj;
@@ -111,19 +122,18 @@ public class CacheAspect {
             String value = parser.parseExpression(key).getValue(context, String.class);
             sb.append(value).append(KEY_SPLIT);
         }
-        return sb.toString();
-    }
-
-    @AfterReturning(pointcut = "@annotation(sun.yamorn.blog.framework.cache.annotation.Cacheable)",
-            returning = "retVal")
-    public void doCache(Object retVal) {
-        System.out.println("After Return");
+        String fullKey = sb.toString();
+        int index;
+        if (fullKey.length() > 0 && (index = fullKey.lastIndexOf(":")) > 0) {
+            fullKey = fullKey.substring(0, index);
+        }
+        return fullKey;
     }
 
     @AfterThrowing(pointcut = "@annotation(sun.yamorn.blog.framework.cache.annotation.Cacheable)",
             throwing = "ex")
     public void doException(Exception ex) {
-
+        logger.log(Level.SEVERE, ex.getLocalizedMessage());
     }
 
 }

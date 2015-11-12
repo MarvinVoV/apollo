@@ -6,14 +6,21 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 
+
 /**
  * Created by yamorn on 2015/11/11.
  *
- * Simple Json Serialization Utils.
+ * A simple Json Serializer.
  */
 public class JsonSerializeUtils {
 
-    private static Gson gson = new GsonBuilder().create();
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    private static Gson gson = null;
+
+    static {
+        gson = new GsonBuilder().setDateFormat(DATE_PATTERN).create();
+    }
 
     /**
      * Try to serialize value to json object.

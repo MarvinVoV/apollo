@@ -1,6 +1,6 @@
 package sun.yamorn.blog.admin.dao;
 
-import sun.yamorn.blog.admin.domain.auth.IUser;
+import sun.yamorn.blog.admin.domain.auth.User;
 
 /**
  * Created by root on 2015/11/7.
@@ -12,5 +12,5 @@ public interface IUserDao {
     /**
      * Query user by unique userID
      */
-    public IUser query(String userId);
+    User query(String userId);
 }

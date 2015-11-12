@@ -20,7 +20,7 @@
                 password-parameter="password"
                 authentication-success-handler-ref="loginSuccessHandler"/>
         <security:access-denied-handler error-page="/error/403"/>
-        <security:logout/>
+        <security:logout invalidate-session="true" logout-url="/logout" logout-success-url="/authentication/login?logout"/>
         <security:http-basic/>
         <security:csrf disabled="true"/>
         <security:session-management>

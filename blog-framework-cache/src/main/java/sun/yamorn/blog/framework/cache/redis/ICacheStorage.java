@@ -16,10 +16,9 @@ public interface ICacheStorage<K, V> extends InitializingBean, DisposableBean {
     void set(K key, V value);
 
     /**
-     * @param key
-     * @param value
+     * @param key   cache key
+     * @param value cache value
      * @param expire seconds
-     * @return
      */
     void setEx(K key, V value, long expire);
 
@@ -28,8 +27,8 @@ public interface ICacheStorage<K, V> extends InitializingBean, DisposableBean {
      * SET, When key already holds a value, no operation is performed. SETNX is short for
      * "SET if Not eXists".
      *
-     * @param key
-     * @param value
+     * @param key   cache key
+     * @param value cache value
      */
     void setNx(K key, V value);
 
@@ -38,7 +37,7 @@ public interface ICacheStorage<K, V> extends InitializingBean, DisposableBean {
      * new values, just as regular SET.
      * MSET is atomic. so all given keys are set at once.
      *
-     * @param values
+     * @param values    A set of cache value
      */
     void mSet(Map<K, V> values);
 
@@ -46,22 +45,22 @@ public interface ICacheStorage<K, V> extends InitializingBean, DisposableBean {
      * Sets the given keys to their respective values. MSETNX will not perform any operation
      * at all even if just a single key already exists.
      *
-     * @param values
+     * @param values    A set of cache value
      */
     void mSetNX(Map<K, V> values);
 
     /**
      * Get the value of key.
      *
-     * @param key
-     * @return
+     * @param key   cache key
+     * @return      generic value
      */
-    public <V> V get(final String key, final Class<V> clazz);
+    <T> T get(final String key, final Class<T> clazz);
 
     /**
      * O(N) where N is the number of keys that will be removed.
      *
-     * @param keys
+     * @param keys  An array of cache key
      * @return The number of keys that were removed.
      */
     Long del(K... keys);
@@ -69,8 +68,8 @@ public interface ICacheStorage<K, V> extends InitializingBean, DisposableBean {
     /**
      * Return if key is exists. Since Redis 3.0.3 it is possible to specify multiple keys.
      *
-     * @param key
-     * @return
+     * @param key   cache key
+     * @return  True is exits this key. vice versa.
      */
     Boolean exists(K key);
 

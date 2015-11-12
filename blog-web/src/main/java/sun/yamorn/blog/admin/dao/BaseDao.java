@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by root on 2015/11/7.
+ *
+ * The base class of DAO which provided some convenient utilities.
  */
 public abstract class BaseDao extends SqlSessionDaoSupport {
 

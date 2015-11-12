@@ -95,7 +95,7 @@ public class StringCacheStorage implements ICacheStorage<String, Object> {
     }
 
     @Override
-    public <V> V get(final String key, final Class<V> clazz) {
+    public <T> T get(final String key, final Class<T> clazz) {
         String value = redisTemplate.execute(new RedisCallback<String>() {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {

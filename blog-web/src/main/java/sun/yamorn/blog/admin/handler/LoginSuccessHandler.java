@@ -11,6 +11,8 @@ import java.io.IOException;
 
 /**
  * Created by root on 2015/11/7.
+ *
+ * Redirect request if users were verified successfully.
  */
 @Component("loginSuccessHandler")
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {

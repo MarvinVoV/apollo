@@ -8,6 +8,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by root on 2015/11/7.
+ *
+ * Authentication Center Controller. Control the login success, failed, logout request and
+ * give the corresponding response.
  */
 
 @Controller
@@ -16,6 +19,7 @@ public class AuthenticationController {
     @RequestMapping(value = "/authentication/login", method = RequestMethod.GET)
     public ModelAndView indexPage(@RequestParam(value = "login", required = false) String login,
                                   @RequestParam(value = "error", required = false) String error,
+                                  @RequestParam(value = "logout", required = false) String logout,
                                   ModelAndView modelAndView) {
         if (login != null) {
             modelAndView.addObject("msg", "Login");
@@ -23,6 +27,12 @@ public class AuthenticationController {
 
         if (error != null) {
             modelAndView.addObject("msg", "Invalid username and password!");
+        }
+
+        if(logout != null){
+            modelAndView.addObject("msg", "Logout success.");
+            modelAndView.setViewName("authentication/logout");
+            return modelAndView;
         }
         modelAndView.setViewName("authentication/login");
         return modelAndView;
@@ -32,9 +42,4 @@ public class AuthenticationController {
     public String loginSuccess() {
         return "admin/index";
     }
-//
-//    @RequestMapping(value="/authentication/logout")
-//    public String logout() {
-//        return "authentication/logout";
-//    }
 }

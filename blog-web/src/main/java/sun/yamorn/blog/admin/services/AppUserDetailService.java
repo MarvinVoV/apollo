@@ -10,15 +10,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.yamorn.blog.admin.dao.IUserDao;
-import sun.yamorn.blog.admin.domain.auth.IRole;
-import sun.yamorn.blog.admin.domain.auth.IUser;
+import sun.yamorn.blog.admin.domain.auth.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * Created by root on 2015/11/7.
- *
+ * <p/>
  * Spring Security Service Level. Valid user.
  */
 @Service("appUserDetailService")
@@ -30,7 +29,7 @@ public class AppUserDetailService implements UserDetailsService {
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        IUser user = userDao.query(username);
+        sun.yamorn.blog.admin.domain.auth.User user = userDao.query(username);
         if (user == null) {
             throw new UsernameNotFoundException("user not found");
         }
@@ -41,7 +40,7 @@ public class AppUserDetailService implements UserDetailsService {
         boolean accountNonLocked = user.isEnable();
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for (IRole role : user.getRoles()) {
+        for (Role role : user.getRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
         }
         return new User(username, password, enabled,
