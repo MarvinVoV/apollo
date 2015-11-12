@@ -9,6 +9,8 @@
 
     <security:http pattern="/authentication/*" security="none"/>
     <security:http pattern="/error/**" security="none"/>
+    <security:http pattern="/resources/**" security="none"/>
+
     <security:http use-expressions="true" auto-config="false">
         <security:intercept-url pattern="/**" access="authenticated"/>
         <security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')" requires-channel="any"/>
