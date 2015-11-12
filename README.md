@@ -36,9 +36,10 @@ A blog website for programmers
 
 ## Module
 ### blog-framework-cache
-    the cache module provids servial annotations for DAO and somewhere else. The most important annotation is
-    **@Cacheable**. We can put it on the DAO methods and specified some parameters which with a namespace. then
-    the spring AOP will try to save the result to the cache which usualy represented by redis.
+    the cache module provids servial annotations for DAO and somewhere else. The most
+     important annotation is **@Cacheable**. We can put it on the DAO methods and
+     specified some parameters which with a namespace. then the spring AOP will try
+     to save the result to the cache which usualy represented by redis.
 
 ## The Web
 #### Authentication
@@ -46,5 +47,42 @@ Spring Security used by this blog web. The Access Control consisted of User and 
 method of access control.
 ### Scene
 #### Edit Blog
-This scene contains editing column, editing article.
-The table design as follows:
+This scene contains editing category, editing article. The table design as follows:
+
+category
+user_id
+category_id
+category_name
+order
+create_date
+
+
+articles
+user_id
+article_id
+category_id
+article_title
+article_content
+create_date
+update_date
+page_view
+order
+top
+
+
+article_attachment
+user_id
+article_id
+attachment_id
+attachment
+
+article_comment
+user_id
+article_id
+comment_id
+
+
+
+
+
+

@@ -7,30 +7,30 @@
 
 -->
 
-<mapper namespace="sun.yamorn.blog.admin.domain.auth.User">
+<mapper namespace="sun.focusblog.admin.domain.auth.User">
     <!-- User Domain Mapping -->
-    <resultMap id="userResultMapper" type="sun.yamorn.blog.admin.domain.auth.User">
+    <resultMap id="userResultMapper" type="sun.focusblog.admin.domain.auth.User">
         <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="password" column="user_pwd" javaType="String" jdbcType="VARCHAR"/>
         <result property="createDate" column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        <collection property="functions" column="user_id" ofType="sun.yamorn.blog.admin.domain.auth.Function"
+        <collection property="functions" column="user_id" ofType="sun.focusblog.admin.domain.auth.Function"
                     select="functionSelect"/>
-        <collection property="roles" column="user_id" ofType="sun.yamorn.blog.admin.domain.auth.Role"
+        <collection property="roles" column="user_id" ofType="sun.focusblog.admin.domain.auth.Role"
                     select="roleSelect"/>
     </resultMap>
 
     <!-- Function Domain Mapping -->
-    <resultMap id="functionResultMapper" type="sun.yamorn.blog.admin.domain.auth.Function">
+    <resultMap id="functionResultMapper" type="sun.focusblog.admin.domain.auth.Function">
         <result property="functionId" column="function_id" javaType="int" jdbcType="INTEGER"/>
         <result property="functionName" column="function_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
-        <collection property="functions" ofType="sun.yamorn.blog.admin.domain.auth.Function"
+        <collection property="functions" ofType="sun.focusblog.admin.domain.auth.Function"
                     column="{functionId=function_id,userId=user_id}" select="subFunctionSelect"/>
     </resultMap>
 
     <!-- Role Domain Mapping -->
-    <resultMap id="roleResultMapper" type="sun.yamorn.blog.admin.domain.auth.Role">
+    <resultMap id="roleResultMapper" type="sun.focusblog.admin.domain.auth.Role">
         <result property="roleId" column="role_id" javaType="int" jdbcType="INTEGER"/>
         <result property="roleName" column="role_name" javaType="String" jdbcType="VARCHAR"/>
     </resultMap>
