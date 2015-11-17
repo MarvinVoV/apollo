@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <title></title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/semantic/semantic.css"/>">
+    <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/site.css"/>">
     <link rel="stylesheet" type="text/css"
           href="<c:url value="/resources/semantic/themes/basic/assets/fonts/icons.ttf"/>">
     <script src="<c:url value="/resources/jquery/jquery-2.1.4.min.js"/>"></script>

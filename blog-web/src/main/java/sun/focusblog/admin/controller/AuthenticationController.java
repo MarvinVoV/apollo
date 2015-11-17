@@ -1,10 +1,13 @@
 package sun.focusblog.admin.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import sun.focusblog.admin.domain.auth.User;
 
 /**
  * Created by root on 2015/11/7.
@@ -38,8 +41,28 @@ public class AuthenticationController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/authentication/register", method = RequestMethod.GET)
+    public ModelAndView register(ModelAndView modelAndView){
+        modelAndView.setViewName("authentication/register");
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/admin/index", method = RequestMethod.GET)
     public String loginSuccess() {
         return "admin/index";
+    }
+
+
+    @RequestMapping(value = "/authentication/registerAction", method = RequestMethod.POST)
+    public ModelAndView registerAction(@ModelAttribute User user, BindingResult result, ModelAndView modelAndView) {
+        if(result.hasErrors()){
+            modelAndView.setViewName("/error/500");
+        }else{
+            modelAndView.setViewName("/authentication/register-valid");
+        }
+
+
+
+        return null;
     }
 }

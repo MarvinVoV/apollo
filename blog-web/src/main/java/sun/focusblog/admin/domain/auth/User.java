@@ -20,6 +20,8 @@ public class User {
 
     private boolean enable;
 
+    private String email;
+
     private List<Function> functions= new LinkedList<>();
 
     private List<Role> roles = new LinkedList<>();
@@ -78,5 +80,13 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

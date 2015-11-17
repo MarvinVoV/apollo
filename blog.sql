@@ -4,7 +4,8 @@ CREATE TABLE USER (
 	user_id VARCHAR (100) NOT NULL UNIQUE,
 	user_name VARCHAR (100),
 	user_pwd VARCHAR (20),
-	ENABLE bit,
+	email VARCHAR (50),
+	enable bit,
 	create_date TIMESTAMP
 );
 

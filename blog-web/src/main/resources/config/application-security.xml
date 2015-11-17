@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <security:http pattern="/authentication/*" security="none"/>
+    <security:http pattern="/authentication/**" security="none"/>
     <security:http pattern="/error/**" security="none"/>
     <security:http pattern="/resources/**" security="none"/>
 

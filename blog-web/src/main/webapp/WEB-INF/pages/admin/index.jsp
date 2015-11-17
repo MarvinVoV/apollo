@@ -14,6 +14,9 @@
 <body>
 <h1>Index</h1>
 
-<h2><a href="<c:url value="/logout" />">logout</a></h2>
+<%--<h2><a href="<c:url value="/logout" />">logout</a></h2>--%>
+
+
+
 </body>
 </html>

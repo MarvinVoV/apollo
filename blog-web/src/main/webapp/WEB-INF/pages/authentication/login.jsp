@@ -15,20 +15,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <title>Login</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/semantic/semantic.css"/>">
+    <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/site.css"/>">
     <link rel="stylesheet" type="text/css"
           href="<c:url value="/resources/semantic/themes/basic/assets/fonts/icons.ttf"/>">
     <script src="<c:url value="/resources/jquery/jquery-2.1.4.min.js"/>"></script>
     <script src="<c:url value="/resources/semantic/semantic.js"/>"></script>
 
     <style type="text/css">
-        body {
-            background-color: #DADADA;
-        }
-
-        body > .grid {
-            height: 100%;
-        }
-
         .column {
             max-width: 450px;
         }
@@ -40,9 +33,6 @@
 <div class="ui middle aligned center aligned grid">
     <div class="column">
         <h2 class="ui teal header">
-            <div class="content">
-                Log-in to your account
-            </div>
             <div>
                 <c:if test="${requestScope.msg != null}">
                     <p>
@@ -57,20 +47,23 @@
                 <div class="field">
                     <div class="ui left icon input">
                         <i class="user icon"></i>
-                        <input type="text" name="username" placeholder="username">
+                        <input type="text" name="username" placeholder="用户名">
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui left icon input">
                         <i class="lock icon"></i>
-                        <input type="password" name="password" placeholder="password">
+                        <input type="password" name="password" placeholder="密码">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </div>
                 </div>
-                <div class="ui fluid large teal submit button">Login</div>
+                <div class="ui fluid large blue submit button">登陆</div>
             </div>
             <div class="ui error message"></div>
         </form>
+        <div class="ui message mini-font">
+            新成员？<a href="<c:url value="/authentication/register"/>">注册</a>
+        </div>
     </div>
 </div>
 
