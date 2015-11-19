@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  * <p/>
  * Cache aspect used to intercept method which has @Cacheable annotation on it.
  * Then do the cache job.
+ * Note: methods which are intercepted must not have primitive type arguments.
  */
 
 @Aspect

@@ -16,7 +16,7 @@ public class RoleDao extends BaseDao implements IRoleDao {
 
     @Cacheable(namespace = CacheNameSpace.CACHE_ROLE, fieldsKey = {"#roleId"}, expire = ExpireConstants.ONE_DAY)
     @Override
-    public Role query(int roleId) {
+    public Role query(Integer roleId) {
         return getSqlSession().selectOne(buildStatement(NAMESPACE, "queryRoleById"),
                 getParamsBuilder()
                 .put("roleId", roleId)

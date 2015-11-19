@@ -95,16 +95,19 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/authentication/emailVerify", method = RequestMethod.GET)
-    public ModelAndView register(@RequestParam String verifyKey) {
+    public ModelAndView register(@RequestParam String verifyKey, ModelAndView modelAndView) {
         User user = userService.getVerifyUser(verifyKey);
         user.setCreateDate(new Date());
         user.setStatus(UserStatus.ACTIVE.getValue());
+        user.setUserId(user.getUserName());
 
         user.getRoles().add(roleService.query(UserRole.ROLE_USER.getValue()));
 
         userService.saveUser(user);
 
-        return null;
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("/authentication/register-success");
+        return modelAndView;
     }
 
 }

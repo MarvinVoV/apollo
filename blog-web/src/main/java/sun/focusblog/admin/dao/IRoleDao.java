@@ -12,5 +12,5 @@ public interface IRoleDao {
     /**
      * Query user by unique userID
      */
-    Role query(int roleId);
+    Role query(Integer roleId);
 }

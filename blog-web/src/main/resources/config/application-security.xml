@@ -13,7 +13,7 @@
 
     <security:http use-expressions="true" auto-config="false">
         <security:intercept-url pattern="/**" access="authenticated"/>
-        <security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')" requires-channel="any"/>
+        <security:intercept-url pattern="/admin/**" access="hasAnyRole('ADMIN',USER)" requires-channel="any"/>
         <security:form-login
                 login-page="/authentication/login?login"
                 default-target-url="/admin/index" always-use-default-target="true"
