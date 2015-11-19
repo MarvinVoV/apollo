@@ -20,6 +20,8 @@ public class User {
 
     private int status;
 
+    private byte[] header;
+
     private String email;
 
     private List<Function> functions= new LinkedList<>();
@@ -88,5 +90,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public byte[] getHeader() {
+        return header;
+    }
+
+    public void setHeader(byte[] header) {
+        this.header = header;
     }
 }

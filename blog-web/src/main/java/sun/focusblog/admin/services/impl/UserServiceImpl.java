@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(User user) {
+        // encrypt password
+        user.setPassword(Base64Utils.encodeToString(user.getPassword().getBytes()));
+        // persist user
         userDao.persistUser(user);
 
         for (Role role : user.getRoles()) {

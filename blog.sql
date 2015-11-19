@@ -6,6 +6,7 @@ CREATE TABLE USER (
 	user_pwd VARCHAR (20),
 	email VARCHAR (50),
 	status bit,
+	header blob,
 	create_date TIMESTAMP
 );
 

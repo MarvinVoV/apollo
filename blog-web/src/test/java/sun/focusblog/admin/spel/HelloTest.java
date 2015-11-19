@@ -11,6 +11,7 @@ import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.Base64Utils;
 
 import java.util.*;
 
@@ -184,6 +185,13 @@ public class HelloTest {
         Expression exp = parser.parseExpression("#name");
         String name = exp.getValue(context, person, String.class);
         assertEquals(name, "Tom");
+    }
+
+    @Test
+    public void testBase64(){
+        String str = "123456";
+        String str2 = Base64Utils.encodeToString(str.getBytes());
+        System.out.println(str2);
     }
 
 
