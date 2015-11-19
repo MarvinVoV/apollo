@@ -13,6 +13,7 @@
         <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="password" column="user_pwd" javaType="String" jdbcType="VARCHAR"/>
+        <result property="status" column="status" javaType="int" jdbcType="INTEGER"/>
         <result property="createDate" column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <collection property="functions" column="user_id" ofType="sun.focusblog.admin.domain.auth.Function"
                     select="functionSelect"/>
@@ -34,7 +35,6 @@
         <result property="roleId" column="role_id" javaType="int" jdbcType="INTEGER"/>
         <result property="roleName" column="role_name" javaType="String" jdbcType="VARCHAR"/>
     </resultMap>
-
 
     <select id="functionSelect" resultMap="functionResultMapper">
         SELECT
@@ -102,11 +102,32 @@
             u.user_name,
             u.user_pwd,
             u.create_date,
-            u.enable
+            u.status
         FROM
             USER u
         WHERE
             u.user_id = #{userId,jdbcType=VARCHAR}
     </select>
+
+    <insert id="persistUser" parameterType="sun.focusblog.admin.domain.auth.User">
+      INSERT INTO USER (
+        user_id,
+        user_name,
+        user_pwd,
+        email,
+        status,
+        create_date
+        )
+        VALUES
+            (
+                #{userId},#{userName},#{password},#{email},#{status},#{createDate}
+            );
+    </insert>
+    <insert id="persistUserRole" parameterType="map">
+        INSERT INTO user_roles (user_id, role_id)
+        VALUES
+            (#{userId},#{roleId});
+    </insert>
+
 
 </mapper>

@@ -7,10 +7,14 @@ import sun.focusblog.admin.domain.auth.User;
  */
 public interface IUserDao {
 
-    String NAMESPACE = "User";
+    String NAMESPACE = "sun.focusblog.admin.domain.auth.User";
 
     /**
      * Query user by unique userID
      */
     User query(String userId);
+
+    boolean persistUser(User user);
+
+    boolean persistUserRole(String userId, int roleId);
 }

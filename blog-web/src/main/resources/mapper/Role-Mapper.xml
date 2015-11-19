@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    Function Mapper
+
+-->
+
+<mapper namespace="sun.focusblog.admin.domain.auth.Role">
+
+    <!-- Role Domain Mapping -->
+    <resultMap id="roleResultMapper" type="sun.focusblog.admin.domain.auth.Role">
+        <result property="roleId" column="role_id" javaType="int" jdbcType="INTEGER"/>
+        <result property="roleName" column="role_name" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- Query function by id -->
+    <select id="queryRoleById" resultMap="roleResultMapper">
+        SELECT
+            role_id,
+            role_name
+        FROM
+            roles
+        WHERE
+            role_id = #{roleId,jdbcType=INTEGER}
+    </select>
+
+</mapper>

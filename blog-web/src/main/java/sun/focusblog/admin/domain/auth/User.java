@@ -18,7 +18,7 @@ public class User {
 
     private Date createDate;
 
-    private boolean enable;
+    private int status;
 
     private String email;
 
@@ -58,12 +58,12 @@ public class User {
         this.createDate = createDate;
     }
 
-    public boolean isEnable() {
-        return enable;
+    public int getStatus() {
+        return status;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public List<Function> getFunctions() {

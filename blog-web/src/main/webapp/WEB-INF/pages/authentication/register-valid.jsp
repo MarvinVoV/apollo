@@ -36,7 +36,7 @@
         </div>
         <div>
             <div class="ui three steps">
-                <div class="active step">
+                <div class="step">
                     <i class="user icon"></i>
 
                     <div class="content">
@@ -44,7 +44,7 @@
                         <div class="description site-mini-font">创建个人账户</div>
                     </div>
                 </div>
-                <div class="step">
+                <div class="active step">
                     <i class="email icon"></i>
 
                     <div class="content">

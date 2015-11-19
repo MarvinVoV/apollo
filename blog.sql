@@ -5,7 +5,7 @@ CREATE TABLE USER (
 	user_name VARCHAR (100),
 	user_pwd VARCHAR (20),
 	email VARCHAR (50),
-	enable bit,
+	status bit,
 	create_date TIMESTAMP
 );
 
@@ -65,3 +65,13 @@ CREATE TABLE article_comment (
 	comment_content LONGTEXT,
 	comment_date TIMESTAMP
 );
+
+
+insert into roles values(1,'ROLE_ADMIN');
+insert into roles values(2,'ROLE_USER');
+
+insert into function values(1,'test_function',null);
+insert into function values(2,'user_role_function',null);
+
+insert into function_roles values(1,1);
+insert into function_roles values(2,2);

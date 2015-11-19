@@ -23,4 +23,20 @@ public class UserDao extends BaseDao implements IUserDao {
                         .build()
         );
     }
+
+
+    @Override
+    public boolean persistUser(User user) {
+        return getSqlSession().insert(buildStatement(NAMESPACE, "persistUser"), user) > 0;
+    }
+
+    @Override
+    public boolean persistUserRole(String userId, int roleId) {
+        return getSqlSession().insert(buildStatement(NAMESPACE, "persistUserRole"),
+                getParamsBuilder()
+                        .put("userId", userId)
+                        .put("roleId", roleId)
+                        .build()
+        ) > 0;
+    }
 }

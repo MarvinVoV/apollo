@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    Function Mapper
+
+-->
+
+<mapper namespace="sun.focusblog.admin.domain.auth.Function">
+
+    <!-- Simple Function Domain Mapping -->
+    <resultMap id="SimpleFunctionResultMapper" type="sun.focusblog.admin.domain.auth.Function">
+        <result property="functionId" column="function_id" javaType="int" jdbcType="INTEGER"/>
+        <result property="functionName" column="function_name" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- Query function by id -->
+    <select id="queryFunctionById" resultMap="SimpleFunctionResultMapper">
+        SELECT
+            function_id,
+            function_name
+        FROM
+            FUNCTION
+        WHERE
+            function_id = #{functionId,jdbcType=INTEGER}
+    </select>
+
+</mapper>

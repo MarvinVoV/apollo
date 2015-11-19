@@ -34,10 +34,10 @@ public class AppUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException("user not found");
         }
         String password = user.getPassword();
-        boolean enabled = user.isEnable();
-        boolean accountNonExpired = user.isEnable();
-        boolean credentialsNonExpired = user.isEnable();
-        boolean accountNonLocked = user.isEnable();
+        boolean enabled = user.getStatus() > 0;
+        boolean accountNonExpired = user.getStatus() > 0;
+        boolean credentialsNonExpired = user.getStatus() > 0;
+        boolean accountNonLocked = user.getStatus() > 0;
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : user.getRoles()) {

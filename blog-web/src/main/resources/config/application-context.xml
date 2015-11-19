@@ -16,6 +16,7 @@
             <list>
                 <value>classpath:jdbc.properties</value>
                 <value>classpath:redis.properties</value>
+                <value>classpath:config.properties</value>
             </list>
         </property>
     </bean>
@@ -25,6 +26,7 @@
 
     <import resource="config-datasource.xml"/>
     <import resource="config-redis.xml"/>
+    <import resource="common-beans.xml"/>
 
 
 </beans>

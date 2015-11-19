@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="step">
-                    <i class="email icon"></i>
+                    <i class="mail icon"></i>
 
                     <div class="content">
                         <div class="title">Step 2:</div>
@@ -67,7 +67,7 @@
                     <form action="<c:url value="/authentication/registerAction"/>" method="post" class="ui form">
                         <div class="required field">
                             <label>用户名</label>
-                            <input type="text" name="username" placeholder="用户名">
+                            <input type="text" name="userName" placeholder="用户名">
 
                             <p class="site-tiny-font">登陆时的唯一凭证</p>
                         </div>
