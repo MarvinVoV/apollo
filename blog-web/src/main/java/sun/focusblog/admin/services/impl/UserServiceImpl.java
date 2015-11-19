@@ -48,4 +48,9 @@ public class UserServiceImpl implements UserService {
             userDao.persistUserRole(user.getUserId(), role.getRoleId());
         }
     }
+
+    @Override
+    public User query(String userId) {
+        return userDao.query(userId);
+    }
 }

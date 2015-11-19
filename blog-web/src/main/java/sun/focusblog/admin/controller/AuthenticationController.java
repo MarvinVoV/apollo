@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import sun.focusblog.admin.components.EmailClient;
+import sun.focusblog.admin.context.SessionConstants;
 import sun.focusblog.admin.context.UserRole;
 import sun.focusblog.admin.context.UserStatus;
 import sun.focusblog.admin.domain.auth.Function;
@@ -20,6 +21,8 @@ import sun.focusblog.admin.services.UserService;
 
 import javax.management.relation.RoleStatus;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.Date;
 
 /**
@@ -70,7 +73,10 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/admin/index", method = RequestMethod.GET)
-    public String loginSuccess() {
+    public String loginSuccess(Principal principal, HttpSession httpSession) {
+        String userId = principal.getName();
+        User user = userService.query(userId);
+        httpSession.setAttribute(SessionConstants.USER, user);
         return "admin/index";
     }
 
@@ -87,11 +93,19 @@ public class AuthenticationController {
         String verifyKey = userService.cacheEmailVerifyKey(user);
         String address = request.getRequestURL().toString().replace(request.getRequestURI(), "");
         String verifyURL = address + request.getContextPath() + "/authentication/emailVerify?verifyKey=" + verifyKey;
-        String html = "<a href=\"" + verifyURL + "\">点击链接，进行邮箱验证</a>";
 
-        emailClient.sendHtmlEmail(user.getEmail(), "Focusblog", html);
+        emailClient.sendHtmlEmail(user.getEmail(), "Focusblog", html(verifyURL));
 
         return modelAndView;
+    }
+
+    private String html(String verifyUrl) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<p> 这是来自Focusblog的验证邮件，请点击下面链接进行验证，该链接在24小时内有效，请及时验证</p>");
+        sb.append("<a href=\"").append(verifyUrl).append("\">点击链接，进行邮箱验证</a>");
+        sb.append("<p>如果点击链接无法进行跳转，请直接复制下面的链接内容到浏览器地址栏，进行访问</p>");
+        sb.append("<div style=\"font-size:14px; font-color:#666\">").append(verifyUrl).append("</div>");
+        return sb.toString();
     }
 
     @RequestMapping(value = "/authentication/emailVerify", method = RequestMethod.GET)

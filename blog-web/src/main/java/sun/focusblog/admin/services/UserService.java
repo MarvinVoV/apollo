@@ -30,4 +30,9 @@ public interface UserService {
      * @param user user class
      */
     void saveUser(User user);
+
+    /**
+     * Query user by userId
+     */
+    User query(String userId);
 }
