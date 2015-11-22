@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
@@ -15,10 +16,30 @@
     <title>设置</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/semantic/semantic.css"/>">
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/site.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/jquery/plugins/jcrop/css/jquery.Jcrop.css"/> "
+          type="text/css"/>
     <link rel="stylesheet" type="text/css"
           href="<c:url value="/resources/semantic/themes/basic/assets/fonts/icons.ttf"/>">
     <script src="<c:url value="/resources/jquery/jquery-2.1.4.min.js"/>"></script>
     <script src="<c:url value="/resources/semantic/semantic.js"/>"></script>
+    <script type="application/javascript"
+            src="<c:url value="/resources/jquery/plugins/jcrop/js/jquery.Jcrop.js"/>"></script>
+    <script src="<c:url value="/resources/js/common.js"/>"></script>
+    <style type="text/css">
+
+        .sun-file-input {
+            position: relative;
+            width: 160px;
+            vertical-align: middle;
+            text-align: center;
+            height: 40px;
+            right: 0;
+            top: 0;
+            font-size: 100px;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -30,16 +51,16 @@
         <div class="three wide column">
             <div class="ui blue vertical pointing menu">
                 <div class="header item" style="color:#555;font-size:13px;">
-                    个人设置
+                    设置
                 </div>
                 <a class="item" href="settings.html" style="color:#4078c0;font-size:13px;">
-                    基本资料
-                </a>
-                <a class="item" style="color:#4078c0;font-size:13px;">
                     账户设置
                 </a>
                 <a class="item" style="color:#4078c0;font-size:13px;">
-                    消息和邮件
+                    隐私设置
+                </a>
+                <a class="item" style="color:#4078c0;font-size:13px;">
+                    邮件和消息
                 </a>
             </div>
         </div>
@@ -56,15 +77,19 @@
                                 <tr>
                                     <td>
                                         <div>
-                                            <img class="ui middle aligned tiny image"
+                                            <img id="showImage" class="ui middle aligned tiny image"
                                                  src="<c:url value="/resources/images/default-head.png"/>">
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="margin-left:20px;">
-                                            <a href="javascript:void(0);" class="ui positive button">Upload new
-                                                picture</a>
-                                            <!--<input type="file" name="file"/>-->
+                                        <div style="margin-left:20px;vertical-align: middle">
+                                            <a style="width:160px;height:40px;margin:0;padding:0;vertical-align: middle;text-align: center"
+                                               class="ui positive button">
+                                                <div style="position:fixed;padding-top:12px;padding-left:50px;">更新头像
+                                                </div>
+                                                <input class="sun-file-input" type="file" accept="image/*" name="file"
+                                                       id="fileToUpload"/>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -72,11 +97,12 @@
                         </div>
                         <div class="field">
                             <label style="color:#666">用户名</label>
-                            <input type="text" name="first-name" placeholder="First Name">
+                            <input type="text" name="first-name" value="${sessionScope.user.userName}" readonly
+                                   placeholder="First Name">
                         </div>
                         <div class="field">
                             <label style="color:#666">公开邮箱</label>
-                            <input type="text" name="last-name" placeholder="Last Name">
+                            <input type="text" name="last-name" ${sessionScope.user.email} placeholder="Last Name">
                         </div>
                         <div class="field">
                             <div class="ui checkbox">
@@ -90,10 +116,28 @@
             </div>
         </div>
         <div class="two wide column"></div>
-
     </div>
+
+    <!-- mask div -->
+    <div class="ui modal">
+        <div class="header">
+            剪裁、调整
+        </div>
+        <div class="image content" style="margin:0;padding:0">
+            <img id="cropImage" class="ui middle aligned image" src="../resources/images/default-head.png">
+        </div>
+        <div class="actions">
+            <div id="crop" class="ui button">OK</div>
+        </div>
+    </div>
+
 </div>
 <script>
+
+    var dataURL;
+    var cor;
+    var jcrop_api;
+
     $(function () {
         $('.ui.menu a.item')
                 .on('click', function () {
@@ -110,7 +154,84 @@
                 })
         ;
 
+
+        // Header profile process
+        $('#crop').click(function () {
+            var modal = $('.ui.modal');
+            var img = modal.find('img').get(0);
+            var canvas = document.createElement('canvas');
+            canvas.width = cor.w;
+            canvas.height = cor.h;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, cor.x, cor.y, cor.w, cor.h, 0, 0, cor.w, cor.h);
+            var data = canvas.toDataURL("image/jpeg");
+            $('#showImage').attr('src', data);
+
+            // destroy jcrop
+            if (jcrop_api) {
+                jcrop_api.destroy();
+            }
+            modal.modal('hide');
+        });
+
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            $('input[type=file]').change(function (e) {
+                var file = e.target.files[0];
+                if (!file.type.match('image.*'))
+                    return;
+                if (file.size > 512 * 1000) {  // max 512kb
+                    alert("图片过大,请限制在1M以内");
+                    return;
+                }
+                var fileReader = new FileReader();
+                fileReader.onload = function (evt) {
+                    var img = new Image();
+                    img.src = evt.target.result;
+                    var newImg = resizeImage(img, 450, 450);
+                    layoutCropImageUI(newImg);
+                };
+                fileReader.readAsDataURL(file);
+            });
+        } else {
+            alert("浏览器不支持html5");
+        }
     });
+
+    /**
+     *  helper function
+     *
+     * */
+    function layoutCropImageUI(img) {
+        var H = img.height;
+        var W = img.width;
+        var data = img.src;
+
+        // load modal
+        var modal = $('.ui.modal');
+        modal.find('img').height(H).width(W);
+        modal.modal({
+            blurring: true,
+            closable: false,
+            offset: H / 2
+        }).modal('show').width(W).css("marginLeft", -W / 2);
+
+        // load crop plugin
+        $('.ui.modal img').empty().attr('src', data).Jcrop({
+            boxWidth: 450, boxHeight: 450,
+            bgColor: 'black',
+            bgOpacity: .5,
+            aspectRatio: 1,
+            setSelect: [100, 100, 250, 250],
+            onSelect: function (e) {
+                cor = e;
+            }
+        }, function () {
+            jcrop_api = this;
+        });
+
+    }
+
+
 </script>
 
 </body>

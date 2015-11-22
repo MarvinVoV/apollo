@@ -14,7 +14,8 @@
         <result property="userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="password" column="user_pwd" javaType="String" jdbcType="VARCHAR"/>
         <result property="status" column="status" javaType="int" jdbcType="INTEGER"/>
-        <result property="header" column="header" javaType="byte[]" jdbcType="BLOB"
+        <result property="header" column="header" javaType="byte[]" jdbcType="VARCHAR"/>
+        <result property="email" column="email" javaType="String" jdbcType="BLOB"
                 typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>
         <result property="createDate" column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <collection property="functions" column="user_id" ofType="sun.focusblog.admin.domain.auth.Function"
@@ -105,7 +106,8 @@
             u.user_pwd,
             u.create_date,
             u.status,
-            u.header
+            u.header,
+            u.email
         FROM
             USER u
         WHERE

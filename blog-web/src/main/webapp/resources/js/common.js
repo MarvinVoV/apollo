@@ -39,3 +39,42 @@ function gotoEmail(email){
     if(value != undefined)
         window.open(value);
 }
+
+
+/**
+ * @param img           Image Object
+ * @param maxWidth      max width
+ * @param maxHeight     max height
+ * @returns {Image}    new image Object
+ */
+function resizeImage(img, maxWidth, maxHeight) {
+    var tempImg = img;
+    var hRatio;
+    var wRatio;
+    var Ratio = 1;
+    var w = img.width;
+    var h = img.height;
+    wRatio = maxWidth / w;
+    hRatio = maxHeight / h;
+    if (maxWidth == 0 && maxHeight == 0) {
+        Ratio = 1;
+    } else if (maxWidth == 0) {//
+        if (hRatio < 1) Ratio = hRatio;
+    } else if (maxHeight == 0) {
+        if (wRatio < 1) Ratio = wRatio;
+    } else if (wRatio < 1 || hRatio < 1) {
+        Ratio = (wRatio <= hRatio ? wRatio : hRatio);
+    }
+    if (Ratio < 1) {
+        w = w * Ratio;
+        h = h * Ratio;
+    }
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(tempImg, 0, 0, w, h);
+    var newImg = new Image();
+    newImg.src = canvas.toDataURL("image/jpeg");
+    return newImg;
+}
