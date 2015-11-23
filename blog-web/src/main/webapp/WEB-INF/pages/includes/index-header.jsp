@@ -22,7 +22,7 @@
     <a class="active item" href="javascript:void(0);" style="width:5%;min-width:60px;">首页</a>
 
     <a class="item" href="javascript:void(0);" style="width:5%;min-width:60px;">发现</a>
-    <a class="item" style="width:5%;min-width:60px;" href="javascript:void(0);">我的博客</a>
+    <a class="item" style="width:5%;min-width:60px;" href="javascript:void(0);">博客</a>
 
     <div class="item" style="width:10%"></div>
     <a class="item" style="max-width:50px;" href="javascript:void(0);"> <i class="alarm icon"></i></a>
@@ -30,9 +30,12 @@
     <div class="item" style="min-width:125px;">
         <div class="ui inline dropdown">
             <div class="text">
-                <img class="ui middle aligned mini circular image"
-                     src="<c:url value="/resources/images/default-head.png"/>">
-                ${sessionScope.user.userName}
+                <c:set var="header" value="/resources/images/default-head.png" scope="page"/>
+                <c:if test="${not empty sessionScope.user.header}">
+                    <c:set var="header" value="${sessionScope.user.header}" scope="page"/>
+                </c:if>
+                <img class="ui middle aligned mini image sun-header"
+                     src="<c:url value="${pageScope.header}"/>">
             </div>
             <i class="dropdown icon"></i>
 

@@ -1,10 +1,12 @@
 package sun.focusblog.admin.dao.impl;
 
 import org.springframework.stereotype.Repository;
+import sun.focusblog.admin.annotation.SessionUpdate;
 import sun.focusblog.admin.dao.IUserDao;
 import sun.focusblog.admin.domain.auth.User;
 import sun.focusblog.admin.context.CacheNameSpace;
 import sun.focusblog.admin.dao.BaseDao;
+import sun.focusblog.framework.cache.annotation.CacheUpdate;
 import sun.focusblog.framework.cache.annotation.Cacheable;
 import sun.focusblog.framework.cache.util.ExpireConstants;
 
@@ -38,5 +40,17 @@ public class UserDao extends BaseDao implements IUserDao {
                         .put("roleId", roleId)
                         .build()
         ) > 0;
+    }
+
+    @CacheUpdate(
+            namespace = CacheNameSpace.CACHE_USER,
+            fieldsKey = {"#user.userId"},
+            valueField = "#user",
+            valueType = User.class,
+            expire = ExpireConstants.ONE_DAY
+    )
+    @Override
+    public boolean updateUserHeader(User user) {
+        return getSqlSession().update(buildStatement(NAMESPACE, "updateHeader"), user) > 0;
     }
 }

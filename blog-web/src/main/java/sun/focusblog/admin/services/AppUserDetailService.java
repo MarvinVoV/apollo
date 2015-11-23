@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 import sun.focusblog.admin.dao.IUserDao;
 import sun.focusblog.admin.domain.auth.Role;
 
@@ -33,7 +34,7 @@ public class AppUserDetailService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("user not found");
         }
-        String password = user.getPassword();
+        String password = new String(Base64Utils.decodeFromString(user.getPassword()));
         boolean enabled = user.getStatus() > 0;
         boolean accountNonExpired = user.getStatus() > 0;
         boolean credentialsNonExpired = user.getStatus() > 0;

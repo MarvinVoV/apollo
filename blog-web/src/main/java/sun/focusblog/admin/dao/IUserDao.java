@@ -17,4 +17,11 @@ public interface IUserDao {
     boolean persistUser(User user);
 
     boolean persistUserRole(String userId, int roleId);
+
+    /**
+     * user.userId and user.header fields must not null
+     * @param user  user entity
+     * @return  boolean
+     */
+    boolean updateUserHeader(User user);
 }

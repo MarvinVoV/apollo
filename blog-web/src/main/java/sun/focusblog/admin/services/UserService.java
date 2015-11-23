@@ -35,4 +35,6 @@ public interface UserService {
      * Query user by userId
      */
     User query(String userId);
+
+    boolean updateHeader(User user);
 }

@@ -1,10 +1,13 @@
 package sun.focusblog.admin.services.impl;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
+import sun.focusblog.admin.annotation.SessionUpdate;
+import sun.focusblog.admin.context.SessionConstants;
 import sun.focusblog.admin.dao.IUserDao;
 import sun.focusblog.admin.domain.auth.Role;
 import sun.focusblog.admin.domain.auth.User;
@@ -13,6 +16,7 @@ import sun.focusblog.framework.cache.redis.StringCacheStorage;
 
 /**
  * Created by root on 2015/11/19.
+ *
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -55,5 +59,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User query(String userId) {
         return userDao.query(userId);
+    }
+
+    /*
+        Update user and synchronize the session attribute.
+     */
+    @SessionUpdate(key = SessionConstants.USER, field = "#user", type = User.class)
+    @Override
+    public boolean updateHeader(User user) {
+        return !(user == null || StringUtils.isEmpty(user.getUserId())) && userDao.updateUserHeader(user);
     }
 }

@@ -32,6 +32,9 @@
             width: 160px;
             vertical-align: middle;
             text-align: center;
+            display:inline-block;
+            margin:0;
+            padding:0;
             height: 40px;
             right: 0;
             top: 0;
@@ -53,7 +56,7 @@
                 <div class="header item" style="color:#555;font-size:13px;">
                     设置
                 </div>
-                <a class="item" href="settings.html" style="color:#4078c0;font-size:13px;">
+                <a class="item" href="<c:url value="/setting/profile"/>" style="color:#4078c0;font-size:13px;">
                     账户设置
                 </a>
                 <a class="item" style="color:#4078c0;font-size:13px;">
@@ -77,13 +80,17 @@
                                 <tr>
                                     <td>
                                         <div>
-                                            <img id="showImage" class="ui middle aligned tiny image"
-                                                 src="<c:url value="/resources/images/default-head.png"/>">
+                                            <c:set var="header" value="/resources/images/default-head.png" scope="page"/>
+                                            <c:if test="${not empty sessionScope.user.header}">
+                                                <c:set var="header" value="${sessionScope.user.header}" scope="page"/>
+                                            </c:if>
+                                            <img id="showImage" class="ui middle aligned tiny image sun-header"
+                                                 src="<c:url value="${pageScope.header}"/>">
                                         </div>
                                     </td>
                                     <td>
                                         <div style="margin-left:20px;vertical-align: middle">
-                                            <a style="width:160px;height:40px;margin:0;padding:0;vertical-align: middle;text-align: center"
+                                            <a style="width:160px;height:40px;margin:0;padding:0;vertical-align: middle;text-align: center;overflow:hidden;"
                                                class="ui positive button">
                                                 <div style="position:fixed;padding-top:12px;padding-left:50px;">更新头像
                                                 </div>
@@ -102,7 +109,7 @@
                         </div>
                         <div class="field">
                             <label style="color:#666">公开邮箱</label>
-                            <input type="text" name="last-name" ${sessionScope.user.email} placeholder="Last Name">
+                            <input type="text" name="last-name" value="${sessionScope.user.email}" placeholder="Last Name">
                         </div>
                         <div class="field">
                             <div class="ui checkbox">
@@ -124,7 +131,7 @@
             剪裁、调整
         </div>
         <div class="image content" style="margin:0;padding:0">
-            <img id="cropImage" class="ui middle aligned image" src="../resources/images/default-head.png">
+            <img id="cropImage" class="ui middle aligned image" src="<c:url value="/resources/images/default-head.png"/>">
         </div>
         <div class="actions">
             <div id="crop" class="ui button">OK</div>
@@ -157,6 +164,7 @@
 
         // Header profile process
         $('#crop').click(function () {
+
             var modal = $('.ui.modal');
             var img = modal.find('img').get(0);
             var canvas = document.createElement('canvas');
@@ -165,13 +173,32 @@
             var ctx = canvas.getContext("2d");
             ctx.drawImage(img, cor.x, cor.y, cor.w, cor.h, 0, 0, cor.w, cor.h);
             var data = canvas.toDataURL("image/jpeg");
-            $('#showImage').attr('src', data);
+            // update
+            $('img').each(function(){
+               if($(this).hasClass('sun-header')){
+                   $(this).attr('src', data);
+               }
+            });
 
             // destroy jcrop
             if (jcrop_api) {
                 jcrop_api.destroy();
             }
-            modal.modal('hide');
+            $(this).addClass("loading");
+            var that = this;
+            $.ajax({
+                type:'post',
+                data:{'header': data},
+                url:'<c:url value="/setting/updateHeader"/>',
+                success:function(e){
+                    $(that).removeClass("loading");
+                    modal.modal('hide');
+                },
+                error: function (e) {
+                    alert(e);
+                }
+            });
+
         });
 
         if (window.File && window.FileReader && window.FileList && window.Blob) {

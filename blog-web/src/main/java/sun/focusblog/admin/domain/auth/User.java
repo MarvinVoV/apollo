@@ -20,7 +20,7 @@ public class User {
 
     private int status;
 
-    private byte[] header;
+    private String header;
 
     private String email;
 
@@ -92,11 +92,11 @@ public class User {
         this.email = email;
     }
 
-    public byte[] getHeader() {
+    public String getHeader() {
         return header;
     }
 
-    public void setHeader(byte[] header) {
+    public void setHeader(String header) {
         this.header = header;
     }
 }

@@ -26,7 +26,7 @@
         <security:http-basic/>
         <security:csrf disabled="true"/>
         <security:session-management>
-            <security:concurrency-control max-sessions="1" expired-url="/error/expire"/>
+            <security:concurrency-control max-sessions="5" expired-url="/error/expire"/>
         </security:session-management>
 
     </security:http>

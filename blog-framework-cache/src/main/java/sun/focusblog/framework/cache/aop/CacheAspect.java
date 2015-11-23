@@ -1,5 +1,6 @@
 package sun.focusblog.framework.cache.aop;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -9,8 +10,10 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
+import sun.focusblog.framework.cache.annotation.CacheUpdate;
 import sun.focusblog.framework.cache.redis.StringCacheStorage;
 import sun.focusblog.framework.cache.annotation.Cacheable;
+import sun.focusblog.framework.cache.util.AopUtils;
 
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -35,6 +38,10 @@ public class CacheAspect {
     @Autowired
     private StringCacheStorage cacheStorage;
 
+    //========================================================================
+    //                          Cache storage AOP
+    //========================================================================
+
     @Pointcut("@annotation(sun.focusblog.framework.cache.annotation.Cacheable)")
     public void cacheAdvice() {
     }
@@ -43,14 +50,16 @@ public class CacheAspect {
     public Object cache(ProceedingJoinPoint pjp) throws Throwable {
         Object retObj;
 
-        Method method = getMethod(pjp);
+        Method method = AopUtils.getMethod(pjp);
         assert method != null;
         Cacheable cacheable = method.getAnnotation(Cacheable.class);
 
         /**
          * The cacheKey is the full name of redis cache key
          */
-        String cacheKey = parseKey(cacheable, method, pjp.getArgs());
+        String namespace = cacheable.namespace();
+        String[] fieldsKey = cacheable.fieldsKey();
+        String cacheKey = parseKey(namespace, fieldsKey, method, pjp.getArgs());
         Class returnType = ((MethodSignature) pjp.getSignature()).getReturnType();
 
         retObj = cacheStorage.get(cacheKey, returnType);
@@ -70,40 +79,13 @@ public class CacheAspect {
         return retObj;
     }
 
-    /**
-     * Get the intercept method object.
-     * <p/>
-     * MethodSignature.getMethod() The top-level interface or parent class method objects
-     * While the cache in the annotation method.
-     * Should the object method uses reflection to obtain the current object so.
-     */
-    private Method getMethod(ProceedingJoinPoint pjp) {
-        Object[] args = pjp.getArgs();
-        Class[] argTypes = new Class[pjp.getArgs().length];
-        for (int i = 0; i < args.length; i++) {
-            argTypes[i] = args[i].getClass();
-        }
-
-        Method method = null;
-        try {
-            method = pjp.getTarget().getClass().getMethod(pjp.getSignature().getName(), argTypes);
-        } catch (NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-        }
-        return method;
-    }
-
 
     /**
      * Parse key and build a redis key with namespace.
      * The key's definition is support the SpEL Expression
      */
-    private String parseKey(Cacheable cacheable, Method method, Object[] args) {
+    private String parseKey(String namespace, String[] fieldsKey, Method method, Object[] args) {
         StringBuilder sb = new StringBuilder();
-
-        String namespace = cacheable.namespace();
-        String[] fieldsKey = cacheable.fieldsKey();
-
         /**
          * Get method parameters using the spring support library.
          */
@@ -135,6 +117,51 @@ public class CacheAspect {
             throwing = "ex")
     public void doException(Exception ex) {
         logger.log(Level.SEVERE, ex.getLocalizedMessage());
+    }
+
+
+    //========================================================================
+    //                          Cache Update AOP
+    //========================================================================
+
+    @Pointcut("@annotation(sun.focusblog.framework.cache.annotation.CacheUpdate)")
+    public void cacheUpdateAdvice() {
+    }
+
+    @AfterReturning(pointcut = "cacheUpdateAdvice()", returning = "rtv")
+    public void cacheUpdate(JoinPoint jp, Object rtv) {
+        Method method = AopUtils.getMethod(jp);
+        assert method != null;
+
+        CacheUpdate cacheUpdate = method.getAnnotation(CacheUpdate.class);
+        /**
+         * The cacheKey is the full name of redis cache key
+         */
+        String namespace = cacheUpdate.namespace();
+        String[] fieldsKey = cacheUpdate.fieldsKey();
+        String cacheKey = parseKey(namespace, fieldsKey, method, jp.getArgs());
+
+        String valueField = cacheUpdate.valueField();
+        Class type = cacheUpdate.valueType();
+        int expire = cacheUpdate.expire();
+
+        Object value = getUpdateFieldValue(valueField, method, jp, type);
+        if (expire > 0) {
+            cacheStorage.setEx(cacheKey, value, expire);
+        } else {
+            cacheStorage.set(cacheKey, value);
+        }
+    }
+
+    private Object getUpdateFieldValue(String valueField, Method method, JoinPoint jp, Class valueType) {
+        LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
+        String[] paramNameArray = u.getParameterNames(method);
+        ExpressionParser parser = new SpelExpressionParser();
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        for (int i = 0; i < paramNameArray.length; i++) {
+            context.setVariable(paramNameArray[i], jp.getArgs()[i]);
+        }
+        return parser.parseExpression(valueField).getValue(context, valueType);
     }
 
 }
