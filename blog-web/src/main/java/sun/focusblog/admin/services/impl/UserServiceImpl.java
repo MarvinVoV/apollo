@@ -69,4 +69,11 @@ public class UserServiceImpl implements UserService {
     public boolean updateHeader(User user) {
         return !(user == null || StringUtils.isEmpty(user.getUserId())) && userDao.updateUserHeader(user);
     }
+
+    @SessionUpdate(key = SessionConstants.USER, field = "#user", type = User.class)
+    @Override
+    public boolean updateEmail(User user) {
+        return !(user == null || StringUtils.isEmpty(user.getUserId())) && userDao.updateUserEmail(user);
+
+    }
 }

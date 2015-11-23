@@ -32,9 +32,9 @@
             width: 160px;
             vertical-align: middle;
             text-align: center;
-            display:inline-block;
-            margin:0;
-            padding:0;
+            display: inline-block;
+            margin: 0;
+            padding: 0;
             height: 40px;
             right: 0;
             top: 0;
@@ -73,50 +73,47 @@
                     个人资料
                 </div>
                 <div class="item">
-                    <form class="ui form">
-                        <div class="field">
-                            <h4 class="ui header">Profile picture</h4>
-                            <table>
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <c:set var="header" value="/resources/images/default-head.png" scope="page"/>
-                                            <c:if test="${not empty sessionScope.user.header}">
-                                                <c:set var="header" value="${sessionScope.user.header}" scope="page"/>
-                                            </c:if>
-                                            <img id="showImage" class="ui middle aligned tiny image sun-header"
-                                                 src="<c:url value="${pageScope.header}"/>">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div style="margin-left:20px;vertical-align: middle">
-                                            <a style="width:160px;height:40px;margin:0;padding:0;vertical-align: middle;text-align: center;overflow:hidden;"
-                                               class="ui positive button">
-                                                <div style="position:fixed;padding-top:12px;padding-left:50px;">更新头像
-                                                </div>
-                                                <input class="sun-file-input" type="file" accept="image/*" name="file"
-                                                       id="fileToUpload"/>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                    <div style="margin-bottom:10px;">
+                        <h4 class="ui header">Profile picture</h4>
+                        <table>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <c:set var="header" value="/resources/images/default-head.png"
+                                               scope="page"/>
+                                        <c:if test="${not empty sessionScope.user.header}">
+                                            <c:set var="header" value="${sessionScope.user.header}" scope="page"/>
+                                        </c:if>
+                                        <img id="showImage" class="ui middle aligned tiny image sun-header"
+                                             src="<c:url value="${pageScope.header}"/>">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="margin-left:20px;vertical-align: middle">
+                                        <a style="width:160px;height:40px;margin:0;padding:0;vertical-align: middle;text-align: center;overflow:hidden;"
+                                           class="ui positive button">
+                                            <div style="position:fixed;padding-top:12px;padding-left:50px;">更新头像
+                                            </div>
+                                            <input class="sun-file-input" type="file" accept="image/*" name="file"
+                                                   id="fileToUpload"/>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <form class="ui form" action="<c:url value="/setting/updateEmail"/>" method="post">
                         <div class="field">
                             <label style="color:#666">用户名</label>
-                            <input type="text" name="first-name" value="${sessionScope.user.userName}" readonly
+                            <input type="text" name="userId" value="${sessionScope.user.userName}" readonly
                                    placeholder="First Name">
                         </div>
                         <div class="field">
                             <label style="color:#666">公开邮箱</label>
-                            <input type="text" name="last-name" value="${sessionScope.user.email}" placeholder="Last Name">
+                            <input type="text" name="email" value="${sessionScope.user.email}"
+                                   placeholder="Last Name">
                         </div>
-                        <div class="field">
-                            <div class="ui checkbox">
-                                <input type="checkbox" tabindex="0" class="hidden">
-                                <label>I agree to the Terms and Conditions</label>
-                            </div>
-                        </div>
+                        <div class="ui error message"></div>
                         <button class="ui primary button" type="submit">Submit</button>
                     </form>
                 </div>
@@ -126,15 +123,17 @@
     </div>
 
     <!-- mask div -->
-    <div class="ui modal">
+    <div class="ui modal" >
         <div class="header">
             剪裁、调整
         </div>
-        <div class="image content" style="margin:0;padding:0">
-            <img id="cropImage" class="ui middle aligned image" src="<c:url value="/resources/images/default-head.png"/>">
+        <div class="image content" style="margin:0;padding:0;overflow: hidden;">
+            <img id="cropImage" class="ui middle aligned image"
+                 src="<c:url value="/resources/images/default-head.png"/>">
         </div>
         <div class="actions">
             <div id="crop" class="ui button">OK</div>
+            <div id="cropCancel" class="ui button">Cancel</div>
         </div>
     </div>
 
@@ -161,6 +160,42 @@
                 })
         ;
 
+        $('.ui.form').form({
+            fields: {
+                userId: {
+                    identifier: "userId",
+                    rules: [
+                        {
+                            type: "empty",
+                            prompt: "用户名不能为空"
+                        }
+                    ]
+                },
+                email: {
+                    identifier: "email",
+                    rules: [
+                        {
+                            type: "empty",
+                            prompt: "邮箱不能为空"
+                        },
+                        {
+                            type: 'email',
+                            prompt: '请输入有效的邮箱地址'
+                        }
+                    ]
+                }
+            }
+        });
+
+        $('#cropCancel').click(function(){
+            var modal = $('.ui.modal');
+            if(jcrop_api) {
+                jcrop_api.destroy();
+            }
+            dataURL = null;
+            $('#fileToUpload').val(null);
+            modal.modal('hide');
+        });
 
         // Header profile process
         $('#crop').click(function () {
@@ -174,10 +209,10 @@
             ctx.drawImage(img, cor.x, cor.y, cor.w, cor.h, 0, 0, cor.w, cor.h);
             var data = canvas.toDataURL("image/jpeg");
             // update
-            $('img').each(function(){
-               if($(this).hasClass('sun-header')){
-                   $(this).attr('src', data);
-               }
+            $('img').each(function () {
+                if ($(this).hasClass('sun-header')) {
+                    $(this).attr('src', data);
+                }
             });
 
             // destroy jcrop
@@ -187,10 +222,10 @@
             $(this).addClass("loading");
             var that = this;
             $.ajax({
-                type:'post',
-                data:{'header': data},
-                url:'<c:url value="/setting/updateHeader"/>',
-                success:function(e){
+                type: 'post',
+                data: {'header': data},
+                url: '<c:url value="/setting/updateHeader"/>',
+                success: function (e) {
                     $(that).removeClass("loading");
                     modal.modal('hide');
                 },
@@ -214,7 +249,7 @@
                 fileReader.onload = function (evt) {
                     var img = new Image();
                     img.src = evt.target.result;
-                    var newImg = resizeImage(img, 450, 450);
+                    var newImg = resizeImage(img, 430, 430);
                     layoutCropImageUI(newImg);
                 };
                 fileReader.readAsDataURL(file);
@@ -241,10 +276,9 @@
             closable: false,
             offset: H / 2
         }).modal('show').width(W).css("marginLeft", -W / 2);
-
         // load crop plugin
         $('.ui.modal img').empty().attr('src', data).Jcrop({
-            boxWidth: 450, boxHeight: 450,
+            boxWidth: 430, boxHeight: 430,
             bgColor: 'black',
             bgOpacity: .5,
             aspectRatio: 1,

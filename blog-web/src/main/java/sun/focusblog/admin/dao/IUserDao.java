@@ -24,4 +24,11 @@ public interface IUserDao {
      * @return  boolean
      */
     boolean updateUserHeader(User user);
+
+    /**
+     * user.userId and user.email fields must not null
+     * @param user  user
+     * @return  boolean
+     */
+    boolean updateUserEmail(User user);
 }

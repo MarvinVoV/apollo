@@ -1,6 +1,7 @@
 package sun.focusblog.admin.dao.impl;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sun.focusblog.admin.annotation.SessionUpdate;
 import sun.focusblog.admin.dao.IUserDao;
 import sun.focusblog.admin.domain.auth.User;
@@ -52,5 +53,17 @@ public class UserDao extends BaseDao implements IUserDao {
     @Override
     public boolean updateUserHeader(User user) {
         return getSqlSession().update(buildStatement(NAMESPACE, "updateHeader"), user) > 0;
+    }
+
+    @CacheUpdate(
+            namespace = CacheNameSpace.CACHE_USER,
+            fieldsKey = {"#user.userId"},
+            valueField = "#user",
+            valueType = User.class,
+            expire = ExpireConstants.ONE_DAY
+    )
+    @Override
+    public boolean updateUserEmail(User user) {
+        return getSqlSession().update(buildStatement(NAMESPACE, "updateEmail"), user) > 0;
     }
 }

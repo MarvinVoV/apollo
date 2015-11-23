@@ -140,4 +140,11 @@
             user_id = #{userId}
     </update>
 
+    <update id="updateEmail" parameterType="sun.focusblog.admin.domain.auth.User">
+        UPDATE USER
+        SET email = #{email}
+        WHERE
+        user_id = #{userId}
+    </update>
+
 </mapper>

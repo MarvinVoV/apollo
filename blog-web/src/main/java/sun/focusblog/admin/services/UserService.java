@@ -37,4 +37,6 @@ public interface UserService {
     User query(String userId);
 
     boolean updateHeader(User user);
+
+    boolean updateEmail(User user);
 }
