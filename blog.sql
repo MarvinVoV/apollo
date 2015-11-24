@@ -32,10 +32,11 @@ CREATE TABLE function_roles (
 );
 
 CREATE TABLE category (
-	category_id INT,
+	category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id VARCHAR (50),
 	category_name VARCHAR (100),
 	category_order INT,
+	status INT,
 	create_date TIMESTAMP
 );
 

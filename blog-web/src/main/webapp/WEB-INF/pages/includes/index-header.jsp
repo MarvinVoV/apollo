@@ -40,7 +40,7 @@
             <i class="dropdown icon"></i>
 
             <div class="menu">
-                <a class="item" href="<c:url value="/admin/index"/> ">
+                <a class="item" href="<c:url value="/manager/index"/> ">
                     <i class="user icon"></i>
                     博客管理
                 </a>
