@@ -9,9 +9,11 @@ public class Category {
     private int id;
     private String userId;
     private String name;
-    private int order = 0;
-    private int status = 1;  // default 1 show, 0 hide
+    private int order = 0; // auto increment
+    private int status = 1;  // default 1 show, 2 hide
     private Date createDate;
+
+    private int articleCount;
 
     public int getId() {
         return id;
@@ -59,5 +61,13 @@ public class Category {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public int getArticleCount() {
+        return articleCount;
+    }
+
+    public void setArticleCount(int articleCount) {
+        this.articleCount = articleCount;
     }
 }

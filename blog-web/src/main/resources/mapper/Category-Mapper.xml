@@ -17,11 +17,12 @@
         <result property="order" column="category_order" javaType="int" jdbcType="INTEGER"/>
         <result property="status" column="status" javaType="int" jdbcType="INTEGER"/>
         <result property="createDate" column="create_date" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result property="articleCount" column="article_count" javaType="int" jdbcType="INTEGER"/>
     </resultMap>
 
 
     <!-- Save Category -->
-    <select id="saveCategory" parameterType="sun.focusblog.admin.domain.Category">
+    <select id="save" parameterType="sun.focusblog.admin.domain.Category">
         INSERT INTO category (
             category_id,
             user_id,
@@ -35,10 +36,58 @@
                 NULL,
                 #{userId},
                 #{name},
-                #{order},
+                NULL,
                 #{status},
                 #{createDate}
             );
     </select>
+
+    <!-- Query Category -->
+    <select id="query" parameterType="String" resultMap="categoryResultMapper">
+        SELECT
+            c.category_id,
+            c.category_name,
+            c.category_order,
+            c. STATUS,
+            c.create_date,
+            (
+                SELECT
+                    count(*)
+                FROM
+                    articles a
+                WHERE
+                    a.category_id = c.category_id
+            ) AS article_count
+        FROM
+            category c
+        WHERE
+            c.user_id = #{userId}
+        ORDER BY
+            c.category_order ASC
+    </select>
+
+    <update id="update" parameterType="sun.focusblog.admin.domain.Category">
+        UPDATE category
+        SET create_date = sysdate()
+        <if test="name != null">
+            ,category_name = #{name}
+        </if>
+        <if test="order != 0">
+            , category_order = #{order}
+        </if>
+        <if test="status != 0">
+            , status = #{status}
+        </if>
+        WHERE
+            category_id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE
+        FROM
+            category
+        WHERE
+            category_id = #{id}
+    </delete>
 
 </mapper>

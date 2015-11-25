@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.context.SessionConstants;
 import sun.focusblog.admin.domain.auth.User;
 import sun.focusblog.admin.services.UserService;
@@ -33,7 +34,7 @@ public class SettingsController {
     @RequestMapping(value = "updateHeader", method = RequestMethod.POST)
     @ResponseBody
     public String updateHeader(@ModelAttribute User user, HttpSession session) {
-        User sessionUser = (User) session.getAttribute(SessionConstants.USER);
+        User sessionUser = Helper.getUser(session);
         sessionUser.setHeader(user.getHeader());
 
         userService.updateHeader(sessionUser);
@@ -43,7 +44,7 @@ public class SettingsController {
 
     @RequestMapping(value = "updateEmail", method = RequestMethod.POST)
     public String updateEmail(@ModelAttribute User user, HttpSession session) {
-        User sessionUser = (User) session.getAttribute(SessionConstants.USER);
+        User sessionUser = Helper.getUser(session);
         sessionUser.setEmail(user.getEmail());
         userService.updateEmail(sessionUser);
         return "redirect:/setting/profile";

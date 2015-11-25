@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
     <meta charset="utf-8"/>
@@ -55,48 +56,77 @@
                 <a class="item " data-tab="six">主题配置</a>
             </div>
 
-                <table class="ui blue selectable table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th class="right aligned">Notes</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>John</td>
-                        <td>Approved</td>
-                        <td class="right aligned">None</td>
-                    </tr>
-                    <tr>
-                        <td>Jamie</td>
-                        <td>Approved</td>
-                        <td class="right aligned">Requires call</td>
-                    </tr>
-                    <tr>
-                        <td>Jill</td>
-                        <td>Denied</td>
-                        <td class="right aligned">None</td>
-                    </tr>
-                    </tbody>
-                    <tfoot>
-                    <tr><th colspan="3">
-                        <div class="ui right floated pagination menu">
-                            <a class="icon item">
-                                <i class="left chevron icon"></i>
+            <table class="ui blue striped selectable table">
+                <thead>
+                <tr>
+                    <th>类别</th>
+                    <th>文章</th>
+                    <th>编辑</th>
+                    <th>删除</th>
+                    <th>显/隐</th>
+                    <th>排序</th>
+                    <th>创建日期</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="category" items="${requestScope.list}">
+                    <tr data-value="${category.order}">
+                        <td style="width:40%">${category.name}</td>
+                        <td>${category.articleCount}</td>
+                        <td>
+                            <a href="javascript:void(0);" style="color:#333333" class="ui link">
+                                <i class="edit icon"></i>
                             </a>
-                            <a class="item">1</a>
-                            <a class="item">2</a>
-                            <a class="item">3</a>
-                            <a class="item">4</a>
-                            <a class="icon item">
-                                <i class="right chevron icon"></i>
+
+                            <div class="ui flowing popup top left transition hidden">
+                                <form class="ui form">
+                                    <div class="field">
+                                        <input type="text" name="name" value="${category.name}" placeholder="类别名称">
+                                        <input type="hidden" name="id" value="${category.id}">
+                                    </div>
+                                    <button class="ui positive mini button" type="submit"
+                                            onclick="return update(this);">确定
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" style="color:#333333" class="ui link">
+                                <i class="trash icon"></i>
                             </a>
-                        </div>
-                    </th>
-                    </tr></tfoot>
-                </table>
+
+                            <div class="ui flowing popup top left transition hidden">
+                                <span class="site-tiny-font">确认删除</span>
+                                <a class="ui red mini button"
+                                   href="<c:url value="/manager/category/delete?id=${category.id}"/>"
+                                   type="submit">删除</a>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0)" onclick="showOrHide(this,'${category.id}')"
+                               style="color:black">
+                                <c:set var="stat" value="hide"/>
+                                <c:if test="${category.status == 1}">
+                                    <c:set var="stat" value="unhide"/>
+                                </c:if>
+                                <i class="${pageScope.stat} icon"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" style="color:#333333">
+                                <i class="arrow down icon"></i>
+                            </a>
+                            <a href="javascript:void(0);" style="color:#333333">
+                                <i class="arrow up icon"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <fmt:formatDate value="${category.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
 
         </div>
         <div class="three wide column">
@@ -115,12 +145,60 @@
             <h4 class="ui header">
                 分类状态
             </h4>
+
             <p><span class="site-mini-font">最近活动时间 2015-10-22 10:30:33</span></p>
         </div>
         <div class="one wide column"></div>
     </div>
 </div>
 <script>
+
+    /**
+     * update category name
+     */
+    function update(e) {
+        var form = $(e).parent();
+        var td = $(e).parents('tr').children().first();
+        $.ajax({
+            type: 'post',
+            url: '<c:url value="/manager/category/update"/>',
+            data: form.serialize(),
+            success: function (e) {
+                td.html(form.serialize().split('&')[0].split('=')[1])
+            },
+            error: function (e) {
+                alert(e);
+            }
+        });
+        return false;
+    }
+
+    /**
+     * update category show or hide field
+     */
+    function showOrHide(e, id) {
+        var icon = $(e).children().first();
+        var status = 2; // 1 show , 2 hide
+        if (icon.hasClass('hide')) {
+            icon.attr('class', 'unhide icon');
+            status = 1;
+        } else {
+            icon.attr('class', 'hide icon');
+        }
+
+        $.ajax({
+            type: 'post',
+            url: '<c:url value="/manager/category/update"/>',
+            data: {'status': status, 'id': id},
+            success: function (e) {
+                console.log(e);
+            },
+            error: function (e) {
+                alert(e);
+            }
+        });
+    }
+
     $(function () {
         $('.ui.menu a.item')
                 .on('click', function () {
@@ -137,6 +215,15 @@
                 })
         ;
 
+        $('.ui.link')
+                .popup({
+                    on: 'click',
+                    hoverable: true,
+                    closable: true,
+                    position: 'top left'
+                })
+        ;
+
         $('.ui.form').form({
             fields: {
                 name: {
@@ -150,6 +237,7 @@
                 }
             }
         });
+
 
     });
 </script>

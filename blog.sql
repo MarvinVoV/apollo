@@ -35,10 +35,24 @@ CREATE TABLE category (
 	category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id VARCHAR (50),
 	category_name VARCHAR (100),
-	category_order INT,
+	category_order INT AUTO_INCREMENT,
 	status INT,
 	create_date TIMESTAMP
 );
+
+-- category order field is auto_increment
+CREATE TRIGGER category_order_trigger BEFORE INSERT ON category FOR EACH ROW
+BEGIN
+DECLARE c_order INT;
+SET c_order = (
+	SELECT
+		(max(category_id) + 1)
+	FROM
+		category
+);
+SET NEW.category_order = c_order;
+END;
+
 
 CREATE TABLE articles (
 	article_id INT,
