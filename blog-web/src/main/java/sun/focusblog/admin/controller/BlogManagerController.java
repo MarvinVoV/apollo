@@ -13,6 +13,7 @@ import sun.focusblog.utils.JSONBuilder;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -66,5 +67,14 @@ public class BlogManagerController {
             categoryService.delete(Integer.valueOf(id));
         }
         return "redirect:/manager/category";
+    }
+
+    @RequestMapping(value = "category/sort", method = RequestMethod.POST)
+    @ResponseBody
+    public String sortCategory(@RequestBody Category[] categories) {
+        for (Category category : categories) {
+            categoryService.update(category);
+        }
+        return JSONBuilder.builder().inflate("status", "ok").build().toString();
     }
 }
