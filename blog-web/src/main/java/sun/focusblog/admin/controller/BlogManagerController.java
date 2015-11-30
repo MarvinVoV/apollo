@@ -77,4 +77,9 @@ public class BlogManagerController {
         }
         return JSONBuilder.builder().inflate("status", "ok").build().toString();
     }
+
+    @RequestMapping(value = "article/new", method = RequestMethod.GET)
+    public String writeArticle() {
+        return "/admin/writearticle";
+    }
 }

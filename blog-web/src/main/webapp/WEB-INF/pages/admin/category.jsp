@@ -107,7 +107,7 @@
                             </a>
 
                             <div class="ui flowing popup top left transition hidden">
-                                <span class="site-tiny-font">确认删除</span>
+                                <span class="site-tiny-font">确认删除?&nbsp;</span>
                                 <a class="ui red mini button"
                                    href="<c:url value="/manager/category/delete?id=${category.id}"/>"
                                    type="submit">删除</a>
@@ -141,7 +141,7 @@
 
             <div class="ui buttons">
                 <button class="ui blue button">
-                    <i class="write icon"></i>写新文章
+                    <i class="write icon"></i><a style="color:white" href="<c:url value="/manager/article/new"/>">写新文章</a>
                 </button>
                 <div class="or" data-text="^^"></div>
                 <button class="ui teal button">
