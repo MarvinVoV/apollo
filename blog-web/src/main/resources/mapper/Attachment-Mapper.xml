@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    Attachment Mapper
+
+-->
+
+<mapper namespace="sun.focusblog.admin.domain.Attachment">
+
+    <!-- Attachment Domain Mapping -->
+    <resultMap id="attachmentResultMapper" type="sun.focusblog.admin.domain.Attachment">
+        <result property="id" column="id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" javaType="String" jdbcType="VARCHAR"/>
+        <result property="fileName" column="file_name" javaType="String" jdbcType="VARCHAR"/>
+        <result property="fileSize" column="file_size" javaType="long" jdbcType="INTEGER"/>
+        <result property="uploadTime" column="upload_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="content" column="content" javaType="byte[]" jdbcType="BLOB"
+                typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>
+    </resultMap>
+
+
+    <sql id="column_list">id,user_id,file_type,file_name,content,file_size,upload_time</sql>
+
+    <!-- Query by id -->
+    <select id="query" parameterType="String" resultMap="attachmentResultMapper">
+        SELECT
+           <include refid="column_list"/>
+        FROM
+        article_attachment
+        WHERE
+            id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <select id="list" parameterType="String" resultMap="attachmentResultMapper">
+       SELECT
+            id
+        FROM
+            article_attachment
+        WHERE
+            user_id = #{userId} and file_type in ('jpg','.jpg','png','.png','gif','.git','.jpeg','jpeg')
+        ORDER BY
+            upload_time DESC
+    </select>
+
+    <insert id="save" parameterType="sun.focusblog.admin.domain.Attachment" >
+        INSERT INTO article_attachment (
+        <include refid = "column_list" />
+        )
+        VALUES
+        (#{id},#{userId},#{fileType},#{fileName},#{content},#{fileSize},#{uploadTime})
+    </insert>
+
+</mapper>

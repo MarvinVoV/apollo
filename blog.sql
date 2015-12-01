@@ -67,11 +67,15 @@ CREATE TABLE articles (
 	top INT
 );
 
+
 CREATE TABLE article_attachment (
-	attachment_id INT,
-	article_id INT,
+	id VARCHAR (36) UNIQUE, -- uuid
 	user_id VARCHAR (50),
-	attachment BLOB
+	file_type VARCHAR (20),
+	file_name VARCHAR (200),
+	content LONGBLOB,
+	file_size LONG,
+	upload_time TIMESTAMP
 );
 
 CREATE TABLE article_comment (

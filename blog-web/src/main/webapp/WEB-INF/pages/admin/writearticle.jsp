@@ -21,9 +21,11 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/site.css"/>">
     <link rel="stylesheet" type="text/css"
           href="<c:url value="/resources/semantic/themes/basic/assets/fonts/icons.ttf"/>">
+    <script src="<c:url value="/resources/ueditor/ueditor.config.js"/>"></script>
+    <script src="<c:url value="/resources/ueditor/ueditor.all.min.js"/>"></script>
     <script src="<c:url value="/resources/jquery/jquery-2.1.4.min.js"/>"></script>
     <script src="<c:url value="/resources/semantic/semantic.js"/>"></script>
-    <script src="<c:url value="/resources/tinymce/tinymce.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/resources/ueditor/lang/zh-cn/zh-cn.js"/>"></script>
 </head>
 <body>
 <div>
@@ -91,7 +93,7 @@
                     <tr>
                         <td colspan="2" style="padding:0;margin:0">
                             <div class="inline field">
-                                <textarea id="editor"></textarea>
+                                <script id="editor"  type="text/plain"></script>
                             </div>
                         </td>
                     </tr>
@@ -143,6 +145,7 @@
 <script>
 
     $(function () {
+
         $('.ui.menu a.item')
                 .on('click', function () {
                     $(this)
@@ -184,119 +187,10 @@
             }
         });
 
-
-        tinymce.init({
-            selector: '#editor',
-            theme: "modern",
-            width: 1024,
-            height: 300,
-            max_height: 600,
-            max_width: 1024,
-            min_height: 300,
-            min_width: 500,
-            resize: 'both',
-            auto_focus: "editor",
-            browser_spellcheck: true,
-            skin: "lightgray",
-            contextmenu: false,
-            language: "zh_CN",
-            cache_suffix: "?v=4.1.6",
-            allow_script_urls: true,
-            convert_urls: true,
-            custom_undo_redo_levels: 10,
-            image_caption: true,
-            media_live_embeds: true,
-            paste_auto_cleanup_on_paste: false,
-            plugin_preview_height: 500,
-            plugin_preview_width: 650,
-            nonbreaking_force_tab: true, //tab key
-            autoresize_bottom_margin: 50,
-            autoresize_max_height: 500,
-            autoresize_min_height: 350,
-            autoresize_on_init: false,
-            autoresize_overflow_padding: 2,
-            autosave_ask_before_unload: true,
-            autosave_interval: "20s",
-            autosave_restore_when_empty: true,
-            autosave_retention: "30m",
-            pagebreak_separator: "<!-- my page break -->",
-            pagebreak_split_block: true,
-            paste_data_images: true,
-            code_dialog_height: 500,
-            code_dialog_width: 750,
-            insertdatetime_formats: ["%H:%M:%S", "%Y-%m-%d", "%I:%M:%S %p", "%D"],
-//        automatic_uploads: false,
-//        object_resizing : true,  // img
-//        end_container_on_empty_block: true,
-//        nowrap : true,
-            toolbar: [
-                "fullpage, code | undo, redo | styleselect | bold, italic, underline, strikethrough | alignleft, aligncenter, alignright, alignjustify | bullist, numlist, outdent, indent | table | link, image, media | subscript, superscript, charmap, blockquote",
-                "print, preview | forecolor, backcolor | emoticons, formatselect, fontselect, fontsizeselect | cut, copy, paste, pastetext | codesample | removeformat, insertdatetime ,nonbreaking,pagebreak,searchreplace | fullscreen"
-            ],
-            init_instance_callback: function (editor) {
-                console.log("Editor: " + editor.id + " is now initialized.");
-            },
-            color_picker_callback: function (callback, value) {
-                callback('#FF00FF');
-            },
-
-//        file_browser_callback: function(field_name, url, type, win) {
-//            win.document.getElementById(field_name).value = 'my browser value';
-//        },
-//        urlconverter_callback : function(url, node, on_save, name){
-//            url = url.substring(3);
-//
-//            // Return new URL
-//            return url;
-//        },
-
-//        file_picker_callback: function(callback, value, meta) {
-//            // Provide file and text for the link dialog
-//            if (meta.filetype == 'file') {
-//                callback('mypage.html', {text: 'My text'});
-//            }
-//
-//            // Provide image and alt text for the image dialog
-//            if (meta.filetype == 'image') {
-//            }
-//        },
-
-//        images_upload_url: "postAcceptor.php",
-//        images_upload_base_path: "/some/basepath",
-//        images_upload_handler: function (blobInfo, success, failure) {
-//            var xhr, formData;
-//            xhr = new XMLHttpRequest();
-//            xhr.withCredentials = false;
-//            xhr.open('POST', "postAcceptor.php");
-//            xhr.onload = function() {
-//                var json;
-//
-//                if (xhr.status != 200) {
-//                    failure("HTTP Error: " + xhr.status);
-//                    return;
-//                }
-//                json = JSON.parse(xhr.responseText);
-//
-//                if (!json || typeof json.location != "string") {
-//                    failure("Invalid JSON: " + xhr.responseText);
-//                    return;
-//                }
-//                success(json.location);
-//            };
-//            formData = new FormData();
-//            formData.append('file', blobInfo.blob(), fileName(blobInfo));
-//            xhr.send(formData);
-//        },
-            plugins: [
-                "advlist autolink link image colorpicker imagetools lists charmap print preview hr anchor pagebreak spellchecker",
-                "searchreplace wordcount visualblocks visualchars code codesample fullscreen insertdatetime media nonbreaking",
-                "save table contextmenu directionality emoticons template paste textcolor fullpage codesample autoresize autosave tabfocus"
-            ],
-            templates: [
-                {title: 'Test template 1', content: 'Test 1'},
-                {title: 'Test template 2', content: 'Test 2'}
-            ]
+        var ue = UE.getEditor('editor', {
+            serverUrl: "<c:url value="/editor/control"/>"
         });
+
     });
 </script>
 

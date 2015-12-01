@@ -28,7 +28,9 @@
         <security:session-management>
             <security:concurrency-control max-sessions="5" expired-url="/error/expire"/>
         </security:session-management>
-
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"/> <!-- X-Frame-Options policy -->
+        </security:headers>
     </security:http>
 
     <security:authentication-manager>

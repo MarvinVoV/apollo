@@ -13,4 +13,8 @@
         <property name="senderName" value="focusblog"/>
         <property name="smtpPort" value="25"/>
     </bean>
+
+    <bean id="editorConfigManager" class="sun.focusblog.admin.components.ueditor.ConfigManager" init-method="initEnv">
+        <property name="configResource" value="classpath:ueditor-config.json"/>
+    </bean>
 </beans>
