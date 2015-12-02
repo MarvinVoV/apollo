@@ -25,5 +25,13 @@ method of access control.
 #### Edit Blog
 This scene contains editing category, editing article.
 
+### MySQL Config
+    vim /etc/mysql/my.cnf
+    [mysqld]
+    lower_case_table_names=1
+    max_allowed_packet = 50M
+
+
+
 
 

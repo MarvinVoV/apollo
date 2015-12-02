@@ -108,13 +108,13 @@
             u.header,
             u.email
         FROM
-            USER u
+            user u
         WHERE
             u.user_id = #{userId,jdbcType=VARCHAR}
     </select>
 
     <insert id="persistUser" parameterType="sun.focusblog.admin.domain.auth.User">
-      INSERT INTO USER (
+      INSERT INTO user (
         user_id,
         user_name,
         user_pwd,
@@ -134,14 +134,14 @@
     </insert>
 
     <update id="updateHeader" parameterType="sun.focusblog.admin.domain.auth.User">
-        UPDATE USER
+        UPDATE user
         SET header = #{header}
         WHERE
             user_id = #{userId}
     </update>
 
     <update id="updateEmail" parameterType="sun.focusblog.admin.domain.auth.User">
-        UPDATE USER
+        UPDATE user
         SET email = #{email}
         WHERE
         user_id = #{userId}

@@ -93,7 +93,7 @@
                     <tr>
                         <td colspan="2" style="padding:0;margin:0">
                             <div class="inline field">
-                                <script id="editor"  type="text/plain"></script>
+                                <script id="editor" type="text/plain"></script>
                             </div>
                         </td>
                     </tr>
@@ -101,16 +101,63 @@
                         <td colspan="2">
                             <div class="field">
                                 <label>文章标签</label>
-                                <input type="text" name="first-name" placeholder="" style="width:600px;">
+
+                                <div style="position:relative">
+                                    <div id="tag-list"
+                                         style="position:absolute;z-index:101;float:left;left:4px;top:5px;">
+                                        <%--<span title="单击删除该标签" class="ui tag label">hello</span>--%>
+                                    </div>
+                                </div>
+                                <input id="tag-input" type="text" name="country" placeholder="" style="width:70%"
+                                       maxlength="45">
+
+                                <div class="ui flowing popup top left transition hidden">
+                                    <div style="width:550px;">
+                                        <h4 class="ui header">推荐标签</h4>
+
+                                        <p>
+                                            <a class="ui tag label">New</a>
+                                            <a class="ui red tag label">Upcoming</a>
+                                            <a class="ui teal tag label">Featured</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div style="float:right;vertical-align: middle;width:30%;padding-top:10px;padding-left:10px;"
+                                     class="site-mini-font">最多45个字符,标签以逗号分隔
+                                </div>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div class="field">
+                            <div class="field" style="width:70%">
                                 <label>文章分类</label>
-                                <input type="text" name="first-name" placeholder="" style="width:600px;">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="width:70%">
+                                            <div id="category_select" class="ui fluid multiple search selection dropdown">
+                                                <input type="hidden" name="country">
+                                                <i class="dropdown icon"></i>
+
+                                                <div class="default text">Select Country</div>
+                                                <div class="menu">
+                                                    <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
+                                                    <div class="item" data-value="ax"><i class="ax flag"></i>Aland Islands</div>
+                                                    <div class="item" data-value="zm"><i class="zm flag"></i>Zambia</div>
+                                                    <div class="item" data-value="zw"><i class="zw flag"></i>Zimbabwe</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="float:right;vertical-align: middle;"
+                                                 class="site-mini-font">同时最多加入三个类别
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+
                             </div>
+
                         </td>
                     </tr>
                     <tr>
@@ -144,6 +191,28 @@
 </div>
 <script>
 
+    var tagQueue = [];
+    function layoutTag(tag) {
+        tag.empty();
+        for (var i = 0; i < tagQueue.length; i++) {
+            var entity = tagQueue[i];
+            var item = $('<span onclick="deleteTag(this)" id="tag-item-' + entity['key'] + '" title="单击删除该标签" class="ui tag label">' + entity['value'] + '</span>');
+            tag.append(item);
+        }
+    }
+    function deleteTag(e) {
+        var id = $(e).attr('id');
+        var key = id.substring(id.lastIndexOf('-') + 1);
+        for (var i = 0; i < tagQueue.length; i++) {
+            var entity = tagQueue[i];
+            if (entity['key'] == key) {
+                tagQueue.splice(i, 1);
+                break;
+            }
+        }
+        layoutTag($('#tag-list'));
+    }
+
     $(function () {
 
         $('.ui.menu a.item')
@@ -172,6 +241,35 @@
                     position: 'top left'
                 })
         ;
+        $('#tag-input').popup({
+                    on: 'focus',
+                    hoverable: true,
+                    closable: true,
+                    position: 'bottom center'
+                }).on('focus', function (e) {
+                        var tagList = $('#tag-list');
+                        $(this).css('padding-left', tagList.width() + parseInt(tagList.css('left')));
+                    }
+        ).blur(function (e) {
+            var value = $(this).val();
+            if (value.trim() != '') {
+                value = value.replace(/，/ig, ',');
+                console.log(value);
+                var list = value.split(',');
+                var tagList = $('#tag-list');
+                tagList.empty();
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].trim() == '') continue;
+                    tagQueue.push({key: (tagQueue.length + i), value: list[i]});
+                }
+                layoutTag(tagList);
+                var width = tagList.width() + parseInt(tagList.css('left'));
+                if (width > $(this).width()) {
+                    $(this).css({'width': width});
+                }
+                $(this).val('');
+            }
+        });
 
         $('.ui.form').form({
             fields: {
@@ -186,6 +284,12 @@
                 }
             }
         });
+
+        $('#category_select')
+                .dropdown({
+                    maxSelections: 3
+                })
+        ;
 
         var ue = UE.getEditor('editor', {
             serverUrl: "<c:url value="/editor/control"/>"

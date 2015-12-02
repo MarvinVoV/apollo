@@ -24,6 +24,8 @@ import java.util.*;
 
 /**
  * Created by root on 2015/12/1.
+ *
+ * Article Attachment Service Implementation.
  */
 @Service
 public class AttachmentServiceImpl implements AttachmentService {
