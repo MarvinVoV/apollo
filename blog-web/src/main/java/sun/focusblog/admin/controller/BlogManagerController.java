@@ -25,6 +25,9 @@ public class BlogManagerController {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * Category manager index page
+     */
     @RequestMapping("index")
     public ModelAndView manager(ModelAndView modelAndView) {
         modelAndView.setViewName("/admin/manager");
@@ -39,6 +42,9 @@ public class BlogManagerController {
         return modelAndView;
     }
 
+    /**
+     * Add new category
+     */
     @RequestMapping(value = "category/save", method = RequestMethod.POST)
     public String saveCategory(@ModelAttribute Category category, HttpSession session) {
         User user = Helper.getUser(session);
@@ -61,6 +67,9 @@ public class BlogManagerController {
         return JSONBuilder.builder().inflate("status", "ok").build().toString();
     }
 
+    /**
+     * Delete category
+     */
     @RequestMapping(value = "category/delete", method = RequestMethod.GET)
     public String deleteCategory(@RequestParam String id) {
         if (!StringUtils.isEmpty(id)) {
@@ -69,6 +78,9 @@ public class BlogManagerController {
         return "redirect:/manager/category";
     }
 
+    /**
+     * Update category manager sequence
+     */
     @RequestMapping(value = "category/sort", method = RequestMethod.POST)
     @ResponseBody
     public String sortCategory(@RequestBody Category[] categories) {
@@ -78,8 +90,14 @@ public class BlogManagerController {
         return JSONBuilder.builder().inflate("status", "ok").build().toString();
     }
 
+    /**
+     * Post new article
+     */
     @RequestMapping(value = "article/new", method = RequestMethod.GET)
-    public String writeArticle() {
-        return "/admin/writearticle";
+    public ModelAndView writeArticle(ModelAndView modelAndView, HttpSession httpSession) {
+        List<Category> list = categoryService.query(Helper.getUser(httpSession));
+        modelAndView.addObject("list", list);
+        modelAndView.setViewName("/admin/writearticle");
+        return modelAndView;
     }
 }

@@ -11,6 +11,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
@@ -66,7 +67,7 @@
                     <tr>
                         <td style="width:10%">
                             <div id="style-dropdown" class="ui teal labeled icon dropdown">
-                                <input type="hidden" name="filters">
+                                <input type="hidden" name="type">
                                 <i class="filter icon"></i>
                                 <span class="text">原创</span>
 
@@ -86,7 +87,7 @@
                         <td style="width:90%">
                             <div class="inline field">
                                 <label>标题</label>
-                                <input type="text" name="first-name" placeholder="" style="width:600px;">
+                                <input type="text" name="title" placeholder="" style="width:600px;">
                             </div>
                         </td>
                     </tr>
@@ -95,6 +96,7 @@
                             <div class="inline field">
                                 <script id="editor" type="text/plain"></script>
                             </div>
+                            <input placeholder="" type="hidden" name="content">
                         </td>
                     </tr>
                     <tr>
@@ -105,10 +107,9 @@
                                 <div style="position:relative">
                                     <div id="tag-list"
                                          style="position:absolute;z-index:101;float:left;left:4px;top:5px;">
-                                        <%--<span title="单击删除该标签" class="ui tag label">hello</span>--%>
                                     </div>
                                 </div>
-                                <input id="tag-input" type="text" name="country" placeholder="" style="width:70%"
+                                <input id="tag-input" type="text" name="tags" placeholder="" style="width:70%"
                                        maxlength="45">
 
                                 <div class="ui flowing popup top left transition hidden">
@@ -130,27 +131,27 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div class="field" style="width:70%">
+                            <div class="field">
                                 <label>文章分类</label>
-                                <table style="width:100%">
+                                <table style="width:100%;padding:0;margin:0">
                                     <tr>
-                                        <td style="width:70%">
-                                            <div id="category_select" class="ui fluid multiple search selection dropdown">
-                                                <input type="hidden" name="country">
+                                        <td style="width:70%;padding:0;margin:0">
+                                            <div id="category_select"
+                                                 class="ui fluid multiple search selection dropdown">
+                                                <input type="hidden" name="categoryId">
                                                 <i class="dropdown icon"></i>
 
-                                                <div class="default text">Select Country</div>
+                                                <div class="default text">请选择</div>
                                                 <div class="menu">
-                                                    <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
-                                                    <div class="item" data-value="ax"><i class="ax flag"></i>Aland Islands</div>
-                                                    <div class="item" data-value="zm"><i class="zm flag"></i>Zambia</div>
-                                                    <div class="item" data-value="zw"><i class="zw flag"></i>Zimbabwe</div>
+                                                    <c:forEach var="category" items="${requestScope.list}">
+                                                        <div class="item"
+                                                             data-value="${category.id}">${category.name}</div>
+                                                    </c:forEach>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div style="float:right;vertical-align: middle;"
-                                                 class="site-mini-font">同时最多加入三个类别
+                                        <td style="width:30%">
+                                            <div style="vertical-align: middle;" class="site-mini-font">同时最多能加入三个类别
                                             </div>
                                         </td>
                                     </tr>
@@ -162,36 +163,89 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div class="field">
+                            <div class="field" style="width:70%;display:inline-block;">
                                 <label>参考引用</label>
-                                <input type="text" name="first-name" placeholder="" style="width:600px;">
+                                <input type="text" name="references" placeholder="参考引用 URL">
+                            </div>
+                            <button onclick="return addReference(this);"
+                                    style="display:inline-block;vertical-align: middle;margin-top:44px;margin-left:5px;"
+                                    class="ui positive button">添加
+                            </button>
+                            <div id="ref-list" class="ui middle aligned selection list"
+                                 style="width:70%;display: none;">
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div class="field">
-                                <label>摘要</label>
-                                <input type="text" name="first-name" placeholder="" style="width:600px;">
+                            <table style="width:100%;padding:0;margin:0">
+                                <tr>
+                                    <td style="width:70%;padding:0;margin:0">
+                                        <div class="field">
+                                            <label style="font-size:13px">摘要</label>
+                                            <textarea title="摘要" name="digest" rows="4"></textarea>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="vertical-align: middle;" class="site-mini-font">同时最多能加入三个类别</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="field" style="width:70%">
+                                <label>设置</label>
+
+                                <div class="ui segment">
+                                    <div class="ui toggle checkbox">
+                                        <label>是否对所有人可见？</label>
+                                        <input placeholder="" type="checkbox" name="isHide" checked tabindex="0"
+                                               class="hidden">
+                                    </div>
+                                </div>
+                                <div class="ui segment">
+                                    <div class="ui toggle checkbox">
+                                        <label>是否允许评论？</label>
+                                        <input placeholder="" type="checkbox" name="allowComment" checked tabindex="0"
+                                               class="hidden">
+                                    </div>
+                                </div>
+                                <div class="ui segment">
+                                    <div class="ui toggle checkbox">
+                                        <label>是否自动生成目录？</label>
+                                        <input placeholder="" type="checkbox" name="autoIndex" checked tabindex="0"
+                                               class="hidden">
+                                    </div>
+                                </div>
+                                <div class="ui segment">
+                                    <div class="ui toggle checkbox">
+                                        <label>是否在博客列表置顶？</label>
+                                        <input placeholder="" type="checkbox" tabindex="0" name="isTop" class="hidden">
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: center">
-                            <button class="ui blue button" type="submit">发表文章</button>
+                            <button id="post" class="ui blue button" type="submit">发表文章</button>
+                            <button id="draft" class="ui teal button" type="submit">保存草稿</button>
                         </td>
                     </tr>
                 </table>
             </form>
-
         </div>
-
         <div class="two wide column"></div>
     </div>
 </div>
 <script>
-
+    // tags queue
     var tagQueue = [];
+    /**
+     * Show tags
+     */
     function layoutTag(tag) {
         tag.empty();
         for (var i = 0; i < tagQueue.length; i++) {
@@ -200,6 +254,10 @@
             tag.append(item);
         }
     }
+    /**
+     * Delete tags
+     * @param e
+     */
     function deleteTag(e) {
         var id = $(e).attr('id');
         var key = id.substring(id.lastIndexOf('-') + 1);
@@ -213,8 +271,41 @@
         layoutTag($('#tag-list'));
     }
 
+    /**
+     * Add reference url
+     */
+    function addReference() {
+        var ref = $('input[name="references"]').val();
+        if (ref.trim() == '') return false;
+        $('#ref-list')
+                .show()
+                .append(
+                        $(
+                                '<div class="item">' +
+                                    '<div class="content">' +
+                                        '<a class="header" style="display:inline-block" href="' + ref + '">' + ref + '</a>' +
+                                        '<a href="javascript:void(0);" onclick="delReference(this)" style="float:right;display:inline-block">删除</a>' +
+                                    '</div>' +
+                                '</div>'
+                        )
+                );
+        return false;
+    }
+
+    /**
+     * Delete reference url
+     */
+    function delReference(e) {
+        var item = $(e).parent().parent();
+        $('#ref-list')[0].removeChild(item[0]);
+    }
+
+    /**
+     * Page init
+     */
     $(function () {
 
+        // Init global menu
         $('.ui.menu a.item')
                 .on('click', function () {
                     $(this)
@@ -224,15 +315,25 @@
                     ;
                 })
         ;
+
+        // Init global dropdown
         $('.dropdown')
                 .dropdown({
                     action: 'hide'
                 })
         ;
+
+        // Exclude this dropdown element
         $('#style-dropdown').dropdown({
             transition: 'drop'
         });
 
+        // Init checkbox
+        $('.ui.checkbox')
+                .checkbox()
+        ;
+
+        // Init global link
         $('.ui.link')
                 .popup({
                     on: 'click',
@@ -241,36 +342,40 @@
                     position: 'top left'
                 })
         ;
-        $('#tag-input').popup({
-                    on: 'focus',
-                    hoverable: true,
-                    closable: true,
-                    position: 'bottom center'
-                }).on('focus', function (e) {
-                        var tagList = $('#tag-list');
-                        $(this).css('padding-left', tagList.width() + parseInt(tagList.css('left')));
-                    }
-        ).blur(function (e) {
-            var value = $(this).val();
-            if (value.trim() != '') {
-                value = value.replace(/，/ig, ',');
-                console.log(value);
-                var list = value.split(',');
-                var tagList = $('#tag-list');
-                tagList.empty();
-                for (var i = 0; i < list.length; i++) {
-                    if (list[i].trim() == '') continue;
-                    tagQueue.push({key: (tagQueue.length + i), value: list[i]});
-                }
-                layoutTag(tagList);
-                var width = tagList.width() + parseInt(tagList.css('left'));
-                if (width > $(this).width()) {
-                    $(this).css({'width': width});
-                }
-                $(this).val('');
-            }
-        });
 
+        // Operate tag popup element
+        $('#tag-input').popup({
+            on: 'focus',
+            hoverable: true,
+            closable: true,
+            position: 'bottom center'
+        }).on('focus',
+                function () {
+                    var tagList = $('#tag-list');
+                    $(this).css('padding-left', tagList.width() + parseInt(tagList.css('left')));
+                }
+        ).blur(
+                function () {
+                    var value = $(this).val();
+                    if (value.trim() != '') {
+                        value = value.replace(/，/ig, ',');
+                        var list = value.split(',');
+                        var tagList = $('#tag-list').empty();
+                        for (var i = 0; i < list.length; i++) {
+                            if (list[i].trim() == '') continue;
+                            tagQueue.push({key: (tagQueue.length + i), value: list[i]});
+                        }
+                        layoutTag(tagList);
+                        var width = tagList.width() + parseInt(tagList.css('left'));
+                        if (width > $(this).width()) {
+                            $(this).css({'width': width});
+                        }
+                        $(this).val('');
+                    }
+                }
+        );
+
+        // Init form element
         $('.ui.form').form({
             fields: {
                 name: {
@@ -285,12 +390,14 @@
             }
         });
 
+        // Init category list
         $('#category_select')
                 .dropdown({
                     maxSelections: 3
                 })
         ;
 
+        // Init global UEditor plugin
         var ue = UE.getEditor('editor', {
             serverUrl: "<c:url value="/editor/control"/>"
         });
