@@ -62,12 +62,12 @@
                 <a class="item " data-tab="five">回收站</a>
                 <a class="item " data-tab="six">主题配置</a>
             </div>
-            <form class="ui form">
+            <form id="post-form" class="ui form" method="post">
                 <table class="ui blue table">
                     <tr>
                         <td style="width:10%">
                             <div id="style-dropdown" class="ui teal labeled icon dropdown">
-                                <input type="hidden" name="type">
+                                <input type="hidden" name="type" value="原创">
                                 <i class="filter icon"></i>
                                 <span class="text">原创</span>
 
@@ -96,7 +96,6 @@
                             <div class="inline field">
                                 <script id="editor" type="text/plain"></script>
                             </div>
-                            <input placeholder="" type="hidden" name="content">
                         </td>
                     </tr>
                     <tr>
@@ -168,7 +167,7 @@
                                 <input type="text" name="references" placeholder="参考引用 URL">
                             </div>
                             <button onclick="return addReference(this);"
-                                    style="display:inline-block;vertical-align: middle;margin-top:44px;margin-left:5px;"
+                                    style="display:inline-block;vertical-align: middle;margin-top:15px;margin-left:5px;"
                                     class="ui positive button">添加
                             </button>
                             <div id="ref-list" class="ui middle aligned selection list"
@@ -199,21 +198,21 @@
                                 <label>设置</label>
 
                                 <div class="ui segment">
-                                    <div class="ui toggle checkbox">
+                                    <div class="ui toggle checkbox checked">
                                         <label>是否对所有人可见？</label>
                                         <input placeholder="" type="checkbox" name="isHide" checked tabindex="0"
                                                class="hidden">
                                     </div>
                                 </div>
                                 <div class="ui segment">
-                                    <div class="ui toggle checkbox">
+                                    <div class="ui toggle checkbox checked">
                                         <label>是否允许评论？</label>
                                         <input placeholder="" type="checkbox" name="allowComment" checked tabindex="0"
                                                class="hidden">
                                     </div>
                                 </div>
                                 <div class="ui segment">
-                                    <div class="ui toggle checkbox">
+                                    <div class="ui toggle checkbox checked">
                                         <label>是否自动生成目录？</label>
                                         <input placeholder="" type="checkbox" name="autoIndex" checked tabindex="0"
                                                class="hidden">
@@ -222,7 +221,7 @@
                                 <div class="ui segment">
                                     <div class="ui toggle checkbox">
                                         <label>是否在博客列表置顶？</label>
-                                        <input placeholder="" type="checkbox" tabindex="0" name="isTop" class="hidden">
+                                        <input placeholder="" type="checkbox" name="isTop" tabindex="0"  class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -230,8 +229,8 @@
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: center">
-                            <button id="post" class="ui blue button" type="submit">发表文章</button>
-                            <button id="draft" class="ui teal button" type="submit">保存草稿</button>
+                            <input type="button" id="post" class="ui blue button" value="发表文章">
+                            <input type="button" id="draft" class="ui teal button" value="保存草稿">
                         </td>
                     </tr>
                 </table>
@@ -243,6 +242,7 @@
 <script>
     // tags queue
     var tagQueue = [];
+    var ue;
     /**
      * Show tags
      */
@@ -272,6 +272,20 @@
     }
 
     /**
+     * concat tags
+     */
+    function concatTags() {
+        var tags = "";
+        for (var i = 0; i < tagQueue.length; i++) {
+            tags += tagQueue[i].value + ',';
+        }
+        if (tags.trim().length > 0) {
+            tags = tags.substring(0, tags.length - 1);
+        }
+        return tags;
+    }
+
+    /**
      * Add reference url
      */
     function addReference() {
@@ -282,10 +296,10 @@
                 .append(
                         $(
                                 '<div class="item">' +
-                                    '<div class="content">' +
-                                        '<a class="header" style="display:inline-block" href="' + ref + '">' + ref + '</a>' +
-                                        '<a href="javascript:void(0);" onclick="delReference(this)" style="float:right;display:inline-block">删除</a>' +
-                                    '</div>' +
+                                '<div class="content">' +
+                                '<a class="header" style="display:inline-block" href="' + ref + '">' + ref + '</a>' +
+                                '<a href="javascript:void(0);" onclick="delReference()" style="float:right;display:inline-block">删除</a>' +
+                                '</div>' +
                                 '</div>'
                         )
                 );
@@ -300,6 +314,16 @@
         $('#ref-list')[0].removeChild(item[0]);
     }
 
+    function concatDigest() {
+        var digests = "";
+        $('#ref-list').children().each(function () {
+            digests += $(this).find('a[class="header"]').attr('href') + '@';
+        });
+        if (digests.trim().length > 0) {
+            digests = digests.substring(0, digests.length - 1);
+        }
+        return digests;
+    }
     /**
      * Page init
      */
@@ -378,12 +402,21 @@
         // Init form element
         $('.ui.form').form({
             fields: {
-                name: {
-                    identifier: "name",
+                title: {
+                    identifier: "title",
                     rules: [
                         {
                             type: "empty",
-                            prompt: "类别名称不能为空"
+                            prompt: "标题名称不能为空"
+                        }
+                    ]
+                },
+                categoryId: {
+                    identifier: "categoryId",
+                    rules: [
+                        {
+                            type: "empty",
+                            prompt: "请选择文章所属分类"
                         }
                     ]
                 }
@@ -398,10 +431,36 @@
         ;
 
         // Init global UEditor plugin
-        var ue = UE.getEditor('editor', {
-            serverUrl: "<c:url value="/editor/control"/>"
+        ue = UE.getEditor('editor', {
+            serverUrl: "<c:url value="/editor/control"/>",
+            textarea: 'content'
         });
 
+        /**
+         * Post blog
+         */
+        $('#post').click(function () {
+            if (!ue) {
+                return false;
+            }
+            $('#tag-input').val(concatTags());
+            $('input[name="references"]').val(concatDigest());
+            $('.ui.checkbox').each(function(){
+                var checkbox = $(this).find('input[type="checkbox"]');
+                console.log($(this).attr('class'))
+                if($(this).hasClass('checked')){
+                    checkbox.val(1);
+                }else{
+                    checkbox.val(0);
+                }
+            });
+            var myForm = $('#post-form');
+            if (myForm.form('validate form')) {
+//                var data = myForm.serialize();
+                myForm.submit();
+            }
+            return false;
+        });
     });
 </script>
 

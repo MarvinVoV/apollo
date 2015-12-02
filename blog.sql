@@ -53,20 +53,25 @@ SET c_order = (
 SET NEW.category_order = c_order;
 END;
 
-
 CREATE TABLE articles (
-	article_id INT,
+	id INT NOT NULL auto_increment PRIMARY KEY,
 	user_id VARCHAR (50),
 	category_id INT,
-	article_title VARCHAR (1000),
-	article_content BLOB,
+	title VARCHAR (1000),
+	type VARCHAR (100),
+	content LONGTEXT,
+	tags VARCHAR (1000),
+	reference VARCHAR (1000),
+	digest VARCHAR (1000),
+	is_hide bit,
+	allow_comment bit,
+	auto_index bit,
+	is_top bit,
 	create_date TIMESTAMP,
 	update_date TIMESTAMP,
 	page_view LONG,
-	article_order INT,
-	top INT
+	article_order INT
 );
-
 
 CREATE TABLE article_attachment (
 	id VARCHAR (36) UNIQUE, -- uuid
