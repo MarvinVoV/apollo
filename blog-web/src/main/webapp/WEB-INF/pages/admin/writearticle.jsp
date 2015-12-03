@@ -48,7 +48,6 @@
             </div>
         </div>
         <div class="two wide column"></div>
-
     </div>
 
     <div class="ui grid">
@@ -112,17 +111,6 @@
                                 <input id="tag-input" type="text" name="tags" placeholder="" style="width:70%"
                                        maxlength="45">
 
-                                <%--<div class="ui flowing popup top left transition hidden">--%>
-                                <%--<div style="width:550px;">--%>
-                                <%--<h4 class="ui header">推荐标签</h4>--%>
-
-                                <%--<p>--%>
-                                <%--<a class="ui tag label">New</a>--%>
-                                <%--<a class="ui red tag label">Upcoming</a>--%>
-                                <%--<a class="ui teal tag label">Featured</a>--%>
-                                <%--</p>--%>
-                                <%--</div>--%>
-                                <%--</div>--%>
                                 <div style="float:right;vertical-align: middle;width:30%;padding-top:10px;padding-left:10px;"
                                      class="site-mini-font">最多45个字符,标签以逗号分隔
                                 </div>
@@ -146,7 +134,7 @@
                                                     <c:forEach var="category" items="${requestScope.list}">
                                                         <div class="item"
                                                              data-value="${category.id}">
-                                                             ${category.name}
+                                                                ${category.name}
                                                         </div>
                                                     </c:forEach>
                                                 </div>
@@ -256,7 +244,7 @@
         tag.empty();
         for (var i = 0; i < tagQueue.length; i++) {
             var entity = tagQueue[i];
-            var item = $('<span onclick="deleteTag(this)" id="tag-item-' + entity['key'] + '" title="单击删除该标签" class="ui '+ colors[randomNumber(colors.length)]+' tag label">' + entity['value'] + '</span>');
+            var item = $('<span onclick="deleteTag(this)" id="tag-item-' + entity['key'] + '" title="单击删除该标签" class="ui ' + colors[randomNumber(colors.length)] + ' tag label">' + entity['value'] + '</span>');
             tag.append(item);
         }
     }
@@ -400,9 +388,9 @@
         });
 
         // Add color on category items.
-        $('#category_menu').children().each(function(){
+        $('#category_menu').children().each(function () {
             var txt = $(this).html();
-            var icon = $('<div class="ui '+colors[randomNumber(colors.length)]+' empty circular label"></div>');
+            var icon = $('<div class="ui ' + colors[randomNumber(colors.length)] + ' empty circular label"></div>');
             $(this).empty().append(icon).append(txt);
         });
 
@@ -509,6 +497,5 @@
         });
     });
 </script>
-
 </body>
 </html>
