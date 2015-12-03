@@ -69,7 +69,7 @@ CREATE TABLE articles (
 	is_top bit,
 	create_date TIMESTAMP,
 	update_date TIMESTAMP,
-	page_view LONG,
+	page_view bigint,
 	article_order INT
 );
 

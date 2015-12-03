@@ -27,6 +27,7 @@
     <script src="<c:url value="/resources/jquery/jquery-2.1.4.min.js"/>"></script>
     <script src="<c:url value="/resources/semantic/semantic.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/resources/ueditor/lang/zh-cn/zh-cn.js"/>"></script>
+    <script src="<c:url value="/resources/js/common.js"/>"></script>
 </head>
 <body>
 <div>
@@ -62,7 +63,7 @@
                 <a class="item " data-tab="five">回收站</a>
                 <a class="item " data-tab="six">主题配置</a>
             </div>
-            <form id="post-form" class="ui form" method="post">
+            <form id="post-form" action="<c:url value="/manager/article/post"/>" class="ui form" method="post">
                 <table class="ui blue table">
                     <tr>
                         <td style="width:10%">
@@ -111,17 +112,17 @@
                                 <input id="tag-input" type="text" name="tags" placeholder="" style="width:70%"
                                        maxlength="45">
 
-                                <div class="ui flowing popup top left transition hidden">
-                                    <div style="width:550px;">
-                                        <h4 class="ui header">推荐标签</h4>
+                                <%--<div class="ui flowing popup top left transition hidden">--%>
+                                <%--<div style="width:550px;">--%>
+                                <%--<h4 class="ui header">推荐标签</h4>--%>
 
-                                        <p>
-                                            <a class="ui tag label">New</a>
-                                            <a class="ui red tag label">Upcoming</a>
-                                            <a class="ui teal tag label">Featured</a>
-                                        </p>
-                                    </div>
-                                </div>
+                                <%--<p>--%>
+                                <%--<a class="ui tag label">New</a>--%>
+                                <%--<a class="ui red tag label">Upcoming</a>--%>
+                                <%--<a class="ui teal tag label">Featured</a>--%>
+                                <%--</p>--%>
+                                <%--</div>--%>
+                                <%--</div>--%>
                                 <div style="float:right;vertical-align: middle;width:30%;padding-top:10px;padding-left:10px;"
                                      class="site-mini-font">最多45个字符,标签以逗号分隔
                                 </div>
@@ -136,7 +137,7 @@
                                     <tr>
                                         <td style="width:70%;padding:0;margin:0">
                                             <div id="category_select"
-                                                 class="ui fluid multiple search selection dropdown">
+                                                 class="ui fluid search selection dropdown">
                                                 <input type="hidden" name="categoryId">
                                                 <i class="dropdown icon"></i>
 
@@ -150,7 +151,7 @@
                                             </div>
                                         </td>
                                         <td style="width:30%">
-                                            <div style="vertical-align: middle;" class="site-mini-font">同时最多能加入三个类别
+                                            <div style="vertical-align: middle;" class="site-mini-font">最多只能选择一个类别
                                             </div>
                                         </td>
                                     </tr>
@@ -162,9 +163,9 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div class="field" style="width:70%;display:inline-block;">
+                            <div id="ref-field" class="field" style="width:70%;display:inline-block;">
                                 <label>参考引用</label>
-                                <input type="text" name="references" placeholder="参考引用 URL">
+                                <input type="text" name="reference" placeholder="参考引用 URL">
                             </div>
                             <button onclick="return addReference(this);"
                                     style="display:inline-block;vertical-align: middle;margin-top:15px;margin-left:5px;"
@@ -186,7 +187,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="vertical-align: middle;" class="site-mini-font">同时最多能加入三个类别</div>
+                                        <div style="vertical-align: middle;" class="site-mini-font">默认选取文章前200个字符</div>
                                     </td>
                                 </tr>
                             </table>
@@ -221,7 +222,7 @@
                                 <div class="ui segment">
                                     <div class="ui toggle checkbox">
                                         <label>是否在博客列表置顶？</label>
-                                        <input placeholder="" type="checkbox" name="isTop" tabindex="0"  class="hidden">
+                                        <input placeholder="" type="checkbox" name="isTop" tabindex="0" class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -243,6 +244,9 @@
     // tags queue
     var tagQueue = [];
     var ue;
+    // tag color
+    var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 'blue', 'violet', 'purple', 'pink', 'brown', 'grey', 'black'];
+
     /**
      * Show tags
      */
@@ -250,7 +254,7 @@
         tag.empty();
         for (var i = 0; i < tagQueue.length; i++) {
             var entity = tagQueue[i];
-            var item = $('<span onclick="deleteTag(this)" id="tag-item-' + entity['key'] + '" title="单击删除该标签" class="ui tag label">' + entity['value'] + '</span>');
+            var item = $('<span onclick="deleteTag(this)" id="tag-item-' + entity['key'] + '" title="单击删除该标签" class="ui '+ colors[randomNumber(colors.length)]+' tag label">' + entity['value'] + '</span>');
             tag.append(item);
         }
     }
@@ -289,8 +293,11 @@
      * Add reference url
      */
     function addReference() {
-        var ref = $('input[name="references"]').val();
-        if (ref.trim() == '') return false;
+        var ref = $('input[name="reference"]').val();
+        if (ref.trim() == '' || !validURL(ref)) {
+            $('#ref-field').addClass('error');
+            return false;
+        }
         $('#ref-list')
                 .show()
                 .append(
@@ -298,7 +305,7 @@
                                 '<div class="item">' +
                                 '<div class="content">' +
                                 '<a class="header" style="display:inline-block" href="' + ref + '">' + ref + '</a>' +
-                                '<a href="javascript:void(0);" onclick="delReference()" style="float:right;display:inline-block">删除</a>' +
+                                '<a href="javascript:void(0);" onclick="delReference(this)" style="float:right;display:inline-block">删除</a>' +
                                 '</div>' +
                                 '</div>'
                         )
@@ -314,7 +321,7 @@
         $('#ref-list')[0].removeChild(item[0]);
     }
 
-    function concatDigest() {
+    function concatReference() {
         var digests = "";
         $('#ref-list').children().each(function () {
             digests += $(this).find('a[class="header"]').attr('href') + '@';
@@ -324,6 +331,16 @@
         }
         return digests;
     }
+    /**
+     * Get default digest
+     */
+    function getDefaultDigest() {
+        if (ue) {
+            return ue.getContentTxt().trim().substring(0, 200);
+        }
+        return '';
+    }
+
     /**
      * Page init
      */
@@ -366,6 +383,19 @@
                     position: 'top left'
                 })
         ;
+        // Init default digest value
+        $('textarea[name="digest"]').focus(function () {
+            if ($(this).val().trim() == '') {
+                if (ue) {
+                    $(this).val(getDefaultDigest());
+                }
+            }
+        });
+
+        // eliminate error
+        $('input[name="reference"]').focus(function () {
+            $('#ref-field').removeClass('error');
+        });
 
         // Operate tag popup element
         $('#tag-input').popup({
@@ -443,20 +473,27 @@
             if (!ue) {
                 return false;
             }
+            // Set or filter field's value.
             $('#tag-input').val(concatTags());
-            $('input[name="references"]').val(concatDigest());
-            $('.ui.checkbox').each(function(){
+            $('input[name="reference"]').val(concatReference());
+            $('.ui.checkbox').each(function () {
                 var checkbox = $(this).find('input[type="checkbox"]');
-                console.log($(this).attr('class'))
-                if($(this).hasClass('checked')){
+                if ($(this).hasClass('checked')) {
                     checkbox.val(1);
-                }else{
+                } else {
                     checkbox.val(0);
                 }
             });
+            // Set default digest
+            var digest = $('textarea[name="digest"]').val();
+            if (digest.trim() == '') {
+                if (ue) {
+                    digest.val(getDefaultDigest());
+                }
+            }
+            // Submit
             var myForm = $('#post-form');
             if (myForm.form('validate form')) {
-//                var data = myForm.serialize();
                 myForm.submit();
             }
             return false;

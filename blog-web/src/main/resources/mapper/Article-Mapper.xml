@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    Article Mapper
+
+-->
+
+<mapper namespace="sun.focusblog.admin.domain.Article">
+
+    <!-- Article Domain Mapping -->
+    <resultMap id="articleResultMapper" type="sun.focusblog.admin.domain.Article">
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" javaType="int" jdbcType="INTEGER"/>
+        <result property="title" column="title" javaType="String" jdbcType="VARCHAR"/>
+        <result property="type" column="type" javaType="String" jdbcType="VARCHAR"/>
+        <result property="content" column="content" javaType="String" jdbcType="VARCHAR"/>
+        <result property="tags" column="tags" javaType="String" jdbcType="VARCHAR"/>
+        <result property="reference" column="reference" javaType="String" jdbcType="VARCHAR"/>
+        <result property="digest" column="digest" javaType="String" jdbcType="VARCHAR"/>
+        <result property="isHide" column="is_hide" javaType="Boolean" jdbcType="BIT"/>
+        <result property="allowComment" column="allow_comment" javaType="Boolean" jdbcType="BIT"/>
+        <result property="autoIndex" column="auto_index" javaType="Boolean" jdbcType="BIT"/>
+        <result property="isTop" column="is_top" javaType="Boolean" jdbcType="BIT"/>
+        <result property="createDate" column="create_date" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result property="updateDate" column="update_date" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result property="pageView" column="page_view" javaType="long" jdbcType="INTEGER"/>
+        <result property="order" column="article_order" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="fields">
+    <![CDATA[
+        id,
+        user_id,
+        category_id,
+        title,
+        type,
+        content,
+        tags,
+        reference,
+        digest,
+        is_hide,
+        allow_comment,
+        auto_index,
+        is_top,
+        create_date,
+        update_date,
+        page_view,
+        article_order
+      ]]>
+    </sql>
+
+
+    <!-- Save Article -->
+    <select id="save" parameterType="sun.focusblog.admin.domain.Article">
+        INSERT INTO articles (
+            <include refid="fields"/>
+        )
+        VALUES
+            (
+                NULL,
+                #{userId},
+                #{categoryId},
+                #{title},
+                #{type},
+                #{content},
+                #{tags},
+                #{reference},
+                #{digest},
+                #{isHide},
+                #{allowComment},
+                #{autoIndex},
+                #{isTop},
+                #{createDate},
+                #{updateDate},
+                #{pageView},
+                #{order}
+            );
+    </select>
+</mapper>

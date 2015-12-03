@@ -1,29 +1,39 @@
 package sun.focusblog.admin.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import sun.focusblog.admin.components.Helper;
+import sun.focusblog.admin.domain.Article;
 import sun.focusblog.admin.domain.Category;
 import sun.focusblog.admin.domain.auth.User;
+import sun.focusblog.admin.services.ArticleService;
 import sun.focusblog.admin.services.CategoryService;
 import sun.focusblog.utils.JSONBuilder;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by root on 2015/11/23.
+ *
+ * Blog manager and post new blog controller.
  */
 @Controller
 @RequestMapping("/manager")
 public class BlogManagerController {
+    private static final Logger logger = LoggerFactory.getLogger(BlogManagerController.class);
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ArticleService articleService;
 
     /**
      * Category manager index page
@@ -34,6 +44,9 @@ public class BlogManagerController {
         return modelAndView;
     }
 
+    /**
+     * List all category
+     */
     @RequestMapping("category")
     public ModelAndView category(ModelAndView modelAndView, HttpSession session) {
         List<Category> list = categoryService.query(Helper.getUser(session));
@@ -97,7 +110,18 @@ public class BlogManagerController {
     public ModelAndView writeArticle(ModelAndView modelAndView, HttpSession httpSession) {
         List<Category> list = categoryService.query(Helper.getUser(httpSession));
         modelAndView.addObject("list", list);
-        modelAndView.setViewName("/admin/writearticle");
+        modelAndView.setViewName("admin/writeArticle");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "article/post", method = RequestMethod.POST)
+    public ModelAndView post(@ModelAttribute Article article, BindingResult result, ModelAndView modelAndView,
+                             HttpSession httpSession) {
+        if(result.hasErrors()){
+            logger.error("Binding article model encounter {} errors.", result.getFieldErrorCount());
+        }
+        articleService.saveWithInnerInfo(httpSession, article);
+        modelAndView.setViewName("admin/blogHome");
         return modelAndView;
     }
 }
