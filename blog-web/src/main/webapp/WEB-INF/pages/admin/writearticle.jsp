@@ -142,10 +142,12 @@
                                                 <i class="dropdown icon"></i>
 
                                                 <div class="default text">请选择</div>
-                                                <div class="menu">
+                                                <div id="category_menu" class="menu">
                                                     <c:forEach var="category" items="${requestScope.list}">
                                                         <div class="item"
-                                                             data-value="${category.id}">${category.name}</div>
+                                                             data-value="${category.id}">
+                                                             ${category.name}
+                                                        </div>
                                                     </c:forEach>
                                                 </div>
                                             </div>
@@ -395,6 +397,13 @@
         // eliminate error
         $('input[name="reference"]').focus(function () {
             $('#ref-field').removeClass('error');
+        });
+
+        // Add color on category items.
+        $('#category_menu').children().each(function(){
+            var txt = $(this).html();
+            var icon = $('<div class="ui '+colors[randomNumber(colors.length)]+' empty circular label"></div>');
+            $(this).empty().append(icon).append(txt);
         });
 
         // Operate tag popup element
