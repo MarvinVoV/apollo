@@ -35,7 +35,7 @@ CREATE TABLE category (
 	category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id VARCHAR (50),
 	category_name VARCHAR (100),
-	category_order INT AUTO_INCREMENT,
+	category_order INT,
 	status INT,
 	create_date TIMESTAMP
 );
@@ -54,7 +54,7 @@ SET NEW.category_order = c_order;
 END;
 
 CREATE TABLE articles (
-	id INT NOT NULL auto_increment PRIMARY KEY,
+	id VARCHAR (50) NOT NULL PRIMARY KEY,
 	user_id VARCHAR (50),
 	category_id INT,
 	title VARCHAR (1000),

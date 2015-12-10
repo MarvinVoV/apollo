@@ -11,7 +11,7 @@
 
     <!-- Article Domain Mapping -->
     <resultMap id="articleResultMapper" type="sun.focusblog.admin.domain.Article">
-        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="id" column="id" javaType="String" jdbcType="VARCHAR"/>
         <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="categoryId" column="category_id" javaType="int" jdbcType="INTEGER"/>
         <result property="title" column="title" javaType="String" jdbcType="VARCHAR"/>
@@ -54,13 +54,13 @@
 
 
     <!-- Save Article -->
-    <select id="save" parameterType="sun.focusblog.admin.domain.Article">
+    <insert id="save" parameterType="sun.focusblog.admin.domain.Article">
         INSERT INTO articles (
             <include refid="fields"/>
         )
         VALUES
             (
-                NULL,
+                #{id},
                 #{userId},
                 #{categoryId},
                 #{title},
@@ -78,5 +78,9 @@
                 #{pageView},
                 #{order}
             );
+    </insert>
+
+    <select id="query" parameterType="String" resultMap="articleResultMapper">
+        SELECT <include refid="fields"/> FROM articles WHERE id=#{id}
     </select>
 </mapper>

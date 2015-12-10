@@ -26,4 +26,12 @@ public interface ArticleService {
      * @return boolean
      */
     boolean saveWithInnerInfo(HttpSession httpSession, Article article);
+
+    /**
+     * Query article by id
+     *
+     * @param id unique id
+     * @return Article
+     */
+    Article query(String id);
 }

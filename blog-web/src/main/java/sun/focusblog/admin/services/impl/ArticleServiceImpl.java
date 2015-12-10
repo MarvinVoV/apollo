@@ -13,6 +13,8 @@ import java.util.Date;
 
 /**
  * Created by root on 2015/12/3.
+ *
+ * Article Service
  */
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -36,4 +38,10 @@ public class ArticleServiceImpl implements ArticleService {
         article.setOrder(0);
         return save(article);
     }
+
+    @Override
+    public Article query(String id) {
+        return articleDao.query(id);
+    }
+
 }

@@ -8,7 +8,7 @@ import java.util.Date;
  * Article entity
  */
 public class Article {
-    private int id;
+    private String id; // uuid
     private String userId;
     private int categoryId;
     private String title;
@@ -34,11 +34,11 @@ public class Article {
         this.autoIndex = autoIndex;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

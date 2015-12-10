@@ -19,6 +19,7 @@ import sun.focusblog.utils.JSONBuilder;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by root on 2015/11/23.
@@ -120,8 +121,16 @@ public class BlogManagerController {
         if(result.hasErrors()){
             logger.error("Binding article model encounter {} errors.", result.getFieldErrorCount());
         }
+        // UUID as Article primary key
+        String id = UUID.randomUUID().toString();
+        article.setId(id);
+
         articleService.saveWithInnerInfo(httpSession, article);
-        modelAndView.setViewName("admin/blogHome");
+
+        Article babyArticle = articleService.query(id);
+        modelAndView.addObject("article", babyArticle);
+
+        modelAndView.setViewName("admin/blogView");
         return modelAndView;
     }
 }

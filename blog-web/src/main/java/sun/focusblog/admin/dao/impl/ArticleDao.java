@@ -11,11 +11,18 @@ import java.util.List;
 
 /**
  * Created by root on 2015/11/24.
+ *
+ * Implements class
  */
 @Repository
 public class ArticleDao extends BaseDao implements IArticleDao {
     @Override
     public boolean save(Article article) {
         return getSqlSession().insert(buildStatement(NAMESPACE, "save"), article) == 1;
+    }
+
+    @Override
+    public Article query(String id) {
+        return getSqlSession().selectOne(buildStatement(NAMESPACE, "query"), id);
     }
 }
