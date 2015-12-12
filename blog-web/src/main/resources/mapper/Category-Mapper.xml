@@ -50,18 +50,13 @@
             c.category_order,
             c. STATUS,
             c.create_date,
-            (
-                SELECT
-                    count(*)
-                FROM
-                    articles a
-                WHERE
-                    a.category_id = c.category_id
-            ) AS article_count
+            sum(a.category_id) AS article_count
         FROM
             category c
-        WHERE
-            c.user_id = #{userId}
+        LEFT JOIN articles a ON c.category_id = a.category_id
+        where c.user_id= #{userId}
+        GROUP BY
+            c.category_name
         ORDER BY
             c.category_order ASC
     </select>

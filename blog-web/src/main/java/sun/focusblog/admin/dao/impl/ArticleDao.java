@@ -1,5 +1,6 @@
 package sun.focusblog.admin.dao.impl;
 
+import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import org.springframework.stereotype.Repository;
 import sun.focusblog.admin.dao.BaseDao;
 import sun.focusblog.admin.dao.IArticleDao;
@@ -11,7 +12,7 @@ import java.util.List;
 
 /**
  * Created by root on 2015/11/24.
- *
+ * <p/>
  * Implements class
  */
 @Repository
@@ -24,5 +25,16 @@ public class ArticleDao extends BaseDao implements IArticleDao {
     @Override
     public Article query(String id) {
         return getSqlSession().selectOne(buildStatement(NAMESPACE, "query"), id);
+    }
+
+    @Override
+    public List<Article> listOrderByDate(String userId, int start, int size) {
+        return getSqlSession().selectList(buildStatement(NAMESPACE, "listOrderByDate"), userId,
+                new PageBounds(start, size));
+    }
+
+    @Override
+    public int countAll(String userId) {
+        return getSqlSession().selectOne(buildStatement(NAMESPACE, "countAll"), userId);
     }
 }

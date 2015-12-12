@@ -4,13 +4,14 @@ import java.util.Date;
 
 /**
  * Created by root on 2015/12/3.
- *
+ * <p/>
  * Article entity
  */
 public class Article {
     private String id; // uuid
     private String userId;
     private int categoryId;
+    private String categoryName; // associate field
     private String title;
     private String type;
     private Date createDate;
@@ -56,6 +57,14 @@ public class Article {
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTitle() {

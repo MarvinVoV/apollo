@@ -4,11 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import sun.focusblog.admin.components.Helper;
+import sun.focusblog.admin.components.pagination.Pagination;
 import sun.focusblog.admin.domain.Article;
 import sun.focusblog.admin.domain.Category;
 import sun.focusblog.admin.domain.auth.User;
@@ -23,7 +25,7 @@ import java.util.UUID;
 
 /**
  * Created by root on 2015/11/23.
- *
+ * <p/>
  * Blog manager and post new blog controller.
  */
 @Controller
@@ -35,6 +37,7 @@ public class BlogManagerController {
 
     @Autowired
     private ArticleService articleService;
+
 
     /**
      * Category manager index page
@@ -105,6 +108,57 @@ public class BlogManagerController {
     }
 
     /**
+     * Personal blog home page
+     */
+    @RequestMapping(value = "blog/home", method = RequestMethod.GET)
+    public ModelAndView personalBlogHome(ModelAndView modelAndView, HttpSession httpSession) {
+        User user = Helper.getUser(httpSession);
+
+        // Set categories
+        List<Category> categories = categoryService.query(user);
+        modelAndView.addObject("categories", categories);
+
+        // Set articles
+        List<Article> articles = articleService.listOrderByDate(user, 1, Integer.valueOf(articleService.getPageSize()));
+        modelAndView.addObject("articles", articles);
+
+        // Set article number
+        int count = articleService.countAll(user);
+        Pagination pagination = new Pagination(count);
+        pagination.setSize(Integer.valueOf(articleService.getPageSize()));
+        modelAndView.addObject("pagination", pagination);
+
+        modelAndView.setViewName("admin/blogHome");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "article/list", method = RequestMethod.GET)
+    public ModelAndView listArticle(@RequestParam Integer num, ModelAndView modelAndView, HttpSession httpSession) {
+        User user = Helper.getUser(httpSession);
+
+        // Set categories
+        List<Category> categories = categoryService.query(user);
+        modelAndView.addObject("categories", categories);
+
+        // Set article number
+        int count = articleService.countAll(user);
+        Pagination pagination = new Pagination(count);
+        pagination.setCount(count);
+        pagination.setNum(num);
+        pagination.setSize(Integer.valueOf(articleService.getPageSize()));
+        modelAndView.addObject("pagination", pagination);
+
+        // Set articles
+        List<Article> articles = articleService.listOrderByDate(user, pagination.getNum(), pagination.getSize());
+        modelAndView.addObject("articles", articles);
+
+
+        modelAndView.setViewName("admin/blogHome");
+        return modelAndView;
+    }
+
+
+    /**
      * Post new article
      */
     @RequestMapping(value = "article/new", method = RequestMethod.GET)
@@ -118,7 +172,7 @@ public class BlogManagerController {
     @RequestMapping(value = "article/post", method = RequestMethod.POST)
     public ModelAndView post(@ModelAttribute Article article, BindingResult result, ModelAndView modelAndView,
                              HttpSession httpSession) {
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             logger.error("Binding article model encounter {} errors.", result.getFieldErrorCount());
         }
         // UUID as Article primary key
