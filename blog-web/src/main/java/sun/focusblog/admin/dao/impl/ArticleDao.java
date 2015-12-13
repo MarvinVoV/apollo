@@ -37,4 +37,9 @@ public class ArticleDao extends BaseDao implements IArticleDao {
     public int countAll(String userId) {
         return getSqlSession().selectOne(buildStatement(NAMESPACE, "countAll"), userId);
     }
+
+    @Override
+    public int update(Article article) {
+        return getSqlSession().update(buildStatement(NAMESPACE, "update"), article);
+    }
 }

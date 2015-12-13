@@ -48,4 +48,12 @@ public interface IArticleDao {
      */
     int countAll(String userId);
 
+    /**
+     * update article
+     *
+     * @param article article
+     * @return int
+     */
+    int update(Article article);
+
 }

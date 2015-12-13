@@ -45,6 +45,17 @@ public class ArticleServiceImpl implements ArticleService {
         return save(article);
     }
 
+    @Transactional
+    @Override
+    public boolean update(Article article, User user) {
+        if (article == null) {
+            return false;
+        }
+        article.setUpdateDate(new Date());
+        article.setUserId(user.getUserId());
+        return articleDao.update(article) == 1;
+    }
+
     @Override
     public Article query(String id) {
         return articleDao.query(id);
@@ -59,6 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
     public int countAll(User user) {
         return articleDao.countAll(user.getUserId());
     }
+
     @Override
     public String getPageSize() {
         return pageSize;

@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="/focusblogTagLib" prefix="p" %>
 <!DOCTYPE html>
 <html>
@@ -22,13 +23,18 @@
           href="<c:url value="/resources/semantic/themes/basic/assets/fonts/icons.ttf"/>">
     <script src="<c:url value="/resources/jquery/jquery-2.1.4.min.js"/>"></script>
     <script src="<c:url value="/resources/semantic/semantic.js"/>"></script>
+    <script src="<c:url value="/resources/ueditor/ueditor.parse.min.js"/>"></script>
+    <script src="<c:url value="/resources/js/common.js"/>"></script>
+
     <style type="text/css">
         .item > a:hover {
             color: #000;
         }
-
         .page-fixed-span {
             padding-right: 10px;
+        }
+        .article-div{
+            padding-top:50px;
         }
     </style>
 </head>
@@ -37,52 +43,51 @@
     <!-- Common Navigator -->
     <jsp:include page="../includes/index-header.jsp"/>
 
-    <div class="ui grid">
+    <div class="ui sixteen grid">
         <div class="two wide column"></div>
         <div class="ten wide column">
 
             <div class="ui basic segment">
                 <div class="ui tiny header" style="color:#666">
-                    <i class="newspaper icon"></i> 全部博文
+                    <i class="newspaper icon"></i> 博文阅览
                 </div>
                 <div class="ui inverted divider"></div>
-                <div class="ui items">
-                    <c:forEach items="${requestScope.articles}" var="article">
-                        <div class="item">
-                            <div class="content">
-                                <a class="ui huge header" href="<c:url value="/manager/article/view?id=${article.id}"/>">${article.title}</a>
 
-                                <div class="meta">
-                                    <div class="site-mini-font">
-                                        来自 ${article.categoryName}
-                                    </div>
-                                </div>
-                                <div class="description" style="margin-top:16px;margin-bottom:16px;">
-                                    <p>${article.digest}</p>
-                                </div>
-                                <div class="extra">
-                                    <div class="site-mini-font" style="float:right;margin-right:10px;">
-                                        <span style="padding-right:20px;"><fmt:formatDate value="${article.updateDate}"
-                                                                                          pattern="yyyy-MM-dd HH:mm:ss"/></span>
-                                        <span class="page-fixed-span"><i class="unhide icon"></i>阅读(${article.pageView})</span>
-                                        <span class="page-fixed-span"><i class="comment outline icon"></i>评论(0)</span>
-                                        <span class="page-fixed-span"><i class="remove bookmark icon"></i>收藏(0)</span>
-                                        <span class="page-fixed-span"><i class="share icon"></i>分享</span>
-                                        <a class="page-fixed-span" href="<c:url value="/manager/article/view?id=${article.id}"/>">查看全文</a>
-                                    </div>
-
+                <div class="ui blue segment">
+                    <div id="type-div" class="ui ribbon label">${article.type}</div>
+                    <p></p>
+                    <p></p>
+                    <div class="ui item">
+                        <div class="content">
+                            <div class="ui huge header">${article.title}</div>
+                            <div class="meta">
+                                <div id="tag-div" class="site-tiny-font">
+                                    <span style="padding-right:10px;">标签</span>
+                                    <c:set value="${ fn:split(article.tags, ',') }" var="tags" />
+                                    <c:forEach items="${tags}" var="tag">
+                                        <a class="ui tiny tag label" style="margin-right:10px;">${tag}</a>
+                                    </c:forEach>
                                 </div>
                             </div>
-
+                            <div class="description" style="margin-top:16px;margin-bottom:16px;">
+                                <div class="site-mini-font" style="float:right;margin-right:10px;">
+                                        <span style="padding-right:20px;"><fmt:formatDate value="${article.updateDate}"
+                                                                                          pattern="yyyy-MM-dd HH:mm:ss"/></span>
+                                    <span class="page-fixed-span"><i class="unhide icon"></i>阅读(${article.pageView})</span>
+                                    <span class="page-fixed-span"><i class="comment outline icon"></i>评论(0)</span>
+                                    <span class="page-fixed-span"><i class="remove bookmark icon"></i>收藏(0)</span>
+                                    <span class="page-fixed-span"><i class="edit icon"></i><a href="<c:url value="/manager/article/modify?id=${requestScope.article.id}"/>" >编辑</a></span>
+                                    <span class="page-fixed-span"><i class="remove icon"></i><a href="javascript:void(0);" >删除</a></span>
+                                    <span class="page-fixed-span"><i class="share icon"></i>分享</span>
+                                </div>
+                            </div>
+                            <div class="extra">
+                                <div class="article-div">
+                                    ${requestScope.article.content}
+                                </div>
+                            </div>
                         </div>
-                        <div class="ui inverted divider"></div>
-                    </c:forEach>
-                </div>
-                <div style="text-align: center;">
-                    <p:pagination num="${requestScope.pagination.num}"
-                                  size="${requestScope.pagination.size}"
-                                  count="${requestScope.pagination.count}"
-                                  url="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}/manager/article/list"/>
+                    </div>
                 </div>
             </div>
 
@@ -115,7 +120,6 @@
                     <%--</div>--%>
                     <a class="ui bottom attached blue button" href="<c:url value="/manager/article/new"/>">
                         <i class="write icon"></i>
-
                         写博客
                     </a>
 
@@ -168,10 +172,32 @@
             </div>
 
         </div>
-        <div class="two wide column"></div>
+        <div class="one wide column"></div>
     </div>
 </div>
 <script>
+
+    /**
+     * init article type color
+     */
+    function initArticleTypeDivColor(){
+        var articleTypeDiv = $('#type-div');
+        var type = articleTypeDiv.html().trim();
+        switch (type){
+            case '原创':
+                articleTypeDiv.addClass('blue');
+                break;
+            case '转载':
+                articleTypeDiv.addClass('orange ');
+                break;
+            case '翻译':
+                articleTypeDiv.addClass('teal');
+                break;
+            default:
+                articleTypeDiv.addClass('blue');
+        }
+    }
+
     $(function () {
         $('.ui.menu a.item')
                 .on('click', function () {
@@ -188,6 +214,21 @@
                 })
         ;
 
+        uParse('.article-div', {
+            rootPath: '<c:url value="/resources/ueditor"/>'
+        });
+
+        /**
+         * init tag color
+         */
+        $('div#tag-div a').each(function(){
+            $(this).addClass(randomSiteColor());
+        });
+
+        /**
+         * init article type color
+         */
+        initArticleTypeDivColor();
     });
 </script>
 

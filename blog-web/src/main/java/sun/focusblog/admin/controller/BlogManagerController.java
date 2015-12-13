@@ -4,11 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.components.pagination.Pagination;
 import sun.focusblog.admin.domain.Article;
@@ -132,6 +132,14 @@ public class BlogManagerController {
         return modelAndView;
     }
 
+    /**
+     * Article list
+     *
+     * @param num          page num
+     * @param modelAndView model and view
+     * @param httpSession  session
+     * @return model and view
+     */
     @RequestMapping(value = "article/list", method = RequestMethod.GET)
     public ModelAndView listArticle(@RequestParam Integer num, ModelAndView modelAndView, HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
@@ -152,11 +160,70 @@ public class BlogManagerController {
         List<Article> articles = articleService.listOrderByDate(user, pagination.getNum(), pagination.getSize());
         modelAndView.addObject("articles", articles);
 
-
         modelAndView.setViewName("admin/blogHome");
         return modelAndView;
     }
 
+    /**
+     * View article content
+     *
+     * @param id           article id
+     * @param modelAndView model and view
+     * @param httpSession  session
+     * @return model and view
+     */
+    @RequestMapping(value = "article/view", method = RequestMethod.GET)
+    public ModelAndView viewArticle(@RequestParam String id, ModelAndView modelAndView, HttpSession httpSession) {
+        return prepareArticleAndCategories(modelAndView, "admin/blogDetail", id, httpSession);
+    }
+
+    /**
+     * Prepare for modifying article
+     *
+     * @param id           article id
+     * @param modelAndView mvc
+     * @return mvc
+     */
+    @RequestMapping(value = "article/modify", method = RequestMethod.GET)
+    public ModelAndView modifyArticleView(@RequestParam String id, ModelAndView modelAndView, HttpSession httpSession) {
+        return prepareArticleAndCategories(modelAndView, "admin/modifyArticle", id, httpSession);
+    }
+
+    /**
+     * Inner Help method
+     */
+    private ModelAndView prepareArticleAndCategories(ModelAndView modelAndView, String view, String id, HttpSession httpSession) {
+        User user = Helper.getUser(httpSession);
+        // Set categories
+        List<Category> categories = categoryService.query(user);
+        modelAndView.addObject("categories", categories);
+
+        Article article = articleService.query(id);
+        modelAndView.addObject("article", article);
+        modelAndView.setViewName(view);
+        return modelAndView;
+    }
+
+    /**
+     * Update article
+     */
+    @RequestMapping(value = "article/update", method = RequestMethod.POST)
+    public ModelAndView updateArticle(@ModelAttribute Article article, BindingResult result, ModelAndView modelAndView,
+                                      HttpSession httpSession) {
+        if (result.hasErrors()) {
+            logger.error("Binding article model encounter {} errors.", result.getFieldErrorCount());
+        }
+        User user = Helper.getUser(httpSession);
+
+        boolean res = articleService.update(article, user);
+
+        if (!res) {
+            logger.error("update article {} failed.", article.getId());
+        }
+        RedirectView view = new RedirectView("/manager/article/view?id=" + article.getId());
+        modelAndView.setView(view);
+        return modelAndView;
+    }
 
     /**
      * Post new article

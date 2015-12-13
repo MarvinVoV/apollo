@@ -147,15 +147,15 @@ public class Article {
         this.digest = digest;
     }
 
-    public boolean isHide() {
+    public boolean getIsHide() {
         return isHide;
     }
 
-    public void setHide(boolean hide) {
+    public void setIsHide(boolean hide) {
         isHide = hide;
     }
 
-    public boolean isAllowComment() {
+    public boolean getAllowComment() {
         return allowComment;
     }
 
@@ -163,11 +163,11 @@ public class Article {
         this.allowComment = allowComment;
     }
 
-    public boolean isTop() {
+    public boolean getIsTop() {
         return isTop;
     }
 
-    public void setTop(boolean top) {
+    public void setIsTop(boolean top) {
         isTop = top;
     }
 }

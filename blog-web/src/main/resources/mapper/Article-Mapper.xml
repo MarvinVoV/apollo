@@ -128,4 +128,22 @@
             user_id = #{userId}
     </select>
 
+    <!-- Update article fields -->
+    <update id="update" parameterType="sun.focusblog.admin.domain.Article">
+        UPDATE articles
+        SET category_id = #{categoryId},
+        title = #{title},
+        type= #{type},
+        content = #{content},
+        tags = #{tags},
+        reference = #{reference},
+        digest = #{digest},
+        is_hide = #{isHide},
+        allow_comment = #{allowComment},
+        auto_index = #{autoIndex},
+        is_top = #{isTop},
+        update_date = #{updateDate}
+        WHERE
+            id = #{id}
+    </update>
 </mapper>

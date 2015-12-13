@@ -60,7 +60,7 @@
                 <a class="item " data-tab="five">回收站</a>
                 <a class="item " data-tab="six">主题配置</a>
             </div>
-            <form id="post-form" action="<c:url value="/manager/article/post"/>" class="ui form" method="post">
+            <form id="post-form" action="<c:url value="/manager/article/update"/>" class="ui form" method="post">
                 <table class="ui blue table">
                     <tr>
                         <td style="width:10%">
@@ -85,7 +85,9 @@
                         <td style="width:90%">
                             <div class="inline field">
                                 <label>标题</label>
-                                <input type="text" name="title" placeholder="" style="width:600px;">
+                                <input type="text" name="title" value="${requestScope.article.title}" placeholder=""
+                                       style="width:600px;">
+                                <input type="hidden" name="id" value="${requestScope.article.id}">
                             </div>
                         </td>
                     </tr>
@@ -106,7 +108,8 @@
                                          style="position:absolute;z-index:101;float:left;left:4px;top:5px;">
                                     </div>
                                 </div>
-                                <input id="tag-input" type="text" name="tags" placeholder="" style="width:70%"
+                                <input id="tag-input" type="text" name="tags" value="${requestScope.article.tags}"
+                                       placeholder="" style="width:70%"
                                        maxlength="45">
 
                                 <div style="float:right;vertical-align: middle;width:30%;padding-top:10px;padding-left:10px;"
@@ -124,13 +127,18 @@
                                         <td style="width:70%;padding:0;margin:0">
                                             <div id="category_select"
                                                  class="ui fluid search selection dropdown">
-                                                <input type="hidden" name="categoryId">
+                                                <input type="hidden" name="categoryId"
+                                                       value="${requestScope.article.categoryId}">
                                                 <i class="dropdown icon"></i>
 
                                                 <div class="default text">请选择</div>
                                                 <div id="category_menu" class="menu">
-                                                    <c:forEach var="category" items="${requestScope.list}">
-                                                        <div class="item"
+                                                    <c:set var="isActiveItem" value=""/>
+                                                    <c:forEach var="category" items="${requestScope.categories}">
+                                                        <c:if test="${requestScope.article.categoryName == category}">
+                                                            <c:set var="isActiveItem" value="active"/>
+                                                        </c:if>
+                                                        <div class="${pageScope.isActiveItem} item"
                                                              data-value="${category.id}">
                                                                 ${category.name}
                                                         </div>
@@ -171,7 +179,8 @@
                                     <td style="width:70%;padding:0;margin:0">
                                         <div class="field">
                                             <label style="font-size:13px">摘要</label>
-                                            <textarea title="摘要" name="digest" rows="4"></textarea>
+                                            <textarea title="摘要" name="digest"
+                                                      rows="4">${requestScope.article.digest}</textarea>
                                         </div>
                                     </td>
                                     <td>
@@ -185,32 +194,51 @@
                         <td colspan="2">
                             <div class="field" style="width:70%">
                                 <label>设置</label>
-
+                                <c:set var="isHide" value=""/>
+                                <c:set var="allowComment" value=""/>
+                                <c:set var="autoIndex" value=""/>
+                                <c:set var="isTop" value=""/>
+                                <c:if test="${requestScope.article.isHide == false}">
+                                    <c:set var="isHide" value="checked"/>
+                                </c:if>
+                                <c:if test="${requestScope.article.allowComment == true}">
+                                    <c:set var="allowComment" value="checked"/>
+                                </c:if>
+                                <c:if test="${requestScope.article.autoIndex == true}">
+                                    <c:set var="autoIndex" value="checked"/>
+                                </c:if>
+                                <c:if test="${requestScope.article.isTop == true}">
+                                    <c:set var="isTop" value="checked"/>
+                                </c:if>
                                 <div class="ui segment">
                                     <div class="ui toggle checkbox checked">
                                         <label>是否对所有人可见？</label>
-                                        <input placeholder="" type="checkbox" name="isHide" checked tabindex="0"
+                                        <input placeholder="" type="checkbox" name="isHide" ${pageScope.isHide}
+                                               tabindex="0"
                                                class="hidden">
                                     </div>
                                 </div>
                                 <div class="ui segment">
                                     <div class="ui toggle checkbox checked">
                                         <label>是否允许评论？</label>
-                                        <input placeholder="" type="checkbox" name="allowComment" checked tabindex="0"
+                                        <input placeholder="" type="checkbox"
+                                               name="allowComment" ${pageScope.allowComment} tabindex="0"
                                                class="hidden">
                                     </div>
                                 </div>
                                 <div class="ui segment">
                                     <div class="ui toggle checkbox checked">
                                         <label>是否自动生成目录？</label>
-                                        <input placeholder="" type="checkbox" name="autoIndex" checked tabindex="0"
+                                        <input placeholder="" type="checkbox" name="autoIndex" ${pageScope.autoIndex}
+                                               tabindex="0"
                                                class="hidden">
                                     </div>
                                 </div>
                                 <div class="ui segment">
                                     <div class="ui toggle checkbox">
                                         <label>是否在博客列表置顶？</label>
-                                        <input placeholder="" type="checkbox" name="isTop" tabindex="0" class="hidden">
+                                        <input placeholder="" type="checkbox" name="isTop"
+                                               tabindex="0" ${pageScope.isTop} class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -218,7 +246,7 @@
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: center">
-                            <input type="button" id="post" class="ui blue button" value="发表文章">
+                            <input type="button" id="post" class="ui blue button" value="保存修改">
                             <input type="button" id="draft" class="ui teal button" value="保存草稿">
                         </td>
                     </tr>
@@ -309,6 +337,19 @@
         $('#ref-list')[0].removeChild(item[0]);
     }
 
+    /**
+     *  echo reference
+     */
+    function echoReference() {
+        var items = '${requestScope.article.reference}'.split('@');
+        var ref = $('input[name="reference"]');
+        for (var i = 0; i < items.length; i++) {
+            ref.val(items[i]);
+            addReference();
+        }
+        ref.val('');
+    }
+
     function concatReference() {
         var digests = "";
         $('#ref-list').children().each(function () {
@@ -351,6 +392,7 @@
                     action: 'hide'
                 })
         ;
+
 
         // Exclude this dropdown element
         $('#style-dropdown').dropdown({
@@ -460,6 +502,20 @@
             serverUrl: "<c:url value="/editor/control"/>",
             textarea: 'content'
         });
+
+        // ############################################################
+        //                          Echo
+        // ############################################################
+
+        // echo ueditor content
+        ue.addListener("ready", function () {
+            ue.setContent('${requestScope.article.content}');
+        });
+
+        // echo reference
+        echoReference();
+        // echo tags
+        $('#tag-input').trigger("focus").trigger('blur');
 
         /**
          * Post blog

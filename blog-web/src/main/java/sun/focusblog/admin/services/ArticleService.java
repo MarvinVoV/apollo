@@ -30,6 +30,14 @@ public interface ArticleService {
     boolean saveWithInnerInfo(HttpSession httpSession, Article article);
 
     /**
+     * Update article
+     *
+     * @param article article
+     * @return boolean
+     */
+    boolean update(Article article, User user);
+
+    /**
      * Query article by id
      *
      * @param id unique id
