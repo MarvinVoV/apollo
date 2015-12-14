@@ -1,5 +1,6 @@
 package sun.focusblog.admin.controller;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import sun.focusblog.admin.annotation.Cipher;
+import sun.focusblog.admin.annotation.CipherType;
 import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.components.pagination.Pagination;
 import sun.focusblog.admin.domain.Article;
@@ -16,6 +19,7 @@ import sun.focusblog.admin.domain.Category;
 import sun.focusblog.admin.domain.auth.User;
 import sun.focusblog.admin.services.ArticleService;
 import sun.focusblog.admin.services.CategoryService;
+import sun.focusblog.admin.services.UserService;
 import sun.focusblog.utils.JSONBuilder;
 
 import javax.servlet.http.HttpSession;
@@ -37,6 +41,9 @@ public class BlogManagerController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private UserService userService;
 
 
     /**
@@ -172,10 +179,20 @@ public class BlogManagerController {
      * @param httpSession  session
      * @return model and view
      */
+//    @Cipher(arguments = {"uid"}, cipherType = CipherType.DECRYPT)
     @RequestMapping(value = "article/view", method = RequestMethod.GET)
-    public ModelAndView viewArticle(@RequestParam String id, ModelAndView modelAndView, HttpSession httpSession) {
-        return prepareArticleAndCategories(modelAndView, "admin/blogDetail", id, httpSession);
+    public ModelAndView viewArticle(@RequestParam String id, @RequestParam String uid, ModelAndView modelAndView,
+                                    HttpSession httpSession) {
+        User user = Helper.getUser(httpSession);
+        if (uid != null) {
+            uid = new String(Base64.decodeBase64(uid));
+            if (!uid.equals(user.getUserId())) {
+                user = userService.query(uid);
+            }
+        }
+        return prepareArticleAndCategories(modelAndView, "admin/blogDetail", id, uid, user);
     }
+
 
     /**
      * Prepare for modifying article
@@ -186,14 +203,15 @@ public class BlogManagerController {
      */
     @RequestMapping(value = "article/modify", method = RequestMethod.GET)
     public ModelAndView modifyArticleView(@RequestParam String id, ModelAndView modelAndView, HttpSession httpSession) {
-        return prepareArticleAndCategories(modelAndView, "admin/modifyArticle", id, httpSession);
+        User user = Helper.getUser(httpSession);
+        return prepareArticleAndCategories(modelAndView, "admin/modifyArticle", id, null, user);
     }
 
     /**
      * Inner Help method
      */
-    private ModelAndView prepareArticleAndCategories(ModelAndView modelAndView, String view, String id, HttpSession httpSession) {
-        User user = Helper.getUser(httpSession);
+    public ModelAndView prepareArticleAndCategories(ModelAndView modelAndView, String view, String id, String uid, User user) {
+        modelAndView.addObject("user", user);
         // Set categories
         List<Category> categories = categoryService.query(user);
         modelAndView.addObject("categories", categories);

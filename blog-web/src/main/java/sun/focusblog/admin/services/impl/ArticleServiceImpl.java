@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.focusblog.admin.annotation.Cipher;
+import sun.focusblog.admin.annotation.CipherType;
 import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.dao.IArticleDao;
 import sun.focusblog.admin.domain.Article;

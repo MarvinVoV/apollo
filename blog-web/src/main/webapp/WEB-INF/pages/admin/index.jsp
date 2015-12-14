@@ -6,7 +6,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,6 +35,39 @@
                 <h1>title</h1>
                 ContentContentContentContentContentContentContentContentContent
                 ContentContentContentContentContentContentContentContentContentContent
+            </div>
+
+            <div class="ui items">
+                <c:forEach items="${requestScope.articles}" var="article">
+                    <div class="item">
+                        <div class="content">
+                            <a class="ui huge header" href="<c:url value="/manager/article/view?id=${article.id}&uid=${article.userId}"/>">${article.title}</a>
+
+                            <div class="meta">
+                                <div class="site-mini-font">
+                                    来自 ${article.categoryName}
+                                </div>
+                            </div>
+                            <div class="description" style="margin-top:16px;margin-bottom:16px;">
+                                <p>${article.digest}</p>
+                            </div>
+                            <div class="extra">
+                                <div class="site-mini-font" style="float:right;margin-right:10px;">
+                                        <span style="padding-right:20px;"><fmt:formatDate value="${article.updateDate}"
+                                                                                          pattern="yyyy-MM-dd HH:mm:ss"/></span>
+                                    <span class="page-fixed-span"><i class="unhide icon"></i>阅读(${article.pageView})</span>
+                                    <span class="page-fixed-span"><i class="comment outline icon"></i>评论(0)</span>
+                                    <span class="page-fixed-span"><i class="remove bookmark icon"></i>收藏(0)</span>
+                                    <span class="page-fixed-span"><i class="share icon"></i>分享</span>
+                                    <a class="page-fixed-span" href="<c:url value="/manager/article/view?id=${article.id}&uid=${article.userId}"/>">查看全文</a>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="ui inverted divider"></div>
+                </c:forEach>
             </div>
 
         </div>

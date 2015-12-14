@@ -1,5 +1,7 @@
 package sun.focusblog.admin.services;
 
+import sun.focusblog.admin.annotation.Cipher;
+import sun.focusblog.admin.annotation.CipherType;
 import sun.focusblog.admin.domain.Article;
 import sun.focusblog.admin.domain.auth.User;
 

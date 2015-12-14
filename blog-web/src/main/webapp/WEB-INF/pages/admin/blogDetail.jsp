@@ -43,6 +43,14 @@
     <!-- Common Navigator -->
     <jsp:include page="../includes/index-header.jsp"/>
 
+
+    <!-- Page Scope User -->
+    <c:set var="user" value="${sessionScope.user}"/>
+    <c:if test="${not empty requestScope.user}">
+        <c:set var="user" value="${requestScope.user}"/>
+    </c:if>
+
+
     <div class="ui sixteen grid">
         <div class="two wide column"></div>
         <div class="ten wide column">
@@ -90,16 +98,15 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <div class="three wide column">
             <div class="ui cards">
                 <div class="card">
                     <div class="content">
-                        <img class="right floated tiny ui image" src="${sessionScope.user.header}">
+                        <img class="right floated tiny ui image" src="${pageScope.user.header}">
 
                         <div class="header">
-                            ${sessionScope.user.userName}
+                            ${pageScope.user.userName}
                         </div>
                         <div class="meta">
                             Friends of Veronika

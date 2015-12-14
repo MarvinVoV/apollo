@@ -1,6 +1,7 @@
 package sun.focusblog.framework.cache.util;
 
 import org.aspectj.lang.JoinPoint;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 
 import java.lang.reflect.Method;
 
@@ -29,5 +30,18 @@ public class AopUtils {
             e.printStackTrace();
         }
         return method;
+    }
+
+    /**
+     * Get method parameters name
+     *
+     * @param method method object
+     * @return parameters name
+     */
+    public static String[] getParametersName(Method method) {
+        if (method == null)
+            return null;
+        LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
+        return u.getParameterNames(method);
     }
 }

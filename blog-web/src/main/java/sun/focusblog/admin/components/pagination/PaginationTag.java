@@ -23,7 +23,7 @@ public class PaginationTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         pageCount = (count + size - 1) / size;
-        if(pageCount == 1){
+        if (pageCount == 1) {
             return;
         }
         if (num > 1) {
@@ -57,17 +57,20 @@ public class PaginationTag extends SimpleTagSupport {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<span class=\"site-mini-font\" style=\"margin-right:10px;\">").append(count).append("条数据 共").append(pageCount).append("页</span>");
-        sb.append("<div class=\"ui pagination menu\">");
-        for (int i = 0; i < span; i++) {
-            String tempUrl = url + "num=" + (index + i);
-            String flag = ((i + index) == num) ? "active " : "";
-            sb.append("<a class=\"").append(flag).append("item\" href=\"").append(tempUrl).append("\">");
-            sb.append((index + i));
-            sb.append("</a>");
+        if (count == 0) {
+            sb.append("<span class=\"site-mini-font\" style=\"margin-right:10px;\">暂无任何内容</span>");
+        }else{
+            sb.append("<span class=\"site-mini-font\" style=\"margin-right:10px;\">").append(count).append("条数据 共").append(pageCount).append("页</span>");
+            sb.append("<div class=\"ui pagination menu\">");
+            for (int i = 0; i < span; i++) {
+                String tempUrl = url + "num=" + (index + i);
+                String flag = ((i + index) == num) ? "active " : "";
+                sb.append("<a class=\"").append(flag).append("item\" href=\"").append(tempUrl).append("\">");
+                sb.append((index + i));
+                sb.append("</a>");
+            }
+            sb.append("</div>");
         }
-        sb.append("</div>");
-
         getJspContext().getOut().println(sb.toString());
     }
 
