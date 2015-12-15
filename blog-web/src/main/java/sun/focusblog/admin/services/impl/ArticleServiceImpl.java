@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.focusblog.admin.annotation.Cipher;
-import sun.focusblog.admin.annotation.CipherType;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.StringUtils;
 import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.dao.IArticleDao;
 import sun.focusblog.admin.domain.Article;
@@ -33,6 +33,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public boolean save(Article article) {
+        if (article == null || !StringUtils.isEmpty(article.getId())) {
+            return false;
+        }
+        // Encrypt article.userId field
+        Base64Utils.encodeToString(article.getUserId().getBytes());
+
         return articleDao.save(article);
     }
 

@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/focusblogTagLib" prefix="p" %>
 <!DOCTYPE html>
 <html>
@@ -30,11 +30,13 @@
         .item > a:hover {
             color: #000;
         }
+
         .page-fixed-span {
             padding-right: 10px;
         }
-        .article-div{
-            padding-top:50px;
+
+        .article-div {
+            padding-top: 50px;
         }
     </style>
 </head>
@@ -64,14 +66,16 @@
                 <div class="ui blue segment">
                     <div id="type-div" class="ui ribbon label">${article.type}</div>
                     <p></p>
+
                     <p></p>
+
                     <div class="ui item">
                         <div class="content">
                             <div class="ui huge header">${article.title}</div>
                             <div class="meta">
                                 <div id="tag-div" class="site-tiny-font">
                                     <span style="padding-right:10px;">标签</span>
-                                    <c:set value="${ fn:split(article.tags, ',') }" var="tags" />
+                                    <c:set value="${ fn:split(article.tags, ',') }" var="tags"/>
                                     <c:forEach items="${tags}" var="tag">
                                         <a class="ui tiny tag label" style="margin-right:10px;">${tag}</a>
                                     </c:forEach>
@@ -79,13 +83,17 @@
                             </div>
                             <div class="description" style="margin-top:16px;margin-bottom:16px;">
                                 <div class="site-mini-font" style="float:right;margin-right:10px;">
-                                        <span style="padding-right:20px;"><fmt:formatDate value="${article.updateDate}"
-                                                                                          pattern="yyyy-MM-dd HH:mm:ss"/></span>
-                                    <span class="page-fixed-span"><i class="unhide icon"></i>阅读(${article.pageView})</span>
+                                        <span style="padding-right:20px;">
+                                            <fmt:formatDate value="${article.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                        </span>
+                                    <span class="page-fixed-span"><i
+                                            class="unhide icon"></i>阅读(${article.pageView})</span>
                                     <span class="page-fixed-span"><i class="comment outline icon"></i>评论(0)</span>
                                     <span class="page-fixed-span"><i class="remove bookmark icon"></i>收藏(0)</span>
-                                    <span class="page-fixed-span"><i class="edit icon"></i><a href="<c:url value="/manager/article/modify?id=${requestScope.article.id}"/>" >编辑</a></span>
-                                    <span class="page-fixed-span"><i class="remove icon"></i><a href="javascript:void(0);" >删除</a></span>
+                                    <span class="page-fixed-span"><i class="edit icon"></i><a
+                                            href="<c:url value="/manager/article/modify?id=${requestScope.article.id}"/>">编辑</a></span>
+                                    <span class="page-fixed-span"><i class="remove icon"></i><a
+                                            href="javascript:void(0);">删除</a></span>
                                     <span class="page-fixed-span"><i class="share icon"></i>分享</span>
                                 </div>
                             </div>
@@ -115,28 +123,52 @@
                             Elliot requested permission to view your contact details
                         </div>
                     </div>
-                    <%--<div style="text-align: center;">--%>
-                    <%--<div class="ui bottom inline blue button" style="width:50%;">--%>
-                    <%--<i class="add icon"></i>--%>
-                    <%--添加关注--%>
-                    <%--</div>--%>
-                    <%--<div class="ui bottom inline green button" style="width:40%;">--%>
-                    <%--<i class="mail icon"></i>--%>
-                    <%--发私信--%>
-                    <%--</div>--%>
-                    <%--</div>--%>
-                    <a class="ui bottom attached blue button" href="<c:url value="/manager/article/new"/>">
-                        <i class="write icon"></i>
-                        写博客
-                    </a>
+                    <c:choose>
+                        <c:when test="${requestScope.relation == null}">
+                            <a class="ui bottom attached blue button" href="<c:url value="/manager/article/new"/>">
+                                <i class="write icon"></i>
+                                写博客
+                            </a>
+                        </c:when>
+                        <c:when test="${requestScope.relation == 'FOLLOWER'}">
+                            <div style="text-align: center;">
+                                <div class="ui bottom inline tiny blue disabled button" style="width:50%;">
+                                    <i class="add icon"></i>
+                                    已关注
+                                </div>
+                                <div class="ui bottom inline tiny green button" style="width:40%;">
+                                    <i class="mail icon"></i>
+                                    发私信
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:when test="${requestScope.relation == 'NOTHING'}">
+                            <div style="text-align: center;">
+                                <a href="javascript:void(0);" onclick="follow(this)" class="ui bottom inline tiny blue button" style="width:50%;">
+                                    <i class="add icon"></i>
+                                    添加关注
+                                </a>
+                                <div class="ui bottom inline tiny green button" style="width:40%;">
+                                    <i class="mail icon"></i>
+                                    发私信
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:when test="${requestScope.relation == 'BLACKLIST'}">
+                            <a class="ui bottom attached blue button" href="<c:url value="/manager/article/new"/>">
+                                <i class="write icon"></i>
+                                黑名单
+                            </a>
+                        </c:when>
+                    </c:choose>
 
                     <div class="extra content">
                         <span class="right floated">
-                        2013-02-25加入
+                        <fmt:formatDate value="${article.createDate}" pattern="yyyy-MM-dd"/> 加入
                         </span>
                         <span>
                             <i class="users icon"></i>
-                            75 关注
+                            <span id="follows">${requestScope.follows}</span> 关注
                         </span>
                     </div>
                 </div>
@@ -187,10 +219,10 @@
     /**
      * init article type color
      */
-    function initArticleTypeDivColor(){
+    function initArticleTypeDivColor() {
         var articleTypeDiv = $('#type-div');
         var type = articleTypeDiv.html().trim();
-        switch (type){
+        switch (type) {
             case '原创':
                 articleTypeDiv.addClass('blue');
                 break;
@@ -203,6 +235,26 @@
             default:
                 articleTypeDiv.addClass('blue');
         }
+    }
+
+    function follow(e){
+        var $that = $(e);
+        $.ajax({
+            type: 'POST',
+            url: '<c:url value="/manager/user/follow"/>',
+            data: {uid:'${article.userId}'},
+            dataType: 'json',
+            success: function(json){
+                if(json && json.status == 'ok'){
+                    $that.html('<i class="add icon"></i>已关注').addClass('disabled');
+                    var follows = $('#follows');
+                    follows.html(parseInt(follows.html().trim()) + 1);
+                }
+            },
+            error:function(e){
+                alert(e);
+            }
+        });
     }
 
     $(function () {
@@ -228,7 +280,7 @@
         /**
          * init tag color
          */
-        $('div#tag-div a').each(function(){
+        $('div#tag-div a').each(function () {
             $(this).addClass(randomSiteColor());
         });
 

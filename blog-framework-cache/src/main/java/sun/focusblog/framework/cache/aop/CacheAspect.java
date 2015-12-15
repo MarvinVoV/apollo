@@ -141,11 +141,18 @@ public class CacheAspect {
         String[] fieldsKey = cacheUpdate.fieldsKey();
         String cacheKey = parseKey(namespace, fieldsKey, method, jp.getArgs());
 
-        String valueField = cacheUpdate.valueField();
         Class type = cacheUpdate.valueType();
         int expire = cacheUpdate.expire();
+        boolean updateRetVal = cacheUpdate.updateRetVal();
 
-        Object value = getUpdateFieldValue(valueField, method, jp, type);
+        Object value;
+        if (updateRetVal) {
+            value = rtv;
+        } else {
+            String valueField = cacheUpdate.valueField();
+            value = getUpdateFieldValue(valueField, method, jp, type);
+        }
+
         if (expire > 0) {
             cacheStorage.setEx(cacheKey, value, expire);
         } else {

@@ -1,24 +1,24 @@
 package sun.focusblog.admin.controller;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Base64Utils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import sun.focusblog.admin.annotation.Cipher;
-import sun.focusblog.admin.annotation.CipherType;
 import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.components.pagination.Pagination;
 import sun.focusblog.admin.domain.Article;
 import sun.focusblog.admin.domain.Category;
+import sun.focusblog.admin.domain.RelationType;
 import sun.focusblog.admin.domain.auth.User;
 import sun.focusblog.admin.services.ArticleService;
 import sun.focusblog.admin.services.CategoryService;
+import sun.focusblog.admin.services.RelationService;
 import sun.focusblog.admin.services.UserService;
 import sun.focusblog.utils.JSONBuilder;
 
@@ -44,6 +44,21 @@ public class BlogManagerController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RelationService relationService;
+
+    private static final String MODEL_ATTR_RELATION = "relation";
+
+    private static final String MODEL_ATTR_PAGINATION = "pagination";
+
+    private static final String MODEL_ATTR_CATEGORIES = "categories";
+
+    private static final String MODEL_ATTR_ARTICLES = "articles";
+
+    private static final String MODEL_ATTR_ARTICLE = "article";
+
+    private static final String MODEL_ATTR_FOLLOWS = "follows"; // follow number
 
 
     /**
@@ -123,17 +138,17 @@ public class BlogManagerController {
 
         // Set categories
         List<Category> categories = categoryService.query(user);
-        modelAndView.addObject("categories", categories);
+        modelAndView.addObject(MODEL_ATTR_CATEGORIES, categories);
 
         // Set articles
         List<Article> articles = articleService.listOrderByDate(user, 1, Integer.valueOf(articleService.getPageSize()));
-        modelAndView.addObject("articles", articles);
+        modelAndView.addObject(MODEL_ATTR_ARTICLES, articles);
 
         // Set article number
         int count = articleService.countAll(user);
         Pagination pagination = new Pagination(count);
         pagination.setSize(Integer.valueOf(articleService.getPageSize()));
-        modelAndView.addObject("pagination", pagination);
+        modelAndView.addObject(MODEL_ATTR_PAGINATION, pagination);
 
         modelAndView.setViewName("admin/blogHome");
         return modelAndView;
@@ -153,7 +168,7 @@ public class BlogManagerController {
 
         // Set categories
         List<Category> categories = categoryService.query(user);
-        modelAndView.addObject("categories", categories);
+        modelAndView.addObject(MODEL_ATTR_CATEGORIES, categories);
 
         // Set article number
         int count = articleService.countAll(user);
@@ -161,11 +176,11 @@ public class BlogManagerController {
         pagination.setCount(count);
         pagination.setNum(num);
         pagination.setSize(Integer.valueOf(articleService.getPageSize()));
-        modelAndView.addObject("pagination", pagination);
+        modelAndView.addObject(MODEL_ATTR_PAGINATION, pagination);
 
         // Set articles
         List<Article> articles = articleService.listOrderByDate(user, pagination.getNum(), pagination.getSize());
-        modelAndView.addObject("articles", articles);
+        modelAndView.addObject(MODEL_ATTR_ARTICLES, articles);
 
         modelAndView.setViewName("admin/blogHome");
         return modelAndView;
@@ -179,17 +194,22 @@ public class BlogManagerController {
      * @param httpSession  session
      * @return model and view
      */
-//    @Cipher(arguments = {"uid"}, cipherType = CipherType.DECRYPT)
     @RequestMapping(value = "article/view", method = RequestMethod.GET)
     public ModelAndView viewArticle(@RequestParam String id, @RequestParam String uid, ModelAndView modelAndView,
                                     HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
-        if (uid != null) {
-            uid = new String(Base64.decodeBase64(uid));
+        if (!StringUtils.isEmpty(uid)) {
+            uid = new String(Base64Utils.decodeFromString(uid));
             if (!uid.equals(user.getUserId())) {
+                User currentUser = user;
                 user = userService.query(uid);
+                RelationType relationType = relationService.getRelation(uid, currentUser.getUserId());
+                modelAndView.addObject(MODEL_ATTR_RELATION, relationType.toString());
             }
         }
+        // Set follows
+        modelAndView.addObject(MODEL_ATTR_FOLLOWS, relationService.follows(user.getUserId()));
+
         return prepareArticleAndCategories(modelAndView, "admin/blogDetail", id, uid, user);
     }
 
@@ -214,10 +234,10 @@ public class BlogManagerController {
         modelAndView.addObject("user", user);
         // Set categories
         List<Category> categories = categoryService.query(user);
-        modelAndView.addObject("categories", categories);
+        modelAndView.addObject(MODEL_ATTR_CATEGORIES, categories);
 
         Article article = articleService.query(id);
-        modelAndView.addObject("article", article);
+        modelAndView.addObject(MODEL_ATTR_ARTICLE, article);
         modelAndView.setViewName(view);
         return modelAndView;
     }
@@ -267,9 +287,24 @@ public class BlogManagerController {
         articleService.saveWithInnerInfo(httpSession, article);
 
         Article babyArticle = articleService.query(id);
-        modelAndView.addObject("article", babyArticle);
+        modelAndView.addObject(MODEL_ATTR_ARTICLE, babyArticle);
 
         modelAndView.setViewName("admin/blogView");
         return modelAndView;
     }
+
+    @RequestMapping(value = "user/follow", method = RequestMethod.POST, produces = {"application/json"})
+    public
+    @ResponseBody
+    String follow(@RequestParam String uid, HttpSession httpSession) {
+        String json = JSONBuilder.builder().inflate("status", "error").build().toString();
+        if (StringUtils.isEmpty(uid)) {
+            return json;
+        }
+        User user = Helper.getUser(httpSession);
+        uid = new String(Base64Utils.decodeFromString(uid));
+        relationService.follow(uid, user.getUserId());
+        return JSONBuilder.builder().inflate("status", "ok").build().toString();
+    }
+
 }

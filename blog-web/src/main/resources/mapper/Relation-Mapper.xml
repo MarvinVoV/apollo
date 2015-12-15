@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    Relation Mapper
+
+-->
+
+<mapper namespace="sun.focusblog.admin.domain.Relation">
+
+    <!-- Relation Domain Mapping -->
+    <resultMap id="relationResultMapper" type="sun.focusblog.admin.domain.Relation">
+        <result property="userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="followerId" column="follower_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="type" column="rel_type" javaType="int" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+
+    <select id="getRelation" parameterType="sun.focusblog.admin.domain.Relation" resultMap="relationResultMapper">
+        SELECT
+            user_id,
+            follower_id,
+            rel_type,
+            create_time
+        FROM
+            relation
+        WHERE
+            user_id =  #{userId}
+        AND follower_id = #{followerId}
+    </select>
+
+
+    <insert id="save" parameterType="sun.focusblog.admin.domain.Relation">
+        INSERT INTO relation (
+            user_id,
+            follower_id,
+            rel_type,
+            create_time
+        )
+        VALUES
+            (
+                #{userId},
+                #{followerId},
+                #{type},
+                #{createTime}
+            )
+    </insert>
+
+    <!-- Get follow number -->
+    <select id="follows" parameterType="String" resultType="Integer">
+        SELECT
+            count(*)
+        FROM
+            relation
+        WHERE
+            user_id = #{userId}
+        AND rel_type = 1
+    </select>
+
+</mapper>

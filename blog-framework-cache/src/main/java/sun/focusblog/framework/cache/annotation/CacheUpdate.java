@@ -19,17 +19,22 @@ public @interface CacheUpdate {
     /*
         A set of fields used to build the cache key.
      */
-    String[] fieldsKey();
+    String[] fieldsKey() default {};
 
     /*
         The update entity of field
      */
-    String valueField();
+    String valueField() default "";
 
     /*
         The value of update entity
      */
     Class valueType();
+
+    /**
+     *  If use this method, AOP will update fieldsKey with return value. Ignore valueField() and valueField()
+     */
+    boolean updateRetVal() default false;
 
     /*
         expire time. Units are seconds.
