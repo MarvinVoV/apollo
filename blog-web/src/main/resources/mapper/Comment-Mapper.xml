@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    Category Mapper
+
+-->
+
+<mapper namespace="sun.focusblog.admin.domain.Comment">
+
+    <!-- Comments Domain Mapping -->
+    <resultMap id="commentsResultMapper" type="sun.focusblog.admin.domain.Comment">
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" javaType="int" jdbcType="INTEGER"/>
+        <result property="articleId" column="article_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="content" column="content" javaType="String" jdbcType="VARCHAR"/>
+        <result property="commentDate" column="comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result property="user.userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="user.userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
+        <result property="user.header" column="header" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- Query Comments -->
+    <select id="list" parameterType="String" resultMap="commentsResultMapper">
+        SELECT
+            c.id,
+            c.parent_id,
+            c.article_id,
+            c.content,
+            c.comment_date,
+            u.user_id,
+            u.user_name,
+            u.header
+        FROM
+            article_comment c,
+            USER u
+        WHERE
+            c.user_id = u.user_id
+        AND article_id = #{aritcleId}
+    </select>
+
+    <!-- Delete comments by comment id -->
+    <delete id="delete" parameterType="int">
+        DELETE
+        FROM
+            article_comment
+        WHERE
+            id = #{id}
+    </delete>
+
+    <select id="query" parameterType="int" resultMap="commentsResultMapper">
+        SELECT
+            c.id,
+            c.parent_id,
+            c.article_id,
+            c.content,
+            c.comment_date,
+            u.user_id,
+            u.user_name,
+            u.header
+        FROM
+            article_comment c,
+            USER u
+        WHERE
+            c.user_id = u.user_id
+        AND id = #{id}
+    </select>
+
+    <select id="count" parameterType="String" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            article_comment c
+        WHERE
+            article_id = #{aritcleId}
+    </select>
+
+</mapper>

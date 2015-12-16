@@ -2,6 +2,7 @@ package sun.focusblog.admin.dao.impl;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 import sun.focusblog.admin.annotation.SessionUpdate;
 import sun.focusblog.admin.dao.IUserDao;
 import sun.focusblog.admin.domain.auth.User;
@@ -30,6 +31,7 @@ public class UserDao extends BaseDao implements IUserDao {
 
     @Override
     public boolean persistUser(User user) {
+        user.setUserId(Base64Utils.encodeToString(user.getUserId().getBytes()));
         return getSqlSession().insert(buildStatement(NAMESPACE, "persistUser"), user) > 0;
     }
 

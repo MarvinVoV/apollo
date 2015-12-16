@@ -84,11 +84,12 @@ CREATE TABLE article_attachment (
 );
 
 CREATE TABLE article_comment (
-  comment_id      INT,
-  article_id      INT,
-  user_id         VARCHAR(50),
-  comment_content LONGTEXT,
-  comment_date    TIMESTAMP
+  id INT NOT NULL auto_increment PRIMARY KEY,
+  parent_id INT,
+  article_id VARCHAR (50),
+  user_id VARCHAR (50),
+  content LONGTEXT,
+  comment_date TIMESTAMP
 );
 
 CREATE TABLE relation (

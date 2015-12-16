@@ -27,10 +27,17 @@ public class AppUserDetailService implements UserDetailsService {
     @Autowired
     private IUserDao userDao;
 
+    /**
+     * Authentication valid
+     *
+     * @param username this username is actually userId. Don't be confused
+     * @return UserDetails
+     * @throws UsernameNotFoundException
+     */
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        sun.focusblog.admin.domain.auth.User user = userDao.query(username);
+        sun.focusblog.admin.domain.auth.User user = userDao.query(Base64Utils.encodeToString(username.getBytes()));
         if (user == null) {
             throw new UsernameNotFoundException("user not found");
         }
@@ -44,7 +51,7 @@ public class AppUserDetailService implements UserDetailsService {
         for (Role role : user.getRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
         }
-        return new User(username, password, enabled,
+        return new User(user.getUserId(), password, enabled,
                 accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
     }

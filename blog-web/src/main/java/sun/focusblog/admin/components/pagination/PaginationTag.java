@@ -1,6 +1,9 @@
 package sun.focusblog.admin.components.pagination;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 
@@ -17,11 +20,16 @@ public class PaginationTag extends SimpleTagSupport {
     private int preNum = 1;     // preview page number
     private int nextNum = 1;    // next page number
     private int labelNum = 10;  // pagination label number
+    private String params;      // url params
     private String url;         // link url
 
 
     @Override
     public void doTag() throws JspException, IOException {
+
+//        PageContext pageContext = (PageContext) this.getJspContext();
+//        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+
         pageCount = (count + size - 1) / size;
         if (pageCount == 1) {
             return;
@@ -37,9 +45,11 @@ public class PaginationTag extends SimpleTagSupport {
         } else {
             nextNum = pageCount;
         }
-
-        if (!url.endsWith("?")) {
-            url += "?";
+        if (StringUtils.isEmpty(url)) {
+            url = "/";
+        }
+        if (params != null) {
+            url += "?" + params + "&";
         }
 
         int span = labelNum;
@@ -59,7 +69,7 @@ public class PaginationTag extends SimpleTagSupport {
         StringBuilder sb = new StringBuilder();
         if (count == 0) {
             sb.append("<span class=\"site-mini-font\" style=\"margin-right:10px;\">暂无任何内容</span>");
-        }else{
+        } else {
             sb.append("<span class=\"site-mini-font\" style=\"margin-right:10px;\">").append(count).append("条数据 共").append(pageCount).append("页</span>");
             sb.append("<div class=\"ui pagination menu\">");
             for (int i = 0; i < span; i++) {
@@ -128,5 +138,13 @@ public class PaginationTag extends SimpleTagSupport {
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 }

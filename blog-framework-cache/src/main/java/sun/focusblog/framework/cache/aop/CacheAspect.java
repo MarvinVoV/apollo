@@ -73,7 +73,7 @@ public class CacheAspect {
                     cacheStorage.set(cacheKey, retObj);
                 }
             } catch (Throwable e) {
-                logger.log(Level.SEVERE, e.getLocalizedMessage());
+                logger.log(Level.SEVERE, e.getMessage());
             }
         }
         return retObj;

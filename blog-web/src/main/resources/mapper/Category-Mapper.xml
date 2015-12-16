@@ -22,7 +22,7 @@
 
 
     <!-- Save Category -->
-    <select id="save" parameterType="sun.focusblog.admin.domain.Category">
+    <insert id="save" parameterType="sun.focusblog.admin.domain.Category">
         INSERT INTO category (
             category_id,
             user_id,
@@ -40,7 +40,7 @@
                 #{status},
                 #{createDate}
             );
-    </select>
+    </insert>
 
     <!-- Query Category -->
     <select id="query" parameterType="String" resultMap="categoryResultMapper">

@@ -82,7 +82,7 @@
                     <p:pagination num="${requestScope.pagination.num}"
                                   size="${requestScope.pagination.size}"
                                   count="${requestScope.pagination.count}"
-                                  url="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}/manager/article/list"/>
+                                  url="/manager/article/list"/>
                 </div>
             </div>
 

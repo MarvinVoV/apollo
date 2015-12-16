@@ -1,4 +1,5 @@
-<%--
+<%@ page import="sun.focusblog.admin.domain.Comment" %>
+<%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: root
   Date: 2015/11/7
@@ -84,7 +85,8 @@
                             <div class="description" style="margin-top:16px;margin-bottom:16px;">
                                 <div class="site-mini-font" style="float:right;margin-right:10px;">
                                         <span style="padding-right:20px;">
-                                            <fmt:formatDate value="${article.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                            <fmt:formatDate value="${article.updateDate}"
+                                                            pattern="yyyy-MM-dd HH:mm:ss"/>
                                         </span>
                                     <span class="page-fixed-span"><i
                                             class="unhide icon"></i>阅读(${article.pageView})</span>
@@ -106,6 +108,127 @@
                     </div>
                 </div>
             </div>
+
+            <div class="ui basic segment">
+
+                <div class="ui comments">
+                    <h3 class="ui dividing tiny header" style="color:#666"><i class="mini comments icon"></i>评论</h3>
+                    <c:if test="${requestScope.comments.size() == 0}">
+                        来吧，说两句儿
+                    </c:if>
+                    <c:forEach var="comment" items="${requestScope.comments}">
+                        <div class="comment">
+                            <a class="avatar">
+                                <img src="${comment.user.header}">
+                            </a>
+
+                            <div class="content">
+                                <a class="author">${comment.user.userName}</a>
+
+                                <div class="metadata">
+                                    <span class="date">
+                                        <fmt:formatDate value="${comment.commentDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    </span>
+                                </div>
+                                <div class="text">
+                                        ${comment.content}
+                                </div>
+                                <div class="actions">
+                                    <a class="reply">Reply</a>
+                                </div>
+                            </div>
+                            <c:if test="${comment.children.size() != 0}">
+                                <div class="comments">
+                                    <c:forEach var="innerComment" items="${comment.children}">
+                                        <div class="comment">
+                                            <a class="avatar">
+                                                <img src="${innerComment.user.header}">
+                                            </a>
+
+                                            <div class="content">
+                                                <a class="author">${innerComment.user.userName}</a>
+
+                                                <div class="metadata">
+                                                       <span class="date">
+                                                            <fmt:formatDate value="${innerComment.commentDate}"
+                                                                            pattern="yyyy-MM-dd HH:mm:ss"/>
+                                                       </span>
+                                                </div>
+                                                <div class="text">${comment.content}</div>
+                                                <div class="actions">
+                                                    <a class="reply">Reply</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <c:if test="${innerComment.children.size() != 0}">
+                                            <%
+                                                Comment innerComment = (Comment) pageContext.getAttribute("innerComment");
+                                                List<Comment> innerMoreComments = innerComment.getChildren();
+                                                int i = 0;
+                                                while (i < innerMoreComments.size()) {
+                                                    Comment innerMoreComment = innerMoreComments.get(i);
+                                            %>
+                                            <div class="comment">
+                                                <a class="avatar">
+                                                    <img src="<%=innerMoreComment.getUser().getHeader()%>">
+                                                </a>
+
+                                                <div class="content">
+                                                    <a class="author"><%=innerMoreComment.getUser().getUserName()%>
+                                                    </a>
+                                                    <span><i class="forward mail icon"></i></span>
+                                                    <a class="author"><%=innerMoreComment.getParent().getUser().getUserName()%>
+                                                    </a>
+
+                                                    <div class="metadata">
+                                                                   <span class="date">
+                                                                        <fmt:formatDate
+                                                                                value="<%=innerMoreComment.getCommentDate()%>"
+                                                                                pattern="yyyy-MM-dd HH:mm:ss"/>
+                                                                   </span>
+                                                    </div>
+                                                    <div class="text"><%=innerMoreComment.getContent()%>
+                                                    </div>
+                                                    <div class="actions">
+                                                        <a class="reply">Reply</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <%
+                                                    if (i == innerMoreComments.size() - 1) {
+                                                        List<Comment> moreChildren = innerMoreComment.getChildren();
+                                                        if (moreChildren.size() != 0) {
+                                                            innerMoreComments = moreChildren;
+                                                            i = -1;
+                                                        }
+                                                    }
+                                                    i++;
+                                                }
+                                            %>
+                                        </c:if>
+                                    </c:forEach>
+                                </div>
+                            </c:if>
+                        </div>
+                    </c:forEach>
+                    <div style="text-align: center;">
+                        <p:pagination num="${requestScope.pagination.num}"
+                                      size="${requestScope.pagination.size}"
+                                      count="${requestScope.pagination.count}"
+                                      url="/manager/article/view"
+                                      params="id=${requestScope.article.id}&uid=${pageScope.user.userId}"/>
+                    </div>
+                    <form class="ui reply form">
+                        <div class="field">
+                            <textarea></textarea>
+                        </div>
+                        <div class="ui blue labeled submit icon button">
+                            <i class="icon edit"></i> Add Reply
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
         <div class="three wide column">
             <div class="ui cards">
@@ -144,10 +267,12 @@
                         </c:when>
                         <c:when test="${requestScope.relation == 'NOTHING'}">
                             <div style="text-align: center;">
-                                <a href="javascript:void(0);" onclick="follow(this)" class="ui bottom inline tiny blue button" style="width:50%;">
+                                <a href="javascript:void(0);" onclick="follow(this)"
+                                   class="ui bottom inline tiny blue button" style="width:50%;">
                                     <i class="add icon"></i>
                                     添加关注
                                 </a>
+
                                 <div class="ui bottom inline tiny green button" style="width:40%;">
                                     <i class="mail icon"></i>
                                     发私信
@@ -237,21 +362,21 @@
         }
     }
 
-    function follow(e){
+    function follow(e) {
         var $that = $(e);
         $.ajax({
             type: 'POST',
             url: '<c:url value="/manager/user/follow"/>',
-            data: {uid:'${article.userId}'},
+            data: {uid: '${article.userId}'},
             dataType: 'json',
-            success: function(json){
-                if(json && json.status == 'ok'){
+            success: function (json) {
+                if (json && json.status == 'ok') {
                     $that.html('<i class="add icon"></i>已关注').addClass('disabled');
                     var follows = $('#follows');
                     follows.html(parseInt(follows.html().trim()) + 1);
                 }
             },
-            error:function(e){
+            error: function (e) {
                 alert(e);
             }
         });

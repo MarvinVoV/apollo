@@ -14,12 +14,10 @@ import sun.focusblog.admin.components.Helper;
 import sun.focusblog.admin.components.pagination.Pagination;
 import sun.focusblog.admin.domain.Article;
 import sun.focusblog.admin.domain.Category;
+import sun.focusblog.admin.domain.Comment;
 import sun.focusblog.admin.domain.RelationType;
 import sun.focusblog.admin.domain.auth.User;
-import sun.focusblog.admin.services.ArticleService;
-import sun.focusblog.admin.services.CategoryService;
-import sun.focusblog.admin.services.RelationService;
-import sun.focusblog.admin.services.UserService;
+import sun.focusblog.admin.services.*;
 import sun.focusblog.utils.JSONBuilder;
 
 import javax.servlet.http.HttpSession;
@@ -48,6 +46,9 @@ public class BlogManagerController {
     @Autowired
     private RelationService relationService;
 
+    @Autowired
+    private CommentsService commentsService;
+
     private static final String MODEL_ATTR_RELATION = "relation";
 
     private static final String MODEL_ATTR_PAGINATION = "pagination";
@@ -57,6 +58,8 @@ public class BlogManagerController {
     private static final String MODEL_ATTR_ARTICLES = "articles";
 
     private static final String MODEL_ATTR_ARTICLE = "article";
+
+    private static final String MODEL_ATTR_COMMENTS = "comments";
 
     private static final String MODEL_ATTR_FOLLOWS = "follows"; // follow number
 
@@ -173,7 +176,6 @@ public class BlogManagerController {
         // Set article number
         int count = articleService.countAll(user);
         Pagination pagination = new Pagination(count);
-        pagination.setCount(count);
         pagination.setNum(num);
         pagination.setSize(Integer.valueOf(articleService.getPageSize()));
         modelAndView.addObject(MODEL_ATTR_PAGINATION, pagination);
@@ -195,11 +197,11 @@ public class BlogManagerController {
      * @return model and view
      */
     @RequestMapping(value = "article/view", method = RequestMethod.GET)
-    public ModelAndView viewArticle(@RequestParam String id, @RequestParam String uid, ModelAndView modelAndView,
+    public ModelAndView viewArticle(@RequestParam String id, @RequestParam String uid,
+                                    @RequestParam(required = false) Integer num, ModelAndView modelAndView,
                                     HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
         if (!StringUtils.isEmpty(uid)) {
-            uid = new String(Base64Utils.decodeFromString(uid));
             if (!uid.equals(user.getUserId())) {
                 User currentUser = user;
                 user = userService.query(uid);
@@ -210,7 +212,7 @@ public class BlogManagerController {
         // Set follows
         modelAndView.addObject(MODEL_ATTR_FOLLOWS, relationService.follows(user.getUserId()));
 
-        return prepareArticleAndCategories(modelAndView, "admin/blogDetail", id, uid, user);
+        return prepareModelAttributes(modelAndView, "admin/blogDetail", id, this.commentsService, num, user);
     }
 
 
@@ -224,20 +226,37 @@ public class BlogManagerController {
     @RequestMapping(value = "article/modify", method = RequestMethod.GET)
     public ModelAndView modifyArticleView(@RequestParam String id, ModelAndView modelAndView, HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
-        return prepareArticleAndCategories(modelAndView, "admin/modifyArticle", id, null, user);
+        return prepareModelAttributes(modelAndView, "admin/modifyArticle", id, null, null, user);
     }
 
     /**
      * Inner Help method
      */
-    public ModelAndView prepareArticleAndCategories(ModelAndView modelAndView, String view, String id, String uid, User user) {
+    public ModelAndView prepareModelAttributes(ModelAndView modelAndView, String view, String articleId,
+                                               CommentsService commentsService, Integer pageNum, User user) {
         modelAndView.addObject("user", user);
         // Set categories
         List<Category> categories = categoryService.query(user);
         modelAndView.addObject(MODEL_ATTR_CATEGORIES, categories);
-
-        Article article = articleService.query(id);
+        // Set article
+        Article article = articleService.query(articleId);
         modelAndView.addObject(MODEL_ATTR_ARTICLE, article);
+        // Set comments
+        if (commentsService != null) {
+            int count = commentsService.count(articleId);
+            Pagination pagination = new Pagination(count);
+            pagination.setSize(commentsService.getPageSize());
+            List<Comment> comments;
+            if(pageNum != null){
+                pagination.setNum(pageNum);
+                comments = commentsService.list(articleId, pageNum, commentsService.getPageSize());
+            }else{
+                pagination.setNum(1);
+                comments = commentsService.defaultList(articleId);
+            }
+            modelAndView.addObject(MODEL_ATTR_PAGINATION, pagination);
+            modelAndView.addObject(MODEL_ATTR_COMMENTS, comments);
+        }
         modelAndView.setViewName(view);
         return modelAndView;
     }
