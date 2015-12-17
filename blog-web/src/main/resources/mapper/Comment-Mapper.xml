@@ -12,33 +12,51 @@
     <!-- Comments Domain Mapping -->
     <resultMap id="commentsResultMapper" type="sun.focusblog.admin.domain.Comment">
         <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
-        <result property="parentId" column="parent_id" javaType="int" jdbcType="INTEGER"/>
+        <result property="parent.id" column="parent_id" javaType="int" jdbcType="INTEGER"/>
         <result property="articleId" column="article_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="content" column="content" javaType="String" jdbcType="VARCHAR"/>
         <result property="commentDate" column="comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
         <result property="user.userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="user.userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="user.header" column="header" javaType="String" jdbcType="VARCHAR"/>
+        <collection property="children" ofType="sun.focusblog.admin.domain.Comment">
+            <result property="id" column="c_id" javaType="int" jdbcType="INTEGER"/>
+            <result property="parent.id" column="c_parent_id" javaType="int" jdbcType="INTEGER"/>
+            <result property="articleId" column="c_article_id" javaType="String" jdbcType="VARCHAR"/>
+            <result property="content" column="c_content" javaType="String" jdbcType="VARCHAR"/>
+            <result property="commentDate" column="c_comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
+            <result property="user.userId" column="c_user_id" javaType="String" jdbcType="VARCHAR"/>
+            <result property="user.userName" column="c_user_name" javaType="String" jdbcType="VARCHAR"/>
+            <result property="user.header" column="c_header" javaType="String" jdbcType="VARCHAR"/>
+        </collection>
     </resultMap>
-
 
     <!-- Query Comments -->
     <select id="list" parameterType="String" resultMap="commentsResultMapper">
         SELECT
-            c.id,
-            c.parent_id,
-            c.article_id,
-            c.content,
-            c.comment_date,
-            u.user_id,
-            u.user_name,
-            u.header
+            a1.id AS id,
+            a1.parent_id AS parent_id,
+            a1.user_id AS user_id,
+            a1.article_id AS article_id,
+            a1.content AS content,
+            a1.comment_date AS comment_date,
+            u1.header AS header,
+            u1.user_name AS user_name,
+            a2.id AS c_id,
+            a2.parent_id AS c_parent_id,
+            a2.article_id AS c_article_id,
+            a2.user_id AS c_user_id,
+            a2.content AS c_content,
+            a2.comment_date AS c_comment_date,
+            u2.header AS c_header,
+            u2.user_name AS c_user_name
         FROM
-            article_comment c,
-            USER u
+            article_comment a1
+        LEFT JOIN article_comment a2 ON a1.id = a2.parent_id
+        LEFT JOIN USER u1 ON u1.user_id = a1.user_id
+        LEFT JOIN USER u2 ON a2.user_id = u2.user_id
         WHERE
-            c.user_id = u.user_id
-        AND article_id = #{aritcleId}
+            a1.article_id = #{aritcleId}
     </select>
 
     <!-- Delete comments by comment id -->
@@ -52,20 +70,29 @@
 
     <select id="query" parameterType="int" resultMap="commentsResultMapper">
         SELECT
-            c.id,
-            c.parent_id,
-            c.article_id,
-            c.content,
-            c.comment_date,
-            u.user_id,
-            u.user_name,
-            u.header
+            a1.id AS id,
+            a1.parent_id AS parent_id,
+            a1.user_id AS user_id,
+            a1.article_id AS article_id,
+            a1.content AS content,
+            a1.comment_date AS comment_date,
+            u1.header AS header,
+            u1.user_name AS user_name,
+            a2.id AS c_id,
+            a2.parent_id AS c_parent_id,
+            a2.article_id AS c_article_id,
+            a2.user_id AS c_user_id,
+            a2.content AS c_content,
+            a2.comment_date AS c_comment_date,
+            u2.header AS c_header,
+            u2.user_name AS c_user_name
         FROM
-            article_comment c,
-            USER u
+            article_comment a1
+        LEFT JOIN article_comment a2 ON a1.id = a2.parent_id
+        LEFT JOIN USER u1 ON u1.user_id = a1.user_id
+        LEFT JOIN USER u2 ON a2.user_id = u2.user_id
         WHERE
-            c.user_id = u.user_id
-        AND id = #{id}
+            a1.id = #{id}
     </select>
 
     <select id="count" parameterType="String" resultType="int">

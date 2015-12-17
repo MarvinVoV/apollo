@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import sun.focusblog.admin.dao.ICommentsDao;
 import sun.focusblog.admin.domain.Comment;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -24,7 +25,7 @@ public class CommentsDaoTest {
     @Test
     public void testList() throws Exception {
         String articleId = "48f408ba-a744-470b-86ce-e82177879e9d";
-        List<Comment> list = commentsDao.list(articleId, 1, 5);
+        List<Comment> list = commentsDao.list(articleId, 2, 22);
         assertNotNull(list);
     }
 }

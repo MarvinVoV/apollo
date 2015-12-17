@@ -154,7 +154,7 @@
                                                                             pattern="yyyy-MM-dd HH:mm:ss"/>
                                                        </span>
                                                 </div>
-                                                <div class="text">${comment.content}</div>
+                                                <div class="text">${innerComment.content}</div>
                                                 <div class="actions">
                                                     <a class="reply">Reply</a>
                                                 </div>

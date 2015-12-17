@@ -13,7 +13,6 @@ import java.util.List;
  */
 public class Comment {
     private int id;
-    private int parentId;
     private String articleId;
     private String content;
     private Date commentDate;
@@ -27,14 +26,6 @@ public class Comment {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
     }
 
     public String getArticleId() {

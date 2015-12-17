@@ -41,67 +41,88 @@ public class CommentsServiceImpl implements CommentsService {
         }
 
         List<Comment> treeList = new LinkedList<>();
-        boolean flag = false;    // fix data loss when page changed
+
+        int i = 0;
         for (Comment comment : list) {
-            if (!flag) {
-                flag = true;
-                if (comment.getParentId() != 0) {
-                    Comment root = backtraceForRootNode(comment);
-                    if (root != null) {
-                        treeList.add(root);
-                    }
-                }
-            }
-            if (comment.getParentId() == 0) { // single root node
+            if (comment.getParent() == null) {
                 treeList.add(comment);
             } else {
-                appendNode(treeList, comment);
+                if (i == 0 && treeList.size() == 0) {  // Bounds checking
+                    i = -1;
+                    Comment rootNode = traceBackForRoot(comment);
+                    treeList.add(rootNode);
+                } else {
+                    appendNode(treeList, comment);
+                }
             }
         }
+
         return treeList;
     }
 
-    /**
-     * Trace back to find this root comment
-     *
-     * @param comment comment
-     * @return root comment which parentId is zero
-     */
-    private Comment backtraceForRootNode(Comment comment) {
-        if (comment == null || comment.getParentId() == 0) {
-            return comment;
-        }
-        Comment node = this.query(comment.getId());
-        comment.setParent(node);
-        return backtraceForRootNode(node);
-    }
-
-
-    private void appendNode(List<Comment> list, Comment comment) {
-        Comment parent = null;
-        for (Comment node : list) {
-            parent = traverse(node, comment);
-            if (parent != null) {
+    private void appendNode(List<Comment> treeList, Comment comment) {
+        for (Comment node : treeList) {
+            if (traverseNode(node, comment)) {
                 break;
             }
         }
-        if (parent != null) {
-            parent.getChildren().add(comment);
-            comment.setParent(parent);
-        }
     }
 
-    private Comment traverse(Comment parent, Comment node) {
-        Comment retVal = null;
-        if (parent.getId() == node.getParentId()) {
-            retVal = parent;
-        } else {
-            List<Comment> list = parent.getChildren();
-            for (Comment comment : list) {
-                retVal = traverse(comment, node);
+    /**
+     * build relation between parent and chilren
+     *
+     * @param node    node of tree
+     * @param comment line head node
+     * @return true find
+     */
+    private boolean traverseNode(Comment node, Comment comment) {
+        // Fix child parent relationship
+        List<Comment> nodeChildren = node.getChildren();
+        if (nodeChildren != null && nodeChildren.size() > 0) {
+            for (Comment nodeChild : nodeChildren) {
+                nodeChild.setParent(node);
             }
         }
-        return retVal;
+        // Build tree structure
+        if (node.getId() == comment.getId()) {
+            List<Comment> children = comment.getChildren();
+            node.setChildren(children);
+            if (children != null && children.size() > 0) {
+                for (Comment child : children) {
+                    child.setParent(node);
+                }
+            }
+            return true;
+        } else {
+            for (Comment child : node.getChildren()) {
+                if (traverseNode(child, comment)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Trace back to find the root node
+     *
+     * @param comment comment
+     * @return root comment
+     */
+    private Comment traceBackForRoot(Comment comment) {
+        Comment node = commentsDao.query(comment.getParent().getId());
+        // Fix child parent relationship
+        List<Comment> children = node.getChildren();
+        if (children != null && children.size() > 0) {
+            for (Comment nodeChild : children) {
+                nodeChild.setParent(node);
+            }
+        }
+
+        if (node.getParent() != null) {
+            return traceBackForRoot(node);
+        }
+        return node;
     }
 
     @Override
