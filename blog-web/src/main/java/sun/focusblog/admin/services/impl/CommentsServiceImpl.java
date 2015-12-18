@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sun.focusblog.admin.dao.ICommentsDao;
 import sun.focusblog.admin.domain.Comment;
+import sun.focusblog.admin.domain.auth.User;
 import sun.focusblog.admin.services.CommentsService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -138,5 +140,15 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public int getPageSize() {
         return Integer.valueOf(this.pageSize);
+    }
+
+    @Override
+    public boolean save(Comment comment, User user) {
+        if (comment != null && user != null) {
+            comment.setUser(user);
+            comment.setCommentDate(new Date());
+            return commentsDao.save(comment);
+        }
+        return false;
     }
 }

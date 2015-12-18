@@ -1,6 +1,7 @@
 package sun.focusblog.admin.services;
 
 import sun.focusblog.admin.domain.Comment;
+import sun.focusblog.admin.domain.auth.User;
 
 import java.util.List;
 
@@ -51,5 +52,14 @@ public interface CommentsService {
      * @return page size
      */
     int getPageSize();
+
+
+    /**
+     * Persist comment entity
+     *
+     * @param comment comment
+     * @return boolean
+     */
+    boolean save(Comment comment, User user);
 
 }

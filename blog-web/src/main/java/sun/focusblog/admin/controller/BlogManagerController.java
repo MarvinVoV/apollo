@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Base64Utils;
 import org.springframework.validation.BindingResult;
@@ -72,6 +74,10 @@ public class BlogManagerController {
         modelAndView.setViewName("/admin/manager");
         return modelAndView;
     }
+
+    //#####################################################################################
+    //                          Category
+    //#####################################################################################
 
     /**
      * List all category
@@ -156,6 +162,11 @@ public class BlogManagerController {
         modelAndView.setViewName("admin/blogHome");
         return modelAndView;
     }
+
+
+    //#####################################################################################
+    //                          Article
+    //#####################################################################################
 
     /**
      * Article list
@@ -247,10 +258,10 @@ public class BlogManagerController {
             Pagination pagination = new Pagination(count);
             pagination.setSize(commentsService.getPageSize());
             List<Comment> comments;
-            if(pageNum != null){
+            if (pageNum != null) {
                 pagination.setNum(pageNum);
                 comments = commentsService.list(articleId, pageNum, commentsService.getPageSize());
-            }else{
+            } else {
                 pagination.setNum(1);
                 comments = commentsService.defaultList(articleId);
             }
@@ -312,6 +323,10 @@ public class BlogManagerController {
         return modelAndView;
     }
 
+    //#####################################################################################
+    //                          Relation
+    //#####################################################################################
+
     @RequestMapping(value = "user/follow", method = RequestMethod.POST, produces = {"application/json"})
     public
     @ResponseBody
@@ -325,5 +340,35 @@ public class BlogManagerController {
         relationService.follow(uid, user.getUserId());
         return JSONBuilder.builder().inflate("status", "ok").build().toString();
     }
+
+
+    //#####################################################################################
+    //                          Comment
+    //#####################################################################################
+
+    @RequestMapping(value = "comments/add", method = RequestMethod.POST)
+    public String addComment(@ModelAttribute Comment comment, @RequestParam String uid, HttpSession httpSession) {
+        User user = Helper.getUser(httpSession);
+
+        boolean retVal = commentsService.save(comment, user);
+        if (!retVal) {
+            logger.error("save comment failed.");
+        }
+        return String.format("redirect:/manager/article/view?id=%s&uid=%s", comment.getArticleId(), uid);
+    }
+
+    @RequestMapping(value = "comments/reply", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public String addReply(@ModelAttribute Comment comment, HttpSession httpSession) {
+        User user = Helper.getUser(httpSession);
+
+//        boolean retVal = commentsService.save(comment, user);
+        boolean retVal = true;
+        if (!retVal) {
+            return JSONBuilder.builder().inflate("status", "error").build().toString();
+        }
+        return JSONBuilder.builder().inflate("status", "ok").build().toString();
+    }
+
 
 }

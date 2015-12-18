@@ -44,4 +44,13 @@ public interface ICommentsDao {
      * @return int
      */
     int count(String articleId);
+
+
+    /**
+     * Persist comment entity
+     *
+     * @param comment comment
+     * @return boolean
+     */
+    boolean save(Comment comment);
 }

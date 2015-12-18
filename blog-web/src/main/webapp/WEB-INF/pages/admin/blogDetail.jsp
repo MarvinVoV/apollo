@@ -39,6 +39,22 @@
         .article-div {
             padding-top: 50px;
         }
+
+        .auto_increment_div {
+            min-height: 40px;
+            max-height: 300px;
+            _height: 40px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 10px;
+            outline: 0;
+            border: 1px solid rgba(34, 36, 38, 0.15);
+            font-size: 14px;
+            word-wrap: break-word;
+            overflow-x: hidden;
+            overflow-y: auto;
+            _overflow-y: visible;
+        }
     </style>
 </head>
 <body>
@@ -134,7 +150,21 @@
                                         ${comment.content}
                                 </div>
                                 <div class="actions">
-                                    <a class="reply">Reply</a>
+                                    <a class="reply" href="javascript:void(0);" onclick="reply(this)">回复</a>
+                                    <form class="ui reply form" style="display: none;">
+                                        <div class="field">
+                                            <div contenteditable="true" class="auto_increment_div"></div>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <a onclick="cancelReply(this);" class="ui link">
+                                                取消
+                                            </a>
+                                            <div onclick="submitReply(this,'${comment.id}','${sessionScope.user.userId}',1);"
+                                                 class="ui blue mini submit button">
+                                                回复
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             <c:if test="${comment.children.size() != 0}">
@@ -147,7 +177,6 @@
 
                                             <div class="content">
                                                 <a class="author">${innerComment.user.userName}</a>
-
                                                 <div class="metadata">
                                                        <span class="date">
                                                             <fmt:formatDate value="${innerComment.commentDate}"
@@ -156,7 +185,24 @@
                                                 </div>
                                                 <div class="text">${innerComment.content}</div>
                                                 <div class="actions">
-                                                    <a class="reply">Reply</a>
+                                                    <a class="reply" href="javascript:void(0);"
+                                                       onclick="reply(this)">回复</a>
+
+                                                    <form class="ui reply form" style="display: none;">
+                                                        <div class="field">
+                                                            <div contenteditable="true"
+                                                                 class="auto_increment_div"></div>
+                                                        </div>
+                                                        <div style="text-align:right;">
+                                                            <a onclick="cancelReply(this);" class="ui link">
+                                                                取消
+                                                            </a>
+                                                            <div onclick="submitReply(this,'${comment.id}','${sessionScope.user.userId}',2);"
+                                                                 class="ui blue mini submit button">
+                                                                回复
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -172,7 +218,6 @@
                                                 <a class="avatar">
                                                     <img src="<%=innerMoreComment.getUser().getHeader()%>">
                                                 </a>
-
                                                 <div class="content">
                                                     <a class="author"><%=innerMoreComment.getUser().getUserName()%>
                                                     </a>
@@ -190,7 +235,23 @@
                                                     <div class="text"><%=innerMoreComment.getContent()%>
                                                     </div>
                                                     <div class="actions">
-                                                        <a class="reply">Reply</a>
+                                                        <a class="reply" href="javascript:void(0);"
+                                                           onclick="reply(this)">回复</a>
+                                                        <form class="ui reply form" style="display: none;">
+                                                            <div class="field">
+                                                                <div contenteditable="true"
+                                                                     class="auto_increment_div"></div>
+                                                            </div>
+                                                            <div style="text-align:right;">
+                                                                <a onclick="cancelReply(this);" class="ui link">
+                                                                    取消
+                                                                </a>
+                                                                <div onclick="submitReply(this,'${comment.id}','${sessionScope.user.userId}',3);"
+                                                                     class="ui blue mini submit button">
+                                                                    回复
+                                                                </div>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -218,14 +279,31 @@
                                       url="/manager/article/view"
                                       params="id=${requestScope.article.id}&uid=${pageScope.user.userId}"/>
                     </div>
-                    <form class="ui reply form">
-                        <div class="field">
-                            <textarea></textarea>
+                    <div style="margin-top:20px;">
+                        <div class="ui middle aligned relaxed list">
+                            <div class="item">
+                                <img class="ui right spaced avatar image" src="${sessionScope.user.header}">
+                                <div class="content">
+                                    <a class="header">${sessionScope.user.userName}</a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <form class="ui reply form" action="<c:url value="/manager/comments/add"/>"
+                                      method="post">
+                                    <div class="field">
+                                        <textarea placeholder="" name="content"></textarea>
+                                        <input type="hidden" name="articleId"
+                                               value="${requestScope.article.id}">
+                                        <input type="hidden" name="uid" value="${pageScope.user.userId}">
+                                    </div>
+                                    <a href="javascript:void(0);" onclick="addComment(this);"
+                                       class="ui blue labeled submit icon button">
+                                        <i class="icon edit"></i>添加评论
+                                    </a>
+                                </form>
+                            </div>
                         </div>
-                        <div class="ui blue labeled submit icon button">
-                            <i class="icon edit"></i> Add Reply
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 
@@ -380,6 +458,118 @@
                 alert(e);
             }
         });
+    }
+
+    function reply(e) {
+        var a = $(e);
+        var form = a.next();
+        a.hide();
+        form.show('fast');
+
+    }
+
+    function cancelReply(e) {
+        console.log(e);
+        var form = $(e).closest('form');
+        var a = form.prev();
+        a.show();
+        form.hide();
+    }
+
+    function submitReply(e, commentId, userId, level) {
+        var form = $(e).closest('form');
+        var a = form.prev();
+        var content = form.find('div[contenteditable="true"]');
+        if ('' == content.html()) return;
+
+        $.ajax({
+            type: 'post',
+            url: '<c:url value="/manager/comments/reply"/>',
+            data: {'parent.id': commentId, 'user.userId': userId, 'content': content.html()},
+            success: function (e) {
+                if (e.status == 'ok') {
+                    a.show();
+                    form.hide();
+                    content.html(''); // Reset
+                    var header = '${sessionScope.user.header}';
+                    var userName = '${sessionScope.user.userName}';
+                    var template;
+                    var comments;
+                    var comment = {date: 'just now', content: 'hello world'};
+                    if (level == 1) {
+                        var contentDiv = a.closest('div[class="content"]');
+                        if (contentDiv.next().hasClass('comments')) {
+                            comments = contentDiv.next();
+                            template = commentTemplate(header, userName, comment, 'none', level + 1);
+                            comments.append(template);
+                            template.show('normal');
+                        } else {
+                            template = commentsTemplate(header, userName, comment, 'none', level + 1);
+                            template.insertAfter(contentDiv);
+                            template.show('normal');
+                        }
+                    } else if (level == 2 || level == 3) {
+                        var parentComment = a.closest('div[class="comment"]');
+                        template = commentTemplate(header, userName, comment, 'none', level == 2 ? ++level : level);
+                        template.insertAfter(parentComment);
+                        template.show('normal');
+                    }
+                } else {
+                    console.log('false')
+                }
+            },
+            error: function (e) {
+                alert(e);
+            }
+        });
+    }
+
+    function commentsTemplate(header, user, comment, display, level) {
+        var commentDiv = commentTemplate(header, user, comment, 'normal', level);
+        var comments = $('<div class="comments" style="display:' + display + '"></div>');
+        comments.append(commentDiv);
+        return comments;
+    }
+
+    function commentTemplate(header, user, comment, display, level) {
+        var author = '<a class="author">' + user + '</a>';
+        if (level == 3) {
+//            author = '<a class="author">' + user + '</a><span><i class="forward mail icon"></i></span><a class="author">'+comment.parent.user.userId+'</a>'
+            author = '<a class="author">' + user + '</a><span><i class="forward mail icon"></i></span><a class="author">yamorn</a>';
+        }
+        return $('<div class="comment" style="display:' + display + '">' +
+                '<a class="avatar"><img src="' + header + '"></a>' +
+                '<div class="content">' +
+                author +
+                '<div class="metadata">' +
+                '<span class="date">' + comment.date + '</span>' +
+                '</div>' +
+                '<div class="text">' + comment.content + '</div>' +
+                '<div class="actions">' +
+                '<a class="reply" href="javascript:void(0);" onclick="reply(this)">回复</a>' +
+                '<form class="ui reply form" style="display: none;">' +
+                '<div class="field">' +
+                '<div contenteditable="true" class="auto_increment_div"></div>' +
+                '</div>' +
+                '<div style="text-align:right;">' +
+                '<a onclick="cancelReply(this);" class="ui link">取消</a>' +
+                '<div onclick="submitReply(this,' + comment.id + ',' + comment.userId + ',' + level + ');" class="ui blue mini submit button">回复</div>' +
+                '</div>' +
+                '</form>' +
+                '</div>' +
+                '</div>' +
+                '</div>');
+    }
+
+    /**
+     * Submit comment form
+     */
+    function addComment(e) {
+        var form = $(e).closest('form');
+        var content = form.find('textarea');
+        if (content.val().trim() != '') {
+            form.submit();
+        }
     }
 
     $(function () {

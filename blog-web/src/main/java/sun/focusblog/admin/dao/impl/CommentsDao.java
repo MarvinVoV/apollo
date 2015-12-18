@@ -37,4 +37,9 @@ public class CommentsDao extends BaseDao implements ICommentsDao {
     public int count(String articleId) {
         return getSqlSession().selectOne(buildStatement(NAMESPACE, "count"), articleId);
     }
+
+    @Override
+    public boolean save(Comment comment) {
+        return getSqlSession().insert(buildStatement(NAMESPACE, "save"), comment) == 1;
+    }
 }
