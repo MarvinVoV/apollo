@@ -36,7 +36,7 @@ public interface CommentsService {
      * @param id comment id
      * @return comment
      */
-    Comment query(int id);
+    Comment query(String id);
 
     /**
      * Count comments

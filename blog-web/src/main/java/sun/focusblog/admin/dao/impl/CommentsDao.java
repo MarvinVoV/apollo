@@ -29,7 +29,7 @@ public class CommentsDao extends BaseDao implements ICommentsDao {
     }
 
     @Override
-    public Comment query(int id) {
+    public Comment query(String id) {
         return getSqlSession().selectOne(buildStatement(NAMESPACE, "query"), id);
     }
 

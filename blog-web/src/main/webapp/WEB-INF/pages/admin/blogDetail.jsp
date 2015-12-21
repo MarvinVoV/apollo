@@ -129,9 +129,6 @@
 
                 <div class="ui comments">
                     <h3 class="ui dividing tiny header" style="color:#666"><i class="mini comments icon"></i>评论</h3>
-                    <c:if test="${requestScope.comments.size() == 0}">
-                        来吧，说两句儿
-                    </c:if>
                     <c:forEach var="comment" items="${requestScope.comments}">
                         <div class="comment">
                             <a class="avatar">
@@ -158,8 +155,9 @@
                                         <div style="text-align:right;">
                                             <a onclick="cancelReply(this);" class="ui link">
                                                 取消
+
                                             </a>
-                                            <div onclick="submitReply(this,'${comment.id}','${sessionScope.user.userId}',1);"
+                                            <div onclick="submitReply(this,'${comment.id}','${comment.user.userId}','${comment.user.userName}',1);"
                                                  class="ui blue mini submit button">
                                                 回复
                                             </div>
@@ -197,7 +195,7 @@
                                                             <a onclick="cancelReply(this);" class="ui link">
                                                                 取消
                                                             </a>
-                                                            <div onclick="submitReply(this,'${comment.id}','${sessionScope.user.userId}',2);"
+                                                            <div onclick="submitReply(this,'${innerComment.id}','${innerComment.user.userId}','${innerComment.user.userName}',2);"
                                                                  class="ui blue mini submit button">
                                                                 回复
                                                             </div>
@@ -246,7 +244,7 @@
                                                                 <a onclick="cancelReply(this);" class="ui link">
                                                                     取消
                                                                 </a>
-                                                                <div onclick="submitReply(this,'${comment.id}','${sessionScope.user.userId}',3);"
+                                                                <div onclick="submitReply(this,'<%=innerMoreComment.getId()%>','<%=innerMoreComment.getUser().getUserId()%>','<%=innerMoreComment.getUser().getUserName()%>',3);"
                                                                      class="ui blue mini submit button">
                                                                     回复
                                                                 </div>
@@ -476,7 +474,8 @@
         form.hide();
     }
 
-    function submitReply(e, commentId, userId, level) {
+    function submitReply(e, commentId, pId, pName, level) {
+        console.log(pName)
         var form = $(e).closest('form');
         var a = form.prev();
         var content = form.find('div[contenteditable="true"]');
@@ -485,9 +484,16 @@
         $.ajax({
             type: 'post',
             url: '<c:url value="/manager/comments/reply"/>',
-            data: {'parent.id': commentId, 'user.userId': userId, 'content': content.html()},
+            data: {
+                'parent.id': commentId,
+                'user.userId': '${sessionScope.user.userId}',
+                'articleId': '${requestScope.article.id}',
+                'content': content.html()
+            },
             success: function (e) {
-                if (e.status == 'ok') {
+                console.log(e);
+
+                if (e.status == Constants.responseMsgStatus.OK) {
                     a.show();
                     form.hide();
                     content.html(''); // Reset
@@ -495,22 +501,22 @@
                     var userName = '${sessionScope.user.userName}';
                     var template;
                     var comments;
-                    var comment = {date: 'just now', content: 'hello world'};
+                    var comment = e.data;
                     if (level == 1) {
                         var contentDiv = a.closest('div[class="content"]');
                         if (contentDiv.next().hasClass('comments')) {
                             comments = contentDiv.next();
-                            template = commentTemplate(header, userName, comment, 'none', level + 1);
+                            template = commentTemplate(header, userName, comment, pId, pName, 'none', level + 1);
                             comments.append(template);
                             template.show('normal');
                         } else {
-                            template = commentsTemplate(header, userName, comment, 'none', level + 1);
+                            template = commentsTemplate(header, userName, comment, pId, pName, 'none', level + 1);
                             template.insertAfter(contentDiv);
                             template.show('normal');
                         }
                     } else if (level == 2 || level == 3) {
                         var parentComment = a.closest('div[class="comment"]');
-                        template = commentTemplate(header, userName, comment, 'none', level == 2 ? ++level : level);
+                        template = commentTemplate(header, userName, comment, pId, pName, 'none', level == 2 ? ++level : level);
                         template.insertAfter(parentComment);
                         template.show('normal');
                     }
@@ -524,25 +530,25 @@
         });
     }
 
-    function commentsTemplate(header, user, comment, display, level) {
-        var commentDiv = commentTemplate(header, user, comment, 'normal', level);
+    function commentsTemplate(header, user, comment, pId, pName, display, level) {
+        var commentDiv = commentTemplate(header, user, comment, pId, pName, 'normal', level);
         var comments = $('<div class="comments" style="display:' + display + '"></div>');
         comments.append(commentDiv);
         return comments;
     }
 
-    function commentTemplate(header, user, comment, display, level) {
+    function commentTemplate(header, user, comment, pId, pName, display, level) {
+        console.log('pid=' + pId + ', pName=' + pName)
         var author = '<a class="author">' + user + '</a>';
         if (level == 3) {
-//            author = '<a class="author">' + user + '</a><span><i class="forward mail icon"></i></span><a class="author">'+comment.parent.user.userId+'</a>'
-            author = '<a class="author">' + user + '</a><span><i class="forward mail icon"></i></span><a class="author">yamorn</a>';
+            author = '<a class="author">' + user + '</a><span><i class="forward mail icon"></i></span><a class="author">' + pName + '</a>';
         }
         return $('<div class="comment" style="display:' + display + '">' +
                 '<a class="avatar"><img src="' + header + '"></a>' +
                 '<div class="content">' +
                 author +
                 '<div class="metadata">' +
-                '<span class="date">' + comment.date + '</span>' +
+                '<span class="date">' + comment.commentDate + '</span>' +
                 '</div>' +
                 '<div class="text">' + comment.content + '</div>' +
                 '<div class="actions">' +
@@ -553,7 +559,7 @@
                 '</div>' +
                 '<div style="text-align:right;">' +
                 '<a onclick="cancelReply(this);" class="ui link">取消</a>' +
-                '<div onclick="submitReply(this,' + comment.id + ',' + comment.userId + ',' + level + ');" class="ui blue mini submit button">回复</div>' +
+                '<div onclick="submitReply(this,\'' + comment.id + '\',\'' + comment.user.userId + '\',\'' + pId + '\',\'' + pName + '\',' + level + ');" class="ui blue mini submit button">回复</div>' +
                 '</div>' +
                 '</form>' +
                 '</div>' +

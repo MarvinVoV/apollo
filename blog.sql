@@ -84,8 +84,8 @@ CREATE TABLE article_attachment (
 );
 
 CREATE TABLE article_comment (
-  id INT NOT NULL auto_increment PRIMARY KEY,
-  parent_id INT,
+  id VARCHAR (50) NOT NULL PRIMARY KEY,
+  parent_id VARCHAR (50),
   article_id VARCHAR (50),
   user_id VARCHAR (50),
   content LONGTEXT,

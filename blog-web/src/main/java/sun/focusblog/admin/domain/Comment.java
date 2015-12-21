@@ -8,11 +8,11 @@ import java.util.List;
 
 /**
  * Created by root on 2015/12/16.
- *
+ * <p/>
  * Article Comment
  */
 public class Comment {
-    private int id;
+    private String id; // uuid
     private String articleId;
     private String content;
     private Date commentDate;
@@ -20,11 +20,11 @@ public class Comment {
     private Comment parent;
     private List<Comment> children = new LinkedList<>();
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -11,8 +11,8 @@
 
     <!-- Comments Domain Mapping -->
     <resultMap id="commentsResultMapper" type="sun.focusblog.admin.domain.Comment">
-        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
-        <result property="parent.id" column="parent_id" javaType="int" jdbcType="INTEGER"/>
+        <result property="id" column="id" javaType="String" jdbcType="VARCHAR"/>
+        <result property="parent.id" column="parent_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="articleId" column="article_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="content" column="content" javaType="String" jdbcType="VARCHAR"/>
         <result property="commentDate" column="comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
@@ -20,8 +20,8 @@
         <result property="user.userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="user.header" column="header" javaType="String" jdbcType="VARCHAR"/>
         <collection property="children" ofType="sun.focusblog.admin.domain.Comment">
-            <result property="id" column="c_id" javaType="int" jdbcType="INTEGER"/>
-            <result property="parent.id" column="c_parent_id" javaType="int" jdbcType="INTEGER"/>
+            <result property="id" column="c_id" javaType="String" jdbcType="VARCHAR"/>
+            <result property="parent.id" column="c_parent_id" javaType="String" jdbcType="VARCHAR"/>
             <result property="articleId" column="c_article_id" javaType="String" jdbcType="VARCHAR"/>
             <result property="content" column="c_content" javaType="String" jdbcType="VARCHAR"/>
             <result property="commentDate" column="c_comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
@@ -62,7 +62,7 @@
     </select>
 
     <!-- Delete comments by comment id -->
-    <delete id="delete" parameterType="int">
+    <delete id="delete" parameterType="String">
         DELETE
         FROM
             article_comment
@@ -70,7 +70,7 @@
             id = #{id}
     </delete>
 
-    <select id="query" parameterType="int" resultMap="commentsResultMapper">
+    <select id="query" parameterType="String" resultMap="commentsResultMapper">
         SELECT
             a1.id AS id,
             a1.parent_id AS parent_id,
@@ -109,6 +109,7 @@
 
     <insert id="save" parameterType="sun.focusblog.admin.domain.Comment">
         INSERT INTO article_comment (
+            id,
             parent_id,
             article_id,
             user_id,
@@ -117,6 +118,7 @@
         )
         VALUES
             (
+                #{id},
                 #{parent.id},
                 #{articleId},
                 #{user.userId},

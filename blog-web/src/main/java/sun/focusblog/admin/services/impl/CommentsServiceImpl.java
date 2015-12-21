@@ -1,5 +1,6 @@
 package sun.focusblog.admin.services.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -8,10 +9,7 @@ import sun.focusblog.admin.domain.Comment;
 import sun.focusblog.admin.domain.auth.User;
 import sun.focusblog.admin.services.CommentsService;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by root on 2015/12/16.
@@ -47,12 +45,22 @@ public class CommentsServiceImpl implements CommentsService {
         int i = 0;
         for (Comment comment : list) {
             if (comment.getParent() == null) {
-                treeList.add(comment);
+                boolean flag = false;
+                for (Comment com : treeList) {
+                    if (com.getId().equals(comment.getId())) {
+                        flag = true;
+                    }
+                }
+                if (!flag) {
+                    treeList.add(comment);
+                }
             } else {
                 if (i == 0 && treeList.size() == 0) {  // Bounds checking
                     i = -1;
                     Comment rootNode = traceBackForRoot(comment);
-                    treeList.add(rootNode);
+                    if (rootNode != null) {
+                        treeList.add(rootNode);
+                    }
                 } else {
                     appendNode(treeList, comment);
                 }
@@ -86,7 +94,7 @@ public class CommentsServiceImpl implements CommentsService {
             }
         }
         // Build tree structure
-        if (node.getId() == comment.getId()) {
+        if (node.getId().equals(comment.getId())) {
             List<Comment> children = comment.getChildren();
             node.setChildren(children);
             if (children != null && children.size() > 0) {
@@ -113,6 +121,9 @@ public class CommentsServiceImpl implements CommentsService {
      */
     private Comment traceBackForRoot(Comment comment) {
         Comment node = commentsDao.query(comment.getParent().getId());
+        if (node == null) {
+            return null;
+        }
         // Fix child parent relationship
         List<Comment> children = node.getChildren();
         if (children != null && children.size() > 0) {
@@ -128,7 +139,7 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
-    public Comment query(int id) {
+    public Comment query(String id) {
         return commentsDao.query(id);
     }
 
@@ -145,6 +156,9 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public boolean save(Comment comment, User user) {
         if (comment != null && user != null) {
+            if (StringUtils.isEmpty(comment.getId())) {
+                comment.setId(UUID.randomUUID().toString());
+            }
             comment.setUser(user);
             comment.setCommentDate(new Date());
             return commentsDao.save(comment);

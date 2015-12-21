@@ -110,3 +110,12 @@ function randomSiteColor() {
     var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 'blue', 'violet', 'purple', 'pink', 'brown', 'grey', 'black'];
     return colors[randomNumber(colors.length)];
 }
+
+
+var Constants = {
+      responseMsgStatus:{
+          OK:'OK',
+          ERROR:'ERROR'
+      }
+};
+

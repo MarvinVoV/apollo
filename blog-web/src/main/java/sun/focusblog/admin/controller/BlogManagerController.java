@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Base64Utils;
 import org.springframework.validation.BindingResult;
@@ -19,6 +18,8 @@ import sun.focusblog.admin.domain.Category;
 import sun.focusblog.admin.domain.Comment;
 import sun.focusblog.admin.domain.RelationType;
 import sun.focusblog.admin.domain.auth.User;
+import sun.focusblog.admin.domain.sys.ResponseEntity;
+import sun.focusblog.admin.domain.sys.ResponseMsgStatus;
 import sun.focusblog.admin.services.*;
 import sun.focusblog.utils.JSONBuilder;
 
@@ -327,7 +328,7 @@ public class BlogManagerController {
     //                          Relation
     //#####################################################################################
 
-    @RequestMapping(value = "user/follow", method = RequestMethod.POST, produces = {"application/json"})
+    @RequestMapping(value = "user/follow", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     public
     @ResponseBody
     String follow(@RequestParam String uid, HttpSession httpSession) {
@@ -359,15 +360,17 @@ public class BlogManagerController {
 
     @RequestMapping(value = "comments/reply", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public String addReply(@ModelAttribute Comment comment, HttpSession httpSession) {
+    public ResponseEntity<Comment> addReply(@ModelAttribute Comment comment, HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
-
-//        boolean retVal = commentsService.save(comment, user);
-        boolean retVal = true;
+        String id = UUID.randomUUID().toString();
+        comment.setId(id);
+        boolean retVal = commentsService.save(comment, user);
+        Comment persistComment = null;
         if (!retVal) {
-            return JSONBuilder.builder().inflate("status", "error").build().toString();
+            return new ResponseEntity<>(ResponseMsgStatus.ERROR, null, persistComment);
         }
-        return JSONBuilder.builder().inflate("status", "ok").build().toString();
+        persistComment = commentsService.query(id);
+        return new ResponseEntity<>(ResponseMsgStatus.OK, null, persistComment);
     }
 
 
