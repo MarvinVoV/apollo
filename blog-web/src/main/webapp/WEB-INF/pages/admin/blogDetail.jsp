@@ -126,21 +126,16 @@
             </div>
 
             <div class="ui basic segment">
-
                 <div class="ui comments">
                     <h3 class="ui dividing tiny header" style="color:#666"><i class="mini comments icon"></i>评论</h3>
                     <c:forEach var="comment" items="${requestScope.comments}">
                         <div class="comment">
-                            <a class="avatar">
-                                <img src="${comment.user.header}">
-                            </a>
-
+                            <a class="avatar"><img src="${comment.user.header}"></a>
                             <div class="content">
                                 <a class="author">${comment.user.userName}</a>
-
                                 <div class="metadata">
                                     <span class="date">
-                                        <fmt:formatDate value="${comment.commentDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                        <fmt:formatDate value="${comment.date}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     </span>
                                 </div>
                                 <div class="text">
@@ -155,9 +150,8 @@
                                         <div style="text-align:right;">
                                             <a onclick="cancelReply(this);" class="ui link">
                                                 取消
-
                                             </a>
-                                            <div onclick="submitReply(this,'${comment.id}','${comment.user.userId}','${comment.user.userName}',1);"
+                                            <div onclick="submitReply(this,'${comment.id}','${comment.user.userId}','${comment.id}', 1);"
                                                  class="ui blue mini submit button">
                                                 回复
                                             </div>
@@ -165,19 +159,20 @@
                                     </form>
                                 </div>
                             </div>
-                            <c:if test="${comment.children.size() != 0}">
+                            <c:if test="${comment.comments.size() != 0}">
                                 <div class="comments">
-                                    <c:forEach var="innerComment" items="${comment.children}">
+                                    <c:forEach var="innerComment" items="${comment.comments}">
                                         <div class="comment">
                                             <a class="avatar">
                                                 <img src="${innerComment.user.header}">
                                             </a>
-
                                             <div class="content">
                                                 <a class="author">${innerComment.user.userName}</a>
+                                                <span><i class="forward mail icon"></i></span><a
+                                                    class="author">${innerComment.parent.user.userName}</a>
                                                 <div class="metadata">
                                                        <span class="date">
-                                                            <fmt:formatDate value="${innerComment.commentDate}"
+                                                            <fmt:formatDate value="${innerComment.date}"
                                                                             pattern="yyyy-MM-dd HH:mm:ss"/>
                                                        </span>
                                                 </div>
@@ -185,7 +180,6 @@
                                                 <div class="actions">
                                                     <a class="reply" href="javascript:void(0);"
                                                        onclick="reply(this)">回复</a>
-
                                                     <form class="ui reply form" style="display: none;">
                                                         <div class="field">
                                                             <div contenteditable="true"
@@ -195,7 +189,7 @@
                                                             <a onclick="cancelReply(this);" class="ui link">
                                                                 取消
                                                             </a>
-                                                            <div onclick="submitReply(this,'${innerComment.id}','${innerComment.user.userId}','${innerComment.user.userName}',2);"
+                                                            <div onclick="submitReply(this,'${innerComment.id}','${innerComment.user.userId}','${comment.id}',2);"
                                                                  class="ui blue mini submit button">
                                                                 回复
                                                             </div>
@@ -204,72 +198,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <c:if test="${innerComment.children.size() != 0}">
-                                            <%
-                                                Comment innerComment = (Comment) pageContext.getAttribute("innerComment");
-                                                List<Comment> innerMoreComments = innerComment.getChildren();
-                                                int i = 0;
-                                                while (i < innerMoreComments.size()) {
-                                                    Comment innerMoreComment = innerMoreComments.get(i);
-                                            %>
-                                            <div class="comment">
-                                                <a class="avatar">
-                                                    <img src="<%=innerMoreComment.getUser().getHeader()%>">
-                                                </a>
-                                                <div class="content">
-                                                    <a class="author"><%=innerMoreComment.getUser().getUserName()%>
-                                                    </a>
-                                                    <span><i class="forward mail icon"></i></span>
-                                                    <a class="author"><%=innerMoreComment.getParent().getUser().getUserName()%>
-                                                    </a>
-
-                                                    <div class="metadata">
-                                                                   <span class="date">
-                                                                        <fmt:formatDate
-                                                                                value="<%=innerMoreComment.getCommentDate()%>"
-                                                                                pattern="yyyy-MM-dd HH:mm:ss"/>
-                                                                   </span>
-                                                    </div>
-                                                    <div class="text"><%=innerMoreComment.getContent()%>
-                                                    </div>
-                                                    <div class="actions">
-                                                        <a class="reply" href="javascript:void(0);"
-                                                           onclick="reply(this)">回复</a>
-                                                        <form class="ui reply form" style="display: none;">
-                                                            <div class="field">
-                                                                <div contenteditable="true"
-                                                                     class="auto_increment_div"></div>
-                                                            </div>
-                                                            <div style="text-align:right;">
-                                                                <a onclick="cancelReply(this);" class="ui link">
-                                                                    取消
-                                                                </a>
-                                                                <div onclick="submitReply(this,'<%=innerMoreComment.getId()%>','<%=innerMoreComment.getUser().getUserId()%>','<%=innerMoreComment.getUser().getUserName()%>',3);"
-                                                                     class="ui blue mini submit button">
-                                                                    回复
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <%
-                                                    if (i == innerMoreComments.size() - 1) {
-                                                        List<Comment> moreChildren = innerMoreComment.getChildren();
-                                                        if (moreChildren.size() != 0) {
-                                                            innerMoreComments = moreChildren;
-                                                            i = -1;
-                                                        }
-                                                    }
-                                                    i++;
-                                                }
-                                            %>
-                                        </c:if>
                                     </c:forEach>
                                 </div>
                             </c:if>
                         </div>
                     </c:forEach>
+
                     <div style="text-align: center;">
                         <p:pagination num="${requestScope.pagination.num}"
                                       size="${requestScope.pagination.size}"
@@ -290,9 +224,7 @@
                                       method="post">
                                     <div class="field">
                                         <textarea placeholder="" name="content"></textarea>
-                                        <input type="hidden" name="articleId"
-                                               value="${requestScope.article.id}">
-                                        <input type="hidden" name="uid" value="${pageScope.user.userId}">
+                                        <input type="hidden" name="articleId" value="${requestScope.article.id}">
                                     </div>
                                     <a href="javascript:void(0);" onclick="addComment(this);"
                                        class="ui blue labeled submit icon button">
@@ -467,15 +399,13 @@
     }
 
     function cancelReply(e) {
-        console.log(e);
         var form = $(e).closest('form');
         var a = form.prev();
         a.show();
         form.hide();
     }
 
-    function submitReply(e, commentId, pId, pName, level) {
-        console.log(pName)
+    function submitReply(e, commentId, userId, ancestor, level) {
         var form = $(e).closest('form');
         var a = form.prev();
         var content = form.find('div[contenteditable="true"]');
@@ -486,19 +416,16 @@
             url: '<c:url value="/manager/comments/reply"/>',
             data: {
                 'parent.id': commentId,
-                'user.userId': '${sessionScope.user.userId}',
+                'parent.user.userId': userId,
                 'articleId': '${requestScope.article.id}',
-                'content': content.html()
+                'content': content.html(),
+                'ancestor': ancestor
             },
             success: function (e) {
-                console.log(e);
-
                 if (e.status == Constants.responseMsgStatus.OK) {
                     a.show();
                     form.hide();
                     content.html(''); // Reset
-                    var header = '${sessionScope.user.header}';
-                    var userName = '${sessionScope.user.userName}';
                     var template;
                     var comments;
                     var comment = e.data;
@@ -506,18 +433,17 @@
                         var contentDiv = a.closest('div[class="content"]');
                         if (contentDiv.next().hasClass('comments')) {
                             comments = contentDiv.next();
-                            template = commentTemplate(header, userName, comment, pId, pName, 'none', level + 1);
+                            template = commentTemplate(comment, ancestor, 'none');
                             comments.append(template);
                             template.show('normal');
                         } else {
-                            template = commentsTemplate(header, userName, comment, pId, pName, 'none', level + 1);
+                            template = commentsTemplate(comment, ancestor, 'none');
                             template.insertAfter(contentDiv);
                             template.show('normal');
                         }
-                    } else if (level == 2 || level == 3) {
-                        var parentComment = a.closest('div[class="comment"]');
-                        template = commentTemplate(header, userName, comment, pId, pName, 'none', level == 2 ? ++level : level);
-                        template.insertAfter(parentComment);
+                    } else {
+                        template = commentTemplate(comment, ancestor, 'none');
+                        template.insertAfter(a.closest('div[class="comment"]'));
                         template.show('normal');
                     }
                 } else {
@@ -529,26 +455,20 @@
             }
         });
     }
-
-    function commentsTemplate(header, user, comment, pId, pName, display, level) {
-        var commentDiv = commentTemplate(header, user, comment, pId, pName, 'normal', level);
+    function commentsTemplate(comment, ancestor, display) {
+        var commentDiv = commentTemplate(comment, ancestor, 'normal');
         var comments = $('<div class="comments" style="display:' + display + '"></div>');
         comments.append(commentDiv);
         return comments;
     }
-
-    function commentTemplate(header, user, comment, pId, pName, display, level) {
-        console.log('pid=' + pId + ', pName=' + pName)
-        var author = '<a class="author">' + user + '</a>';
-        if (level == 3) {
-            author = '<a class="author">' + user + '</a><span><i class="forward mail icon"></i></span><a class="author">' + pName + '</a>';
-        }
+    function commentTemplate(comment, ancestor, display) {
+        var author = '<a class="author">${sessionScope.user.userName}</a><span><i class="forward mail icon"></i></span><a class="author">' + comment.parent.user.userName + '</a>';
         return $('<div class="comment" style="display:' + display + '">' +
-                '<a class="avatar"><img src="' + header + '"></a>' +
+                '<a class="avatar"><img src="${sessionScope.user.header}"></a>' +
                 '<div class="content">' +
                 author +
                 '<div class="metadata">' +
-                '<span class="date">' + comment.commentDate + '</span>' +
+                '<span class="date">' + comment.date + '</span>' +
                 '</div>' +
                 '<div class="text">' + comment.content + '</div>' +
                 '<div class="actions">' +
@@ -559,7 +479,7 @@
                 '</div>' +
                 '<div style="text-align:right;">' +
                 '<a onclick="cancelReply(this);" class="ui link">取消</a>' +
-                '<div onclick="submitReply(this,\'' + comment.id + '\',\'' + comment.user.userId + '\',\'' + pId + '\',\'' + pName + '\',' + level + ');" class="ui blue mini submit button">回复</div>' +
+                '<div onclick="submitReply(this,\'' + comment.id + '\',\'' + comment.user.userId + '\',\'' + ancestor + '\');" class="ui blue mini submit button">回复</div>' +
                 '</div>' +
                 '</form>' +
                 '</div>' +

@@ -15,50 +15,34 @@
         <result property="parent.id" column="parent_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="articleId" column="article_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="content" column="content" javaType="String" jdbcType="VARCHAR"/>
-        <result property="commentDate" column="comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result property="date" column="date" javaType="Date" jdbcType="TIMESTAMP"/>
         <result property="user.userId" column="user_id" javaType="String" jdbcType="VARCHAR"/>
         <result property="user.userName" column="user_name" javaType="String" jdbcType="VARCHAR"/>
         <result property="user.header" column="header" javaType="String" jdbcType="VARCHAR"/>
-        <collection property="children" ofType="sun.focusblog.admin.domain.Comment">
-            <result property="id" column="c_id" javaType="String" jdbcType="VARCHAR"/>
-            <result property="parent.id" column="c_parent_id" javaType="String" jdbcType="VARCHAR"/>
-            <result property="articleId" column="c_article_id" javaType="String" jdbcType="VARCHAR"/>
-            <result property="content" column="c_content" javaType="String" jdbcType="VARCHAR"/>
-            <result property="commentDate" column="c_comment_date" javaType="Date" jdbcType="TIMESTAMP"/>
-            <result property="user.userId" column="c_user_id" javaType="String" jdbcType="VARCHAR"/>
-            <result property="user.userName" column="c_user_name" javaType="String" jdbcType="VARCHAR"/>
-            <result property="user.header" column="c_header" javaType="String" jdbcType="VARCHAR"/>
-        </collection>
+        <result property="comments" column="comments" javaType="java.util.List"
+                typeHandler="sun.focusblog.admin.handler.CommentsTypeHandler" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- Query Comments -->
     <select id="list" parameterType="String" resultMap="commentsResultMapper">
         SELECT
-            a1.id AS id,
-            a1.parent_id AS parent_id,
-            a1.user_id AS user_id,
-            a1.article_id AS article_id,
-            a1.content AS content,
-            a1.comment_date AS comment_date,
-            u1.header AS header,
-            u1.user_name AS user_name,
-            a2.id AS c_id,
-            a2.parent_id AS c_parent_id,
-            a2.article_id AS c_article_id,
-            a2.user_id AS c_user_id,
-            a2.content AS c_content,
-            a2.comment_date AS c_comment_date,
-            u2.header AS c_header,
-            u2.user_name AS c_user_name
+            c.id,
+            c.parent_id,
+            c.article_id,
+            u.user_id,
+            u.header,
+            u.user_name,
+            c.content,
+            c.comments,
+            c.date
         FROM
-            article_comment a1
-        LEFT JOIN article_comment a2 ON a1.id = a2.parent_id
-        LEFT JOIN USER u1 ON u1.user_id = a1.user_id
-        LEFT JOIN USER u2 ON a2.user_id = u2.user_id
+            article_comment c,
+            USER u
         WHERE
-            a1.article_id = #{aritcleId}
+            c.user_id = u.user_id
+        AND c.article_id = #{articleId}
         ORDER BY
-	        a1.comment_date DESC
+            c.date DESC
     </select>
 
     <!-- Delete comments by comment id -->
@@ -72,29 +56,21 @@
 
     <select id="query" parameterType="String" resultMap="commentsResultMapper">
         SELECT
-            a1.id AS id,
-            a1.parent_id AS parent_id,
-            a1.user_id AS user_id,
-            a1.article_id AS article_id,
-            a1.content AS content,
-            a1.comment_date AS comment_date,
-            u1.header AS header,
-            u1.user_name AS user_name,
-            a2.id AS c_id,
-            a2.parent_id AS c_parent_id,
-            a2.article_id AS c_article_id,
-            a2.user_id AS c_user_id,
-            a2.content AS c_content,
-            a2.comment_date AS c_comment_date,
-            u2.header AS c_header,
-            u2.user_name AS c_user_name
+            c.id,
+            c.parent_id,
+            c.article_id,
+            u.user_id,
+            u.header,
+            u.user_name,
+            c.content,
+            c.comments,
+            c.date
         FROM
-            article_comment a1
-        LEFT JOIN article_comment a2 ON a1.id = a2.parent_id
-        LEFT JOIN USER u1 ON u1.user_id = a1.user_id
-        LEFT JOIN USER u2 ON a2.user_id = u2.user_id
+            article_comment c,
+            USER u
         WHERE
-            a1.id = #{id}
+            c.user_id = u.user_id
+        AND c.id = #{id}
     </select>
 
     <select id="count" parameterType="String" resultType="int">
@@ -114,7 +90,8 @@
             article_id,
             user_id,
             content,
-            comment_date
+            date,
+            comments
         )
         VALUES
             (
@@ -123,8 +100,15 @@
                 #{articleId},
                 #{user.userId},
                 #{content},
-                #{commentDate}
+                #{date},
+                #{comments}
             )
     </insert>
+
+    <update id="update" parameterType="sun.focusblog.admin.domain.Comment">
+        update article_comment
+        set comments=#{comments}
+        where id=#{id}
+    </update>
 
 </mapper>

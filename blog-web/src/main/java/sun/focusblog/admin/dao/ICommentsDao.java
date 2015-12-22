@@ -53,4 +53,6 @@ public interface ICommentsDao {
      * @return boolean
      */
     boolean save(Comment comment);
+
+    boolean update(Comment comment);
 }

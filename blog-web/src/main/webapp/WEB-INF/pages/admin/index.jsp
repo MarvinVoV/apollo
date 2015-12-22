@@ -41,7 +41,7 @@
                 <c:forEach items="${requestScope.articles}" var="article">
                     <div class="item">
                         <div class="content">
-                            <a class="ui huge header" href="<c:url value="/manager/article/view?id=${article.id}&uid=${article.userId}"/>">${article.title}</a>
+                            <a class="ui huge header" href="<c:url value="/manager/article/view?id=${article.id}"/>">${article.title}</a>
 
                             <div class="meta">
                                 <div class="site-mini-font">
@@ -59,7 +59,7 @@
                                     <span class="page-fixed-span"><i class="comment outline icon"></i>评论(0)</span>
                                     <span class="page-fixed-span"><i class="remove bookmark icon"></i>收藏(0)</span>
                                     <span class="page-fixed-span"><i class="share icon"></i>分享</span>
-                                    <a class="page-fixed-span" href="<c:url value="/manager/article/view?id=${article.id}&uid=${article.userId}"/>">查看全文</a>
+                                    <a class="page-fixed-span" href="<c:url value="/manager/article/view?id=${article.id}"/>">查看全文</a>
                                 </div>
 
                             </div>

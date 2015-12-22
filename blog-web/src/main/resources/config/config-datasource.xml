@@ -33,6 +33,11 @@
                 </bean>
             </list>
         </property>
+        <property name="typeHandlers">
+            <list>
+                <bean class="sun.focusblog.admin.handler.CommentsTypeHandler"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

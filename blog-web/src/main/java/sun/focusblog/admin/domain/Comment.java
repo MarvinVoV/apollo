@@ -15,10 +15,10 @@ public class Comment {
     private String id; // uuid
     private String articleId;
     private String content;
-    private Date commentDate;
+    private Date date;
     private User user;
     private Comment parent;
-    private List<Comment> children = new LinkedList<>();
+    private List<Comment> comments = new LinkedList<>();    // reply comments, json format
 
     public String getId() {
         return id;
@@ -26,6 +26,14 @@ public class Comment {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Comment getParent() {
+        return parent;
+    }
+
+    public void setParent(Comment parent) {
+        this.parent = parent;
     }
 
     public String getArticleId() {
@@ -44,12 +52,12 @@ public class Comment {
         this.content = content;
     }
 
-    public Date getCommentDate() {
-        return commentDate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setCommentDate(Date commentDate) {
-        this.commentDate = commentDate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public User getUser() {
@@ -60,19 +68,11 @@ public class Comment {
         this.user = user;
     }
 
-    public List<Comment> getChildren() {
-        return children;
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public void setChildren(List<Comment> children) {
-        this.children = children;
-    }
-
-    public Comment getParent() {
-        return parent;
-    }
-
-    public void setParent(Comment parent) {
-        this.parent = parent;
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

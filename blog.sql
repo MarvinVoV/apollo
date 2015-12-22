@@ -89,8 +89,10 @@ CREATE TABLE article_comment (
   article_id VARCHAR (50),
   user_id VARCHAR (50),
   content LONGTEXT,
-  comment_date TIMESTAMP
+  comments LONGTEXT,  -- reply comments , json format
+  date TIMESTAMP
 );
+
 
 CREATE TABLE relation (
   user_id VARCHAR (100) NOT NULL,

@@ -42,4 +42,9 @@ public class CommentsDao extends BaseDao implements ICommentsDao {
     public boolean save(Comment comment) {
         return getSqlSession().insert(buildStatement(NAMESPACE, "save"), comment) == 1;
     }
+
+    @Override
+    public boolean update(Comment comment) {
+        return getSqlSession().update(buildStatement(NAMESPACE, "update"), comment) == 1;
+    }
 }

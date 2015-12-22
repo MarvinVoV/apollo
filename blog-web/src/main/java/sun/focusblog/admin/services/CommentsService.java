@@ -62,4 +62,6 @@ public interface CommentsService {
      */
     boolean save(Comment comment, User user);
 
+    boolean update(Comment comment);
+
 }

@@ -3,6 +3,7 @@ package sun.focusblog.admin.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -209,22 +210,12 @@ public class BlogManagerController {
      * @return model and view
      */
     @RequestMapping(value = "article/view", method = RequestMethod.GET)
-    public ModelAndView viewArticle(@RequestParam String id, @RequestParam String uid,
-                                    @RequestParam(required = false) Integer num, ModelAndView modelAndView,
-                                    HttpSession httpSession) {
-        User user = Helper.getUser(httpSession);
-        if (!StringUtils.isEmpty(uid)) {
-            if (!uid.equals(user.getUserId())) {
-                User currentUser = user;
-                user = userService.query(uid);
-                RelationType relationType = relationService.getRelation(uid, currentUser.getUserId());
-                modelAndView.addObject(MODEL_ATTR_RELATION, relationType.toString());
-            }
-        }
-        // Set follows
-        modelAndView.addObject(MODEL_ATTR_FOLLOWS, relationService.follows(user.getUserId()));
+    public ModelAndView viewArticle(@RequestParam String id, @RequestParam(required = false) Integer num,
+                                    ModelAndView modelAndView, HttpSession httpSession) {
 
-        return prepareModelAttributes(modelAndView, "admin/blogDetail", id, this.commentsService, num, user);
+        User user = Helper.getUser(httpSession);
+        return prepareModelAttributes(modelAndView, "admin/blogDetail", id, this.relationService,
+                this.commentsService, num, user);
     }
 
 
@@ -238,13 +229,14 @@ public class BlogManagerController {
     @RequestMapping(value = "article/modify", method = RequestMethod.GET)
     public ModelAndView modifyArticleView(@RequestParam String id, ModelAndView modelAndView, HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
-        return prepareModelAttributes(modelAndView, "admin/modifyArticle", id, null, null, user);
+        return prepareModelAttributes(modelAndView, "admin/modifyArticle", id, null, null, null, user);
     }
 
     /**
      * Inner Help method
      */
     public ModelAndView prepareModelAttributes(ModelAndView modelAndView, String view, String articleId,
+                                               RelationService relationService,
                                                CommentsService commentsService, Integer pageNum, User user) {
         modelAndView.addObject("user", user);
         // Set categories
@@ -253,6 +245,22 @@ public class BlogManagerController {
         // Set article
         Article article = articleService.query(articleId);
         modelAndView.addObject(MODEL_ATTR_ARTICLE, article);
+
+        // Set relation
+        if (relationService != null) {
+            String userId = article.getUserId();
+            if (!StringUtils.isEmpty(userId)) {
+                if (!userId.equals(user.getUserId())) {
+                    User author = userService.query(userId);
+                    // Reset user
+                    modelAndView.addObject("user", author);
+                    RelationType relationType = relationService.getRelation(userId, user.getUserId());
+                    modelAndView.addObject(MODEL_ATTR_RELATION, relationType.toString());
+                }
+            }
+            // Set follows
+            modelAndView.addObject(MODEL_ATTR_FOLLOWS, relationService.follows(user.getUserId()));
+        }
         // Set comments
         if (commentsService != null) {
             int count = commentsService.count(articleId);
@@ -348,29 +356,64 @@ public class BlogManagerController {
     //#####################################################################################
 
     @RequestMapping(value = "comments/add", method = RequestMethod.POST)
-    public String addComment(@ModelAttribute Comment comment, @RequestParam String uid, HttpSession httpSession) {
+    public String addComment(@ModelAttribute Comment comment, HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
 
         boolean retVal = commentsService.save(comment, user);
         if (!retVal) {
             logger.error("save comment failed.");
         }
-        return String.format("redirect:/manager/article/view?id=%s&uid=%s", comment.getArticleId(), uid);
+        return String.format("redirect:/manager/article/view?id=%s", comment.getArticleId());
     }
 
     @RequestMapping(value = "comments/reply", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public ResponseEntity<Comment> addReply(@ModelAttribute Comment comment, HttpSession httpSession) {
+    public ResponseEntity<Comment> addReply(@ModelAttribute Comment comment, @RequestParam String ancestor,
+                                            HttpSession httpSession) {
         User user = Helper.getUser(httpSession);
         String id = UUID.randomUUID().toString();
         comment.setId(id);
-        boolean retVal = commentsService.save(comment, user);
-        Comment persistComment = null;
-        if (!retVal) {
-            return new ResponseEntity<>(ResponseMsgStatus.ERROR, null, persistComment);
+
+        // Set user information
+        User currentUser = new User();
+        currentUser.setUserId(user.getUserId());
+        currentUser.setUserName(user.getUserName());
+        currentUser.setHeader(user.getHeader());
+        comment.setUser(currentUser);
+        comment.setDate(new Date());
+
+        String commentId = ancestor;
+        if (StringUtils.isEmpty(commentId)) {
+            commentId = comment.getParent().getId();
         }
-        persistComment = commentsService.query(id);
-        return new ResponseEntity<>(ResponseMsgStatus.OK, null, persistComment);
+        Comment updateComment = commentsService.query(commentId);
+        List<Comment> comments = updateComment.getComments();
+        int index = -1;
+        for (int i = 0; i < comments.size(); i++) {
+            Comment com = comments.get(i);
+            if (com.getId().equals(comment.getParent().getId()) && !comment.getParent().getId().equals(updateComment.getId())) {
+                index = i;
+                break;
+            }
+        }
+        Comment parent = new Comment();
+        if (index != -1) {
+            parent.setUser(comments.get(index).getUser());
+            parent.setId(comments.get(index).getId());
+            comment.setParent(parent);
+            comments.add(index + 1, comment);
+        } else {
+            parent.setUser(updateComment.getUser());
+            parent.setId(updateComment.getId());
+            comment.setParent(parent);
+            comments.add(comment);
+        }
+
+        boolean retVal = commentsService.update(updateComment);
+        if (!retVal) {
+            return new ResponseEntity<>(ResponseMsgStatus.ERROR, null, comment);
+        }
+        return new ResponseEntity<>(ResponseMsgStatus.OK, null, comment);
     }
 
 

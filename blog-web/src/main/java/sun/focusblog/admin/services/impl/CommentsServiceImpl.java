@@ -35,108 +35,9 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public List<Comment> list(String articleId, int start, int size) {
-        List<Comment> list = commentsDao.list(articleId, start, size);
-        if (list == null || list.size() == 0) {
-            return new ArrayList<>();
-        }
-
-        List<Comment> treeList = new LinkedList<>();
-
-        int i = 0;
-        for (Comment comment : list) {
-            if (comment.getParent() == null) {
-                boolean flag = false;
-                for (Comment com : treeList) {
-                    if (com.getId().equals(comment.getId())) {
-                        flag = true;
-                    }
-                }
-                if (!flag) {
-                    treeList.add(comment);
-                }
-            } else {
-                if (i == 0 && treeList.size() == 0) {  // Bounds checking
-                    i = -1;
-                    Comment rootNode = traceBackForRoot(comment);
-                    if (rootNode != null) {
-                        treeList.add(rootNode);
-                    }
-                } else {
-                    appendNode(treeList, comment);
-                }
-            }
-        }
-
-        return treeList;
+        return commentsDao.list(articleId, start, size);
     }
 
-    private void appendNode(List<Comment> treeList, Comment comment) {
-        for (Comment node : treeList) {
-            if (traverseNode(node, comment)) {
-                break;
-            }
-        }
-    }
-
-    /**
-     * build relation between parent and chilren
-     *
-     * @param node    node of tree
-     * @param comment line head node
-     * @return true find
-     */
-    private boolean traverseNode(Comment node, Comment comment) {
-        // Fix child parent relationship
-        List<Comment> nodeChildren = node.getChildren();
-        if (nodeChildren != null && nodeChildren.size() > 0) {
-            for (Comment nodeChild : nodeChildren) {
-                nodeChild.setParent(node);
-            }
-        }
-        // Build tree structure
-        if (node.getId().equals(comment.getId())) {
-            List<Comment> children = comment.getChildren();
-            node.setChildren(children);
-            if (children != null && children.size() > 0) {
-                for (Comment child : children) {
-                    child.setParent(node);
-                }
-            }
-            return true;
-        } else {
-            for (Comment child : node.getChildren()) {
-                if (traverseNode(child, comment)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Trace back to find the root node
-     *
-     * @param comment comment
-     * @return root comment
-     */
-    private Comment traceBackForRoot(Comment comment) {
-        Comment node = commentsDao.query(comment.getParent().getId());
-        if (node == null) {
-            return null;
-        }
-        // Fix child parent relationship
-        List<Comment> children = node.getChildren();
-        if (children != null && children.size() > 0) {
-            for (Comment nodeChild : children) {
-                nodeChild.setParent(node);
-            }
-        }
-
-        if (node.getParent() != null) {
-            return traceBackForRoot(node);
-        }
-        return node;
-    }
 
     @Override
     public Comment query(String id) {
@@ -160,9 +61,14 @@ public class CommentsServiceImpl implements CommentsService {
                 comment.setId(UUID.randomUUID().toString());
             }
             comment.setUser(user);
-            comment.setCommentDate(new Date());
+            comment.setDate(new Date());
             return commentsDao.save(comment);
         }
         return false;
+    }
+
+    @Override
+    public boolean update(Comment comment) {
+        return commentsDao.update(comment);
     }
 }

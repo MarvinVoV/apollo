@@ -1,15 +1,17 @@
 package sun.focusblog.framework.cache.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.lang.reflect.ParameterizedType;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
  * Created by yamorn on 2015/11/11.
- *
+ * <p/>
  * A simple Json Serializer.
  */
 public class JsonSerializeUtils {
@@ -43,6 +45,33 @@ public class JsonSerializeUtils {
             return null;
         }
         return gson.fromJson(json, clazz);
+    }
+
+    /**
+     * Convert json array to list
+     *
+     * @param jsonArray json array string
+     * @param type      element type
+     * @param <T>       element class type
+     * @return list
+     */
+    public static <T> List<T> toList(String jsonArray, Class<T> type) {
+        if (StringUtils.isEmpty(jsonArray)) {
+            return null;
+        }
+        List<T> list = new LinkedList<>();
+        try {
+            JsonArray array = (JsonArray) new JsonParser().parse(jsonArray);
+            for (int i = 0; i < array.size(); i++) {
+                JsonObject jsonObject = (JsonObject) array.get(i);
+                T t = gson.fromJson(jsonObject.toString(), type);
+                list.add(t);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**
