@@ -2,12 +2,11 @@
 
 [项目文档](https://sunyameng.gitbook.io/apollo/)
 
-一些未整理的脚本
+
+Run
+
 ```bash
-./mvnw spring-boot:run
-
-
-./mvnw clean package
-
-java -jar target/xxx.jar
+mvn clean install
+cd apollo/app/web/boot
+mvn spring-boot:run
 ```

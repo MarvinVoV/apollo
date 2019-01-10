@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.marvin.apollo.common.dal.entity.UserEntityMapper">
+    <resultMap id="UserResultMap" type="UserEntity">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="gender" property="gender" jdbcType="BIT"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id, account, age, gender, status, gmt_create, gmt_modified
+    </sql>
+
+    <select id="getOne" resultMap="UserResultMap" parameterType="Integer">
+        SELECT
+        <include refid="BaseColumnList"/>
+        FROM user WHERE id = #{id}
+    </select>
+
+    <select id="getOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumnList"/>
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true"
+            parameterType="UserEntity">
+       INSERT INTO
+       		user
+       		(account,age, gender, status, gmt_create, gmt_modified)
+       	VALUES
+       		(#{account}, #{age}, #{gender}, #{status}, now(), now())
+    </insert>
+</mapper>
