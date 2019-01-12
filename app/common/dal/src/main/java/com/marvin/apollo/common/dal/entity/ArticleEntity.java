@@ -4,11 +4,12 @@ package com.marvin.apollo.common.dal.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
-public class ArticleEntity {
+public class ArticleEntity implements Serializable {
     private long   id;
     private long   userId;
     private long   categoryId;
