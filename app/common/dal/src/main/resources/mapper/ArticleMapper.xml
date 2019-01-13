@@ -58,4 +58,16 @@
             gmt_modified = now()
         where id = #{id}
     </update>
+
+    <select id="queryList" parameterType="map" resultType="ArticleEntity">
+        SELECT
+        <include refid="AllColumnList"/>
+        FROM article WHERE status=1
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+    </select>
 </mapper>

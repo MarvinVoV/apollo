@@ -4,13 +4,19 @@
     <resultMap id="ResultMap" type="CategoryEntity">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="AllColumnList">
-        id, name, status, gmt_create, gmt_modified
+        id,
+        name,
+        user_id,
+        status,
+        gmt_create,
+        gmt_modified
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="ResultMap" parameterType="Long">
@@ -22,9 +28,9 @@
     <insert id="insert" parameterType="UserEntity">
         INSERT INTO
         category
-        (name, status, gmt_create, gmt_modified)
+        (name, user_id, status, gmt_create, gmt_modified)
         VALUES
-        (#{name}, #{status}, now(), now())
+        (#{name}, #{userId}, #{status}, now(), now())
         <selectKey keyProperty="id" keyColumn="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID();
         </selectKey>
@@ -39,9 +45,15 @@
     <update id="updateByPrimaryKey" parameterType="UserEntity">
         update category
         set name         = #{name},
+            user_id      = #{userId},
             status       = #{status},
             gmt_create   = now(),
             gmt_modified = now()
         where id = #{id}
     </update>
+
+    <select id="queryAllByUserId" parameterType="long" resultMap="ResultMap">
+        <include refid="AllColumnList"/>
+        FROM category WHERE status = 1 and user_id = #{userId}
+    </select>
 </mapper>

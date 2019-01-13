@@ -15,10 +15,10 @@ public class ArticleEntity implements Serializable {
     private long   categoryId;
     private String title;
     private byte[] content;
-    private long   top;
+    private int    top;
     private String tag;
-    private long   invisible;
-    private long   status;
+    private int    invisible;
+    private int    status;
     private Date   gmtCreate;
     private Date   gmtModified;
 }

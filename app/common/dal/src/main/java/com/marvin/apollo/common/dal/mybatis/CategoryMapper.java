@@ -2,7 +2,10 @@ package com.marvin.apollo.common.dal.mybatis;
 
 import com.marvin.apollo.common.dal.entity.CategoryEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author hufeng
@@ -11,5 +14,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface CategoryMapper extends BaseMapper<CategoryEntity, Long> {
-
+    List<CategoryEntity> queryAllByUserId(@Param("userId") long userId);
 }

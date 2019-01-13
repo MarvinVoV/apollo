@@ -11,6 +11,7 @@ import java.util.Date;
 public class CategoryEntity implements Serializable {
     private long   id;
     private String name;
+    private Long   userId;
     private int    status;
     private Date   gmtCreate;
     private Date   gmtModified;

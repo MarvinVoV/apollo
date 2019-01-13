@@ -25,6 +25,11 @@
             <artifactId>common-dal</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.marvin.apollo</groupId>
+            <artifactId>core-model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
