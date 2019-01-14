@@ -1,40 +1,29 @@
 package com.marvin.apollo.core.service.repository.convert;
 
 import com.marvin.apollo.common.dal.entity.UserEntity;
-import com.marvin.apollo.core.model.domain.User;
-import com.marvin.apollo.core.model.dto.UserDTO;
-import com.marvin.apollo.core.model.enums.Gender;
-import com.marvin.apollo.core.model.enums.RecordStatus;
+import com.marvin.apollo.core.model.dto.UserDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * @author hufeng
  * @version UserConvert.java, v 0.1 2019-01-13 23:54 Exp $
  */
+@Mapper
+public interface UserConvert extends DefaultConvert{
+    UserConvert INSTANCE = Mappers.getMapper(UserConvert.class);
 
-public class UserConvert {
-    public static UserDTO convert(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        UserDTO dto = new UserDTO();
-        dto.setId(entity.getId());
-        dto.setAccount(entity.getAccount());
-        dto.setAge(entity.getAge());
-        dto.setGender(Gender.getByCode(entity.getGender()));
-        dto.setCreateTime(entity.getGmtCreate());
-        dto.setModifiedTime(entity.getGmtModified());
-        dto.setRecordStatus(RecordStatus.getByCode(entity.getStatus()));
-        return dto;
-    }
+    @Mappings({
+            @Mapping(source = "status", target = "recordStatus"),
+            @Mapping(source = "gender", target = "gender"),
+            @Mapping(source = "gmtCreate", target = "createTime"),
+            @Mapping(source = "gmtModified", target = "modifiedTime")
+    })
+    UserDto entityToDto(UserEntity entity);
 
-    public static User convert(UserDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        User user = new User();
-        user.setId(dto.getId());
-        user.setAccount(dto.getAccount());
-        user.setGender(dto.getGender());
-        return user;
-    }
+    List<UserDto> entitiesToDtos(List<UserEntity> entities);
 }

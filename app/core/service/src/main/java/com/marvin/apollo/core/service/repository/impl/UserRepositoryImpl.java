@@ -2,7 +2,7 @@ package com.marvin.apollo.core.service.repository.impl;
 
 import com.marvin.apollo.common.dal.entity.UserEntity;
 import com.marvin.apollo.common.dal.mybatis.UserMapper;
-import com.marvin.apollo.core.model.dto.UserDTO;
+import com.marvin.apollo.core.model.dto.UserDto;
 import com.marvin.apollo.core.service.repository.UserRepository;
 import com.marvin.apollo.core.service.repository.convert.UserConvert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,8 @@ public class UserRepositoryImpl implements UserRepository {
     private UserMapper userMapper;
 
     @Override
-    public UserDTO queryById(Long userId) {
+    public UserDto queryById(Long userId) {
         UserEntity entity = userMapper.selectByPrimaryKey(userId);
-        return UserConvert.convert(entity);
+        return UserConvert.INSTANCE.entityToDto(entity);
     }
 }

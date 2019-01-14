@@ -1,12 +1,12 @@
 package com.marvin.apollo.core.service.repository.convert;
 
 import com.marvin.apollo.common.dal.entity.CategoryEntity;
-import com.marvin.apollo.core.model.domain.Category;
-import com.marvin.apollo.core.model.dto.CategoryDTO;
-import com.marvin.apollo.core.model.enums.RecordStatus;
-import org.springframework.util.CollectionUtils;
+import com.marvin.apollo.core.model.dto.CategoryDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,37 +14,17 @@ import java.util.List;
  * @version CategoryConvert.java, v 0.1 2019-01-13 23:55 Exp $
  */
 
-public class CategoryConvert {
-    public static CategoryDTO convert(CategoryEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        CategoryDTO dto = new CategoryDTO();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setRecordStatus(RecordStatus.getByCode(entity.getStatus()));
-        dto.setUserId(entity.getUserId());
-        dto.setModifiedTime(entity.getGmtModified());
-        dto.setCreateTime(entity.getGmtCreate());
-        return dto;
-    }
+@Mapper
+public interface CategoryConvert extends DefaultConvert {
+    CategoryConvert INSTANCE = Mappers.getMapper(CategoryConvert.class);
 
-    public static List<CategoryDTO> convertList(List<CategoryEntity> entityList) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            return new ArrayList<>();
-        }
-        List<CategoryDTO> dtoList = new ArrayList<>();
-        entityList.forEach(item -> dtoList.add(convert(item)));
-        return dtoList;
-    }
+    @Mappings({
+            @Mapping(source = "status", target = "recordStatus"),
+            @Mapping(source = "gmtCreate", target = "createTime"),
+            @Mapping(source = "gmtModified", target = "modifiedTime")
+    })
+    CategoryDto entityToDto(CategoryEntity entity);
 
-    public static Category convert(CategoryDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        Category category = new Category();
-        category.setId(dto.getId());
-        category.setName(dto.getName());
-        return category;
-    }
+    List<CategoryDto> entitiesToDtos(List<CategoryEntity> entities);
+
 }

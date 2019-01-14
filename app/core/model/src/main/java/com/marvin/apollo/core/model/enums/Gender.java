@@ -7,7 +7,7 @@ package com.marvin.apollo.core.model.enums;
 
 public enum Gender {
     MALE(1, "男"),
-    FAMALE(2, "女"),
+    FEMALE(2, "女"),
     ;
 
     private int    code;

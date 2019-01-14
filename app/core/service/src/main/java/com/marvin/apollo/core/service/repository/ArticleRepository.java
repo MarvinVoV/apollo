@@ -1,6 +1,6 @@
 package com.marvin.apollo.core.service.repository;
 
-import com.marvin.apollo.core.model.dto.ArticleDTO;
+import com.marvin.apollo.core.model.dto.ArticleDto;
 import com.marvin.apollo.core.model.pagination.PageModel;
 
 /**
@@ -9,5 +9,5 @@ import com.marvin.apollo.core.model.pagination.PageModel;
  */
 
 public interface ArticleRepository {
-    PageModel<ArticleDTO> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize);
+    PageModel<ArticleDto> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize);
 }

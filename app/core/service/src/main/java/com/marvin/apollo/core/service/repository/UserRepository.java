@@ -1,6 +1,6 @@
 package com.marvin.apollo.core.service.repository;
 
-import com.marvin.apollo.core.model.dto.UserDTO;
+import com.marvin.apollo.core.model.dto.UserDto;
 
 /**
  * @author hufeng
@@ -8,5 +8,5 @@ import com.marvin.apollo.core.model.dto.UserDTO;
  */
 
 public interface UserRepository {
-    UserDTO queryById(Long userId);
+    UserDto queryById(Long userId);
 }

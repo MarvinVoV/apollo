@@ -1,12 +1,15 @@
 package com.marvin.apollo.core.model.enums;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
  * @author hufeng
  * @version InvisibleStatus.java, v 0.1 2019-01-13 21:04 Exp $
  */
-
+@Getter
 public enum InvisibleStatus implements Serializable {
     PUBLIC(1, "公开可见"),
     PRIVATE(2, "自己可见");
@@ -27,21 +30,5 @@ public enum InvisibleStatus implements Serializable {
             }
         }
         return null;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 }

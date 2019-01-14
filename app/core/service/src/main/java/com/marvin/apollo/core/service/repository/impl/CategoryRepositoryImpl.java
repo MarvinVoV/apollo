@@ -2,7 +2,7 @@ package com.marvin.apollo.core.service.repository.impl;
 
 import com.marvin.apollo.common.dal.entity.CategoryEntity;
 import com.marvin.apollo.common.dal.mybatis.CategoryMapper;
-import com.marvin.apollo.core.model.dto.CategoryDTO;
+import com.marvin.apollo.core.model.dto.CategoryDto;
 import com.marvin.apollo.core.service.repository.CategoryRepository;
 import com.marvin.apollo.core.service.repository.convert.CategoryConvert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     private CategoryMapper categoryMapper;
 
     @Override
-    public List<CategoryDTO> queryAllByUserId(Long userId) {
+    public List<CategoryDto> queryAllByUserId(Long userId) {
         List<CategoryEntity> entities = categoryMapper.queryAllByUserId(userId);
 
         if (CollectionUtils.isEmpty(entities)) {
             return new ArrayList<>();
         }
-        return CategoryConvert.convertList(entities);
+        return CategoryConvert.INSTANCE.entitiesToDtos(entities);
     }
 }

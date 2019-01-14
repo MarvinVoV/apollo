@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.marvin.apollo.common.dal.entity.ArticleEntity;
 import com.marvin.apollo.common.dal.mybatis.ArticleMapper;
-import com.marvin.apollo.core.model.dto.ArticleDTO;
+import com.marvin.apollo.core.model.dto.ArticleDto;
 import com.marvin.apollo.core.model.pagination.PageModel;
 import com.marvin.apollo.core.service.repository.ArticleRepository;
 import com.marvin.apollo.core.service.repository.convert.ArticleConvert;
@@ -27,12 +27,12 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public PageModel<ArticleDTO> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize) {
+    public PageModel<ArticleDto> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize) {
         PageInfo<ArticleEntity> entityPageInfo = PageHelper.startPage(pageNum, pageSize)
                 .doSelectPageInfo(() -> articleMapper.queryList(userId, categoryId));
-        List<ArticleDTO> articleDTOList = ArticleConvert.convertList(entityPageInfo.getList());
-        PageModel<ArticleDTO> pageModel = new PageModel<>();
-        pageModel.setList(articleDTOList);
+        List<ArticleDto> articleDtoList = ArticleConvert.INSTANCE.entitiesToDtos(entityPageInfo.getList());
+        PageModel<ArticleDto> pageModel = new PageModel<>();
+        pageModel.setList(articleDtoList);
         pageModel.setPageNo(entityPageInfo.getPageNum());
         pageModel.setPageSize(entityPageInfo.getPageSize());
         pageModel.setTotal(entityPageInfo.getTotal());

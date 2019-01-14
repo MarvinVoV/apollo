@@ -1,43 +1,30 @@
 package com.marvin.apollo.core.service.repository.convert;
 
 import com.marvin.apollo.common.dal.entity.ArticleEntity;
-import com.marvin.apollo.core.model.dto.ArticleDTO;
-import com.marvin.apollo.core.model.enums.InvisibleStatus;
-import com.marvin.apollo.core.model.enums.RecordStatus;
-import org.springframework.util.CollectionUtils;
+import com.marvin.apollo.core.model.dto.ArticleDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author hufeng
  * @version ArticleConvert.java, v 0.1 2019-01-13 21:11 Exp $
  */
+@Mapper
+public interface ArticleConvert extends DefaultConvert {
+    ArticleConvert INSTANCE = Mappers.getMapper(ArticleConvert.class);
 
-public class ArticleConvert {
-    public static ArticleDTO convert(ArticleEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        ArticleDTO dto = new ArticleDTO();
-        dto.setId(entity.getId());
-        dto.setCreateTime(entity.getGmtCreate());
-        dto.setModifiedTime(entity.getGmtModified());
-        dto.setUserId(entity.getUserId());
-        dto.setCategoryId(entity.getCategoryId());
-        dto.setTitle(entity.getTitle());
-        dto.setContent(entity.getContent());
-        dto.setInvisibleStatus(InvisibleStatus.getByCode(entity.getInvisible()));
-        dto.setRecordStatus(RecordStatus.getByCode(entity.getStatus()));
-        return dto;
-    }
+    @Mappings({
+            @Mapping(source = "invisible", target = "invisibleStatus"),
+            @Mapping(source = "status", target = "recordStatus"),
+            @Mapping(source = "top", target = "top"),
+            @Mapping(source = "gmtCreate", target = "createTime"),
+            @Mapping(source = "gmtModified", target = "modifiedTime"),
+    })
+    ArticleDto entityToDto(ArticleEntity entity);
 
-    public static List<ArticleDTO> convertList(List<ArticleEntity> entityList) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            return new ArrayList<>();
-        }
-        List<ArticleDTO> result = new ArrayList<>();
-        entityList.forEach(item -> result.add(convert(item)));
-        return result;
-    }
+    List<ArticleDto> entitiesToDtos(List<ArticleEntity> entities);
 }

@@ -9,12 +9,12 @@ import java.util.Date;
 
 /**
  * @author hufeng
- * @version CategoryDTO.java, v 0.1 2019-01-13 23:48 Exp $
+ * @version CategoryDto.java, v 0.1 2019-01-13 23:48 Exp $
  */
 
 @Setter
 @Getter
-public class CategoryDTO implements Serializable {
+public class CategoryDto implements Serializable {
     private Long         id;
     private Long         userId;
     private String       name;

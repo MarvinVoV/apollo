@@ -1,5 +1,7 @@
 package com.marvin.apollo.core.model.enums;
 
+import lombok.Getter;
+
 import java.io.Serializable;
 
 /**
@@ -7,6 +9,7 @@ import java.io.Serializable;
  * @version RecordStatus.java, v 0.1 2019-01-13 21:00 Exp $
  */
 
+@Getter
 public enum RecordStatus implements Serializable {
     VALID(1, "正常"),
     INVALID(0, "无效");
@@ -26,13 +29,5 @@ public enum RecordStatus implements Serializable {
             }
         }
         return null;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 }

@@ -1,6 +1,6 @@
 package com.marvin.apollo.com.marvin.apollo.core.service.repository;
 
-import com.marvin.apollo.core.model.dto.ArticleDTO;
+import com.marvin.apollo.core.model.dto.ArticleDto;
 import com.marvin.apollo.core.model.pagination.PageModel;
 import com.marvin.apollo.core.service.repository.ArticleRepository;
 import com.marvin.apollo.web.home.boot.BaseTest;
@@ -18,7 +18,7 @@ public class ArticleRepositoryTest extends BaseTest {
 
     @Test
     public void testPagingQuery() {
-        PageModel<ArticleDTO> pageModel = articleRepository.queryByPage(1L, 1L, 1, 2);
+        PageModel<ArticleDto> pageModel = articleRepository.queryByPage(1L, 1L, 1, 2);
         System.out.println(pageModel);
     }
 

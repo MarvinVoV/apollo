@@ -10,11 +10,11 @@ import java.util.Date;
 
 /**
  * @author hufeng
- * @version UserDTO.java, v 0.1 2019-01-13 23:50 Exp $
+ * @version UserDto.java, v 0.1 2019-01-13 23:50 Exp $
  */
 @Setter
 @Getter
-public class UserDTO implements Serializable {
+public class UserDto implements Serializable {
     private Long         id;
     private String       account;
     private int          age;

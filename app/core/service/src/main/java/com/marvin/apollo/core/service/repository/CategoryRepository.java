@@ -1,6 +1,6 @@
 package com.marvin.apollo.core.service.repository;
 
-import com.marvin.apollo.core.model.dto.CategoryDTO;
+import com.marvin.apollo.core.model.dto.CategoryDto;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface CategoryRepository {
-    List<CategoryDTO> queryAllByUserId(Long userId);
+    List<CategoryDto> queryAllByUserId(Long userId);
 }

@@ -11,12 +11,12 @@ import java.util.Date;
 
 /**
  * @author hufeng
- * @version ArticleDTO.java, v 0.1 2019-01-13 20:56 Exp $
+ * @version ArticleDto.java, v 0.1 2019-01-13 20:56 Exp $
  */
 @Setter
 @Getter
 @ToString
-public class ArticleDTO implements Serializable {
+public class ArticleDto implements Serializable {
     private Long            id;
     private Long            userId;
     private Long            categoryId;

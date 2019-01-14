@@ -2,7 +2,6 @@ package com.marvin.apollo.core.model.pagination;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,9 +11,8 @@ import java.util.function.Function;
  * @author hufeng
  * @version PageModel.java, v 0.1 2019-01-13 23:03 Exp $
  */
-@Setter
 @Getter
-@ToString
+@Setter
 public class PageModel<E> implements Serializable {
 
     private List<E> list;
