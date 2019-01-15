@@ -1,7 +1,11 @@
 package com.marvin.apollo.web.home.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 /**
  * @author hufeng
@@ -9,8 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class HomeController {
-    @RequestMapping("/")
-    public String home() {
-        return "welcome";
+    @GetMapping("/")
+    public String home(HttpSession httpSession) {
+
+        return "welcome " + httpSession.getId();
+    }
+
+    @GetMapping("/user")
+    public Principal user(Principal principal) {
+        return principal;
     }
 }
