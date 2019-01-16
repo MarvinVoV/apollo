@@ -18,6 +18,10 @@
         <module>app/common/service/integration</module>
         <module>app/biz/service-impl</module>
         <module>app/web/boot</module>
+        <module>app/web/auth</module>
+        <module>lab/oauth-authorization-server</module>
+        <module>lab/oauth-resource-server</module>
+        <module>lab/oauth-client</module>
     </modules>
     <name>apollo</name>
     <description>apollo</description>
@@ -48,6 +52,17 @@
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>1.2.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>2.3.4.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>1.0.9.RELEASE</version>
             </dependency>
 
             <dependency>
@@ -83,6 +98,16 @@
                 <version>${lombok.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.8.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.6</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.marvin.apollo</groupId>
