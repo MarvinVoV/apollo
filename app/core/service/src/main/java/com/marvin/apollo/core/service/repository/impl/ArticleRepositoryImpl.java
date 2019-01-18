@@ -27,9 +27,10 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public PageModel<ArticleDto> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize) {
+    public PageModel<ArticleDto> queryByPage(Long categoryId, int pageNum, int pageSize) {
         PageInfo<ArticleEntity> entityPageInfo = PageHelper.startPage(pageNum, pageSize)
-                .doSelectPageInfo(() -> articleMapper.queryList(userId, categoryId));
+                .doSelectPageInfo(() -> articleMapper.queryList(categoryId));
+
         List<ArticleDto> articleDtoList = ArticleConvert.INSTANCE.entitiesToDtos(entityPageInfo.getList());
         PageModel<ArticleDto> pageModel = new PageModel<>();
         pageModel.setList(articleDtoList);

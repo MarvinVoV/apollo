@@ -9,5 +9,5 @@ import com.marvin.apollo.core.model.pagination.PageModel;
  */
 
 public interface ArticleRepository {
-    PageModel<ArticleDto> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize);
+    PageModel<ArticleDto> queryByPage(Long categoryId, int pageNum, int pageSize);
 }

@@ -19,7 +19,6 @@ public interface CategoryConvert extends DefaultConvert {
     CategoryConvert INSTANCE = Mappers.getMapper(CategoryConvert.class);
 
     @Mappings({
-            @Mapping(source = "status", target = "recordStatus"),
             @Mapping(source = "gmtCreate", target = "createTime"),
             @Mapping(source = "gmtModified", target = "modifiedTime")
     })

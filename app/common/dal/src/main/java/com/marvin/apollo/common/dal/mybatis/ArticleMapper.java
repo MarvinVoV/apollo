@@ -14,5 +14,5 @@ import java.util.List;
 @Repository
 @Mapper
 public interface ArticleMapper extends BaseMapper<ArticleEntity, Long> {
-    List<ArticleEntity> queryList(@Param("userId") Long userId, @Param("categoryId") Long categoryId);
+    List<ArticleEntity> queryList(@Param("categoryId") Long categoryId);
 }

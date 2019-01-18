@@ -1,6 +1,5 @@
 package com.marvin.apollo.core.model.dto;
 
-import com.marvin.apollo.core.model.enums.RecordStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,9 +15,7 @@ import java.util.Date;
 @Getter
 public class CategoryDto implements Serializable {
     private Long         id;
-    private Long         userId;
     private String       name;
-    private RecordStatus recordStatus;
     private Date         createTime;
     private Date         modifiedTime;
 }

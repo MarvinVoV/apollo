@@ -19,10 +19,11 @@ public interface ArticleConvert extends DefaultConvert {
 
     @Mappings({
             @Mapping(source = "invisible", target = "invisibleStatus"),
-            @Mapping(source = "status", target = "recordStatus"),
             @Mapping(source = "top", target = "top"),
             @Mapping(source = "gmtCreate", target = "createTime"),
             @Mapping(source = "gmtModified", target = "modifiedTime"),
+            @Mapping(source = "categoryEntity.id", target = "categoryId"),
+            @Mapping(source = "categoryEntity.name", target = "categoryName"),
     })
     ArticleDto entityToDto(ArticleEntity entity);
 

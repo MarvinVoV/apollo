@@ -19,9 +19,6 @@
         <module>app/biz/service-impl</module>
         <module>app/web/boot</module>
         <module>app/web/auth</module>
-        <module>lab/oauth-authorization-server</module>
-        <module>lab/oauth-resource-server</module>
-        <module>lab/oauth-client</module>
     </modules>
     <name>apollo</name>
     <description>apollo</description>

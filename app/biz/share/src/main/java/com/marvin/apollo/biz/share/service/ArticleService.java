@@ -1,6 +1,6 @@
 package com.marvin.apollo.biz.share.service;
 
-import com.marvin.apollo.core.model.domain.Article;
+import com.marvin.apollo.core.model.dto.ArticleDto;
 import com.marvin.apollo.core.model.pagination.PageModel;
 
 /**
@@ -8,5 +8,5 @@ import com.marvin.apollo.core.model.pagination.PageModel;
  * @version ArticleService.java, v 0.1 2019-01-13 23:26 Exp $
  */
 public interface ArticleService {
-    PageModel<Article> queryByPage(Long userId, Long categoryId, int pageNum, int pageSize);
+    PageModel<ArticleDto> queryByPage(Long categoryId, int pageNum, int pageSize);
 }

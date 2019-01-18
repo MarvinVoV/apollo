@@ -1,7 +1,6 @@
 package com.marvin.apollo.core.model.dto;
 
 import com.marvin.apollo.core.model.enums.InvisibleStatus;
-import com.marvin.apollo.core.model.enums.RecordStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,14 +17,14 @@ import java.util.Date;
 @ToString
 public class ArticleDto implements Serializable {
     private Long            id;
-    private Long            userId;
     private Long            categoryId;
+    private String          categoryName;
     private String          title;
     private byte[]          content;
     private boolean         top;
     private String          tag;
+    private int             pv;
     private InvisibleStatus invisibleStatus;
-    private RecordStatus    recordStatus;
     private Date            createTime;
     private Date            modifiedTime;
 }

@@ -11,8 +11,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         ArticleMapperTest.class,
-        CategoryMapperTest.class,
-        UserMapperTest.class
+        CategoryMapperTest.class
 })
 public class MapperIntegrationTests extends BaseTest {
 }

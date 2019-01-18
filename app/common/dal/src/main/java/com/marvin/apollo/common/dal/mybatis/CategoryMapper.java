@@ -14,5 +14,5 @@ import java.util.List;
 @Repository
 @Mapper
 public interface CategoryMapper extends BaseMapper<CategoryEntity, Long> {
-    List<CategoryEntity> queryAllByUserId(@Param("userId") long userId);
+    List<CategoryEntity> queryAll();
 }

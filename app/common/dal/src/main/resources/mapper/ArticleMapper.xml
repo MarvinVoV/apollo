@@ -3,26 +3,38 @@
 <mapper namespace="com.marvin.apollo.common.dal.mybatis.ArticleMapper">
     <resultMap id="ResultMap" type="ArticleEntity">
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="user_id" property="userId" jdbcType="INTEGER"/>
-        <result column="category_id" property="categoryId" jdbcType="INTEGER"/>
         <result column="title" property="title" jdbcType="INTEGER"/>
         <result column="content" property="content" jdbcType="BLOB"/>
         <result column="top" property="top" jdbcType="INTEGER"/>
         <result column="tag" property="tag" jdbcType="VARCHAR"/>
         <result column="invisible" property="invisible" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="pv" property="pv" jdbcType="INTEGER"/>
         <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+        <association property="categoryEntity" column="category_id"
+                     resultMap="com.marvin.apollo.common.dal.mybatis.CategoryMapper.ResultMap"/>
     </resultMap>
 
     <sql id="AllColumnList">
-        id, user_id, category_id, title, content, top, tag, invisible, status, gmt_create, gmt_modified
+        id,
+        category_id,
+        title,
+        content,
+        top,
+        tag,
+        invisible,
+        status,
+        pv,
+        gmt_create,
+        gmt_modified
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="ResultMap" parameterType="Long">
-        SELECT
-        <include refid="AllColumnList"/>
-        FROM article WHERE id = #{id}
+        SELECT *
+        FROM article a
+                 LEFT JOIN category b ON a.category_id = b.id and b.status = 1
+        WHERE a.id = #{id}
     </select>
 
     <insert id="insert" parameterType="ArticleEntity">
@@ -32,11 +44,12 @@
         <include refid="AllColumnList"/>
         )
         VALUES
-        (null, #{userId}, #{categoryId}, #{title}, #{content}, #{top}, #{tag},
+        (null, #{categoryEntity.id}, #{title}, #{content}, #{top}, #{tag},
         #{invisible},#{status}, now(), now())
         <selectKey keyProperty="id" keyColumn="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID();
         </selectKey>
+
     </insert>
 
     <delete id="deleteByPrimaryKey" parameterType="Long">
@@ -45,29 +58,27 @@
         where id = #{id}
     </delete>
 
-    <update id="updateByPrimaryKey" parameterType="UserEntity">
+    <update id="updateByPrimaryKey" parameterType="ArticleEntity">
         update article
-        set user_id      = #{userId},
-            category_id  = #{categoryid},
+        set category_id  = #{categoryEntity.id},
             title        = #{title},
             content      = #{content},
             tag          = #{tag},
             top          = #{top},
             status       = #{status},
+            pv           = #{pv},
             gmt_create   = now(),
             gmt_modified = now()
         where id = #{id}
     </update>
 
-    <select id="queryList" parameterType="map" resultType="ArticleEntity">
-        SELECT
-        <include refid="AllColumnList"/>
-        FROM article WHERE status=1
-        <if test="userId != null">
-            AND user_id = #{userId}
-        </if>
+    <select id="queryList" parameterType="map" resultType="ArticleEntity" resultMap="ResultMap" >
+        SELECT *
+        FROM article a
+        LEFT JOIN category b ON a.category_id = b.id and b.status = 1
+        WHERE a.status = 1
         <if test="categoryId != null">
-            AND category_id = #{categoryId}
+            AND a.category_id = #{categoryId}
         </if>
     </select>
 </mapper>

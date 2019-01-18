@@ -23,8 +23,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     private CategoryMapper categoryMapper;
 
     @Override
-    public List<CategoryDto> queryAllByUserId(Long userId) {
-        List<CategoryEntity> entities = categoryMapper.queryAllByUserId(userId);
+    public List<CategoryDto> queryAll() {
+        List<CategoryEntity> entities = categoryMapper.queryAll();
 
         if (CollectionUtils.isEmpty(entities)) {
             return new ArrayList<>();

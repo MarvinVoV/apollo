@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface CategoryRepository {
-    List<CategoryDto> queryAllByUserId(Long userId);
+    List<CategoryDto> queryAll();
 }
