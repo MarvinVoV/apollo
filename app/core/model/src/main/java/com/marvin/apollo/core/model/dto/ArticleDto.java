@@ -20,7 +20,7 @@ public class ArticleDto implements Serializable {
     private Long            categoryId;
     private String          categoryName;
     private String          title;
-    private byte[]          content;
+    private String          content;
     private boolean         top;
     private String          tag;
     private int             pv;

@@ -4,9 +4,7 @@ import com.marvin.apollo.biz.share.service.ArticleService;
 import com.marvin.apollo.core.model.dto.ArticleDto;
 import com.marvin.apollo.core.model.pagination.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author hufeng
@@ -18,7 +16,7 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
-    @GetMapping("/article")
+    @RequestMapping("/article")
     public PageModel<ArticleDto> articlePageQuery(Long categoryId,
                                                   @RequestParam(defaultValue = "1") int pageNum,
                                                   @RequestParam(defaultValue = "5") int pageSize) {

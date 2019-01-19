@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -28,4 +29,11 @@ public interface ArticleConvert extends DefaultConvert {
     ArticleDto entityToDto(ArticleEntity entity);
 
     List<ArticleDto> entitiesToDtos(List<ArticleEntity> entities);
+
+    default String bytesToString(byte[] data) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        return new String(data, Charset.forName("UTF-8"));
+    }
 }
