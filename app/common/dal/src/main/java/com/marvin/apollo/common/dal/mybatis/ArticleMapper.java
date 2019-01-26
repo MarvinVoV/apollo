@@ -15,4 +15,6 @@ import java.util.List;
 @Mapper
 public interface ArticleMapper extends BaseMapper<ArticleEntity, Long> {
     List<ArticleEntity> queryList(@Param("categoryId") Long categoryId);
+
+    ArticleEntity queryByRefIdentifier(@Param("refNoteId") Integer refNoteId, @Param("refBookId") Integer refBookId);
 }

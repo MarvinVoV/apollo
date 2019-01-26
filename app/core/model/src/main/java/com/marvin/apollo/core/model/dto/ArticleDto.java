@@ -18,12 +18,16 @@ import java.util.Date;
 public class ArticleDto implements Serializable {
     private Long            id;
     private Long            categoryId;
+    private int             refNoteId;
+    private int             refBookId;
     private String          categoryName;
     private String          title;
-    private String          content;
+    private String          contentOfMd;
+    private String          contentOfHtml;
     private boolean         top;
     private String          tag;
-    private int             pv;
+    private int             viewCount;
+    private int             likeCount;
     private InvisibleStatus invisibleStatus;
     private Date            createTime;
     private Date            modifiedTime;

@@ -39,4 +39,32 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         pageModel.setTotal(entityPageInfo.getTotal());
         return pageModel;
     }
+
+    @Override
+    public ArticleDto queryByRefIdentifier(Integer refNoteId, Integer refBookId) {
+        ArticleEntity articleEntity = articleMapper.queryByRefIdentifier(refNoteId, refBookId);
+        return ArticleConvert.INSTANCE.entityToDto(articleEntity);
+    }
+
+    @Override
+    public int save(ArticleDto articleDto) {
+        ArticleEntity entity = ArticleConvert.INSTANCE.dtoToEntity(articleDto);
+        articleMapper.insert(entity);
+        return (int) entity.getId();
+    }
+
+    @Override
+    public int update(ArticleDto articleDto) {
+        ArticleEntity entity = ArticleConvert.INSTANCE.dtoToEntity(articleDto);
+        return articleMapper.updateByPrimaryKey(entity);
+    }
+
+    @Override
+    public ArticleDto queryById(Long id) {
+        if (id == null || id < 0) {
+            return null;
+        }
+        ArticleEntity articleEntity = articleMapper.selectByPrimaryKey(id);
+        return ArticleConvert.INSTANCE.entityToDto(articleEntity);
+    }
 }

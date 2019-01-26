@@ -3,13 +3,17 @@
 <mapper namespace="com.marvin.apollo.common.dal.mybatis.ArticleMapper">
     <resultMap id="ResultMap" type="ArticleEntity">
         <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="ref_note_id" property="refNoteId" jdbcType="INTEGER"/>
+        <result column="ref_book_id" property="refBookId" jdbcType="INTEGER"/>
         <result column="title" property="title" jdbcType="INTEGER"/>
-        <result column="content" property="content" jdbcType="BLOB"/>
+        <result column="content_md" property="contentOfMd" jdbcType="BLOB"/>
+        <result column="content_html" property="contentOfHtml" jdbcType="BLOB"/>
         <result column="top" property="top" jdbcType="INTEGER"/>
         <result column="tag" property="tag" jdbcType="VARCHAR"/>
         <result column="invisible" property="invisible" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
-        <result column="pv" property="pv" jdbcType="INTEGER"/>
+        <result column="view_count" property="viewCount" jdbcType="INTEGER"/>
+        <result column="like_count" property="likeCount" jdbcType="INTEGER"/>
         <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
         <association property="categoryEntity" column="category_id"
@@ -19,33 +23,37 @@
     <sql id="AllColumnList">
         id,
         category_id,
+        ref_note_id,
+        ref_book_id,
         title,
-        content,
+        content_md,
+        content_html,
         top,
         tag,
         invisible,
         status,
-        pv,
+        view_count,
+        like_count,
         gmt_create,
         gmt_modified
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="ResultMap" parameterType="Long">
         SELECT *
-        FROM article a
-                 LEFT JOIN category b ON a.category_id = b.id and b.status = 1
+        FROM articles a
+                 LEFT JOIN categories b ON a.category_id = b.id and b.status = 1
         WHERE a.id = #{id}
     </select>
 
     <insert id="insert" parameterType="ArticleEntity">
         INSERT INTO
-        article
+        articles
         (
         <include refid="AllColumnList"/>
         )
         VALUES
-        (null, #{categoryEntity.id}, #{title}, #{content}, #{top}, #{tag},
-        #{invisible},#{status}, now(), now())
+        (null, #{categoryEntity.id}, #{refNoteId},#{refBookId},#{title}, #{contentOfMd},#{contentOfHtml}, #{top},
+        #{tag},#{invisible},#{status},#{viewCount},#{likeCount}, now(), now())
         <selectKey keyProperty="id" keyColumn="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID();
         </selectKey>
@@ -54,31 +62,42 @@
 
     <delete id="deleteByPrimaryKey" parameterType="Long">
         delete
-        from article
+        from articles
         where id = #{id}
     </delete>
 
     <update id="updateByPrimaryKey" parameterType="ArticleEntity">
-        update article
+        update articles
         set category_id  = #{categoryEntity.id},
+            ref_note_id  = #{refNoteId},
+            ref_book_id  = #{refBookId},
             title        = #{title},
-            content      = #{content},
+            content_md   = #{contentOfMd},
+            content_html = #{contentOfHtml},
             tag          = #{tag},
             top          = #{top},
             status       = #{status},
-            pv           = #{pv},
-            gmt_create   = now(),
+            view_count   = #{viewCount},
+            like_count   = #{likeCount},
             gmt_modified = now()
         where id = #{id}
     </update>
 
-    <select id="queryList" parameterType="map" resultType="ArticleEntity" resultMap="ResultMap" >
+    <select id="queryList" parameterType="map" resultType="ArticleEntity" resultMap="ResultMap">
         SELECT *
-        FROM article a
-        LEFT JOIN category b ON a.category_id = b.id and b.status = 1
+        FROM articles a
+        LEFT JOIN categories b ON a.category_id = b.id and b.status = 1
         WHERE a.status = 1
         <if test="categoryId != null">
             AND a.category_id = #{categoryId}
         </if>
     </select>
+
+    <select id="queryByRefIdentifier" parameterType="map" resultType="ArticleEntity" resultMap="ResultMap">
+        SELECT *
+        FROM articles a
+        WHERE ref_note_id = #{refNoteId}
+          AND ref_book_id = #{refBookId}
+    </select>
+
 </mapper>

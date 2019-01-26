@@ -13,6 +13,10 @@ public interface DefaultConvert {
         return value != 0;
     }
 
+    default int boolToInt(boolean value) {
+        return value ? 1 : 0;
+    }
+
     default InvisibleStatus convertInvisibleStatus(int invisibleStatus) {
         for (InvisibleStatus item : InvisibleStatus.values()) {
             if (item.getCode() == invisibleStatus) {
@@ -20,5 +24,12 @@ public interface DefaultConvert {
             }
         }
         return null;
+    }
+
+    default int reverseConvertInvisibleStatus(InvisibleStatus status) {
+        if (status == null) {
+            return 0;
+        }
+        return status.getCode();
     }
 }

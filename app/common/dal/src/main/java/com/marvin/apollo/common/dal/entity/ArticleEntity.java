@@ -11,13 +11,17 @@ import java.util.Date;
 @Setter
 public class ArticleEntity implements Serializable {
     private long           id;
+    private int            refNoteId;
+    private int            refBookId;
     private String         title;
-    private byte[]         content;
+    private byte[]         contentOfMd;
+    private byte[]         contentOfHtml;
     private int            top;
     private String         tag;
     private int            invisible;
     private int            status;
-    private int            pv;
+    private int            viewCount;
+    private int            likeCount;
     private CategoryEntity categoryEntity;
     private Date           gmtCreate;
     private Date           gmtModified;
