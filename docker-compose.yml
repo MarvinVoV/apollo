@@ -10,22 +10,22 @@ services:
     ports:
       - ${APP_PORT}:8081
     volumes:
-      - .:/code
-      - logvolume01:/var/log
+      - '.:/code'
+      - 'logvolume01:/var/log'
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
     ports:
       - ${REDIS_PORT}:6379
     volumes:
-      - redis:/data
+      - 'redis:/data'
   db:
-    image: "mysql:latest"
+    image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
       - ${DB_PORT}:3306
     volumes:
-      - dbdata:/var/lib/mysql
+      - 'dbdata:/var/lib/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: apollo
