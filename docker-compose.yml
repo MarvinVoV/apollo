@@ -1,0 +1,37 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+      - redis
+    ports:
+      - ${APP_PORT}:8081
+    volumes:
+      - .:/code
+      - logvolume01:/var/log
+  redis:
+    image: "redis:alpine"
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis:/data
+  db:
+    image: "mysql:latest"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: apollo
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+volumes:
+  logvolume01:
+  redis:
+  dbdata:
