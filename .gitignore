@@ -18,3 +18,6 @@
 *.log
 /.mvn
 *.rdb
+
+
+.env

@@ -1,9 +1,15 @@
 version: '3'
 services:
   web:
+    container_name: apollo
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
+      args:
+        - 'url=https://github.com/MarvinVoV/apollo.git'
+        - 'project=apollo'
+        - 'artifactId=web-boot'
+        - 'version=0.0.1-SNAPSHOT-exec'
     depends_on:
       - db
       - redis
@@ -11,13 +17,13 @@ services:
       - ${APP_PORT}:8081
     volumes:
       - '.:/code'
-      - 'logvolume01:/var/log'
+      - 'log_volume01:/var/log'
   redis:
     image: redis:alpine
     ports:
       - ${REDIS_PORT}:6379
     volumes:
-      - 'redis:/data'
+      - 'redis_data:/data'
   db:
     image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
@@ -25,13 +31,13 @@ services:
     ports:
       - ${DB_PORT}:3306
     volumes:
-      - 'dbdata:/var/lib/mysql'
+      - 'db_data:/var/lib/mysql'
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: apollo
-      MYSQL_USER: root
-      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: ${DB_SECRET}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_SECRET}
 volumes:
-  logvolume01:
-  redis:
-  dbdata:
+  log_volume01:
+  redis_data:
+  db_data:
