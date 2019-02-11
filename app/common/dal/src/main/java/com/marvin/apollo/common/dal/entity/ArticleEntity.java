@@ -19,7 +19,7 @@ public class ArticleEntity implements Serializable {
     private int            top;
     private String         tag;
     private int            invisible;
-    private int            status;
+    private Integer        status;
     private int            viewCount;
     private int            likeCount;
     private CategoryEntity categoryEntity;

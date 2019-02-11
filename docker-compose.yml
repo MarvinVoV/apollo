@@ -6,10 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - 'url=https://github.com/MarvinVoV/apollo.git'
-        - 'project=apollo'
-        - 'artifactId=web-boot'
-        - 'version=0.0.1-SNAPSHOT-exec'
+        - url=https://github.com/MarvinVoV/apollo.git
+        - project=apollo
+        - artifactId=web-boot
+        - version=0.0.1-SNAPSHOT-exec
     depends_on:
       - db
       - redis
