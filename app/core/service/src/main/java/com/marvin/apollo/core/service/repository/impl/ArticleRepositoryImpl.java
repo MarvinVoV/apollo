@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.marvin.apollo.common.dal.entity.ArticleEntity;
 import com.marvin.apollo.common.dal.mybatis.ArticleMapper;
 import com.marvin.apollo.core.model.dto.ArticleDto;
+import com.marvin.apollo.core.model.enums.RecordStatus;
 import com.marvin.apollo.core.model.pagination.PageModel;
 import com.marvin.apollo.core.service.repository.ArticleRepository;
 import com.marvin.apollo.core.service.repository.convert.ArticleConvert;
@@ -49,6 +50,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     @Override
     public int save(ArticleDto articleDto) {
         ArticleEntity entity = ArticleConvert.INSTANCE.dtoToEntity(articleDto);
+        entity.setStatus(RecordStatus.VALID.getCode());
         articleMapper.insert(entity);
         return (int) entity.getId();
     }
@@ -56,6 +58,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     @Override
     public int update(ArticleDto articleDto) {
         ArticleEntity entity = ArticleConvert.INSTANCE.dtoToEntity(articleDto);
+        entity.setStatus(RecordStatus.VALID.getCode());
         return articleMapper.updateByPrimaryKey(entity);
     }
 

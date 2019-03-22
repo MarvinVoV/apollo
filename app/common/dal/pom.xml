@@ -17,8 +17,9 @@
     <dependencies>
         <dependency>
             <groupId>com.marvin.apollo</groupId>
-            <artifactId>common-utils</artifactId>
+            <artifactId>core-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 </project>

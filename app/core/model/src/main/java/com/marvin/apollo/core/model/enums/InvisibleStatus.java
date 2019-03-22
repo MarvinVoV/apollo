@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author hufeng
@@ -11,12 +13,25 @@ import java.io.Serializable;
  */
 @Getter
 public enum InvisibleStatus implements Serializable {
+    /**
+     * 公开可见
+     */
     PUBLIC(1, "公开可见"),
+    /**
+     * 自己可见
+     */
     PRIVATE(2, "自己可见");
 
 
-    private int    code;
-    private String desc;
+    private static final Map<Integer, InvisibleStatus> LOOKUP = new HashMap<>();
+    private              int                           code;
+    private              String                        desc;
+
+    static {
+        for (InvisibleStatus status : InvisibleStatus.values()) {
+            LOOKUP.put(status.getCode(), status);
+        }
+    }
 
     InvisibleStatus(int code, String desc) {
         this.code = code;
@@ -24,11 +39,6 @@ public enum InvisibleStatus implements Serializable {
     }
 
     public static InvisibleStatus getByCode(int code) {
-        for (InvisibleStatus item : InvisibleStatus.values()) {
-            if (item.getCode() == code) {
-                return item;
-            }
-        }
-        return null;
+        return LOOKUP.get(code);
     }
 }

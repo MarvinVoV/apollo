@@ -10,5 +10,10 @@ import java.util.List;
  */
 
 public interface CategoryRepository {
+    /**
+     * Query All
+     *
+     * @return category list
+     */
     List<CategoryDto> queryAll();
 }
