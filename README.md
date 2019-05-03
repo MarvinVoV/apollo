@@ -6,5 +6,21 @@
 
 Build
 ```bash
-docker build
+docker build -t marvinvov/apollo:latest
+```
+
+Build And Start
+```bash
+docker-compose up --build -d
+``` 
+
+Push
+```bash
+docker-compose push
+```
+
+Run on remote
+```bash
+docker-compose pull
+docker-compose up -d --no-build
 ```
