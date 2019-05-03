@@ -43,6 +43,7 @@
                         <configuration>
                             <classifier>exec</classifier>
                             <outputDirectory>${project.parent.build.outputDirectory}</outputDirectory>
+                            <finalName>web-boot-apollo</finalName>
                         </configuration>
                     </execution>
                 </executions>
