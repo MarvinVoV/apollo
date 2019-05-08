@@ -16,9 +16,9 @@ spring:
     store-type: redis
 logging:
   level:
-    org.springframework.web: debug
-    org.mybatis: debug
-    marvin.apollo.common.dal.mybatis: debug
+    org.springframework.web: info
+    org.mybatis: info
+    marvin.apollo.common.dal.mybatis: info
 pagehelper:
   helperDialect: mysql
   reasonable: true

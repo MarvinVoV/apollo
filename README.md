@@ -35,5 +35,5 @@ mvn clean package -DskipTests=true
 
 Start
 ```bash
-java -jar web-boot-apollo-exec.jar --spring.profiles.active=dev --db_pwd=root --db_user=root
+java -jar web-boot-apollo-exec.jar --spring.profiles.active=dev
 ```
