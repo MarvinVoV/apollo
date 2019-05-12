@@ -22,6 +22,7 @@ public class ArticleConvertTest {
         entity.setTag("tag");
         entity.setContentOfMd("hello".getBytes());
         entity.setTop(1);
+        entity.setDigest("digest");
         entity.setInvisible(1);
         entity.setGmtCreate(new Date());
         entity.setGmtModified(new Date());

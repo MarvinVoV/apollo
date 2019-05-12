@@ -5,6 +5,7 @@ create table if not exists articles
   ref_note_id  int comment 'reference YuQue note ID',
   ref_book_id  int comment 'reference YuQue book ID',
   title        varchar(200) comment 'title',
+  digest       longtext comment 'digest',
   content_md   longblob comment 'markdown format data',
   content_html longblob comment 'html format data',
   top          tinyint default 0 comment 'stick flag',

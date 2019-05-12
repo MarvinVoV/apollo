@@ -25,6 +25,7 @@ public interface ArticleConvert extends DefaultConvert {
             @Mapping(source = "gmtModified", target = "modifiedTime"),
             @Mapping(source = "categoryEntity.id", target = "categoryId"),
             @Mapping(source = "categoryEntity.name", target = "categoryName"),
+            @Mapping(source = "digest", target = "digest")
     })
     ArticleDto entityToDto(ArticleEntity entity);
 
@@ -36,6 +37,7 @@ public interface ArticleConvert extends DefaultConvert {
             @Mapping(target = "gmtModified", source = "modifiedTime"),
             @Mapping(target = "categoryEntity.id", source = "categoryId"),
             @Mapping(target = "categoryEntity.name", source = "categoryName"),
+            @Mapping(source = "digest", target = "digest")
     })
     ArticleEntity dtoToEntity(ArticleDto dto);
 

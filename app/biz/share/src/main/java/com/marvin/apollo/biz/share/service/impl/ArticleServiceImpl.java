@@ -1,5 +1,6 @@
 package com.marvin.apollo.biz.share.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.marvin.apollo.biz.share.constants.NoteFieldsDefine;
 import com.marvin.apollo.biz.share.model.Note;
@@ -21,6 +22,8 @@ import org.springframework.util.CollectionUtils;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author hufeng
@@ -28,11 +31,12 @@ import java.util.Map;
  */
 @Service
 public class ArticleServiceImpl implements ArticleService {
-    private static final Logger              LOGGER = LoggerFactory.getLogger(ArticleService.class);
+    private static final Logger              LOGGER       = LoggerFactory.getLogger(ArticleService.class);
     @Autowired
     private              ArticleRepository   articleRepository;
     @Autowired
     private              TransactionTemplate transactionTemplate;
+    private static final Pattern             INFO_PATTERN = Pattern.compile("<!\\[start]>(.*?)<!\\[end]>");
 
     @Override
     public PageModel<ArticleDto> queryByPage(final Long categoryId, int pageNum, int pageSize) {
@@ -42,6 +46,11 @@ public class ArticleServiceImpl implements ArticleService {
             return new PageModel<>();
         }
         return articleRepository.queryByPage(categoryId, pageNum, pageSize);
+    }
+
+    @Override
+    public ArticleDto queryById(Long id) {
+        return articleRepository.queryById(id);
     }
 
     @Override
@@ -75,6 +84,21 @@ public class ArticleServiceImpl implements ArticleService {
         });
     }
 
+    /**
+     * 自定义头部内容
+     * <pre>
+     *     <![start]><br />
+     *     {
+     *      "category": "tech",
+     *      "tag":"java,maven",
+     *      "digest":"摘要"
+     *      }
+     *     <![end]>
+     * </pre>
+     *
+     * @param payload payload
+     * @return Note
+     */
     private Note parseNote(Map<String, Object> payload) {
         if (CollectionUtils.isEmpty(payload)) {
             return null;
@@ -89,7 +113,23 @@ public class ArticleServiceImpl implements ArticleService {
         int noteId = (Integer) data.get(NoteFieldsDefine.ID);
         Date modifiedTime = Date.from(Instant.parse((String) data.get(NoteFieldsDefine.CONTENT_UPDATED_AT)));
 
-        return Note.builder()
+        Note.NoteBuilder noteBuilder = Note.builder();
+//      解析自定义的头部数据
+        Matcher matcher = INFO_PATTERN.matcher(contentOfMd);
+        if (matcher.find()) {
+            String info = matcher.group(1);
+            info = info.replaceAll("<br\\s*/>", "");
+            JSONObject infoJson = JSON.parseObject(info);
+            if (infoJson != null) {
+                noteBuilder.tag(infoJson.getString("tag"));
+                noteBuilder.category(infoJson.getString("category"));
+                noteBuilder.digest(infoJson.getString("digest"));
+            }
+            // markdown内容移除自定义头部数据, html的全部保留
+            contentOfMd = contentOfMd.replace(matcher.group(0), "");
+        }
+
+        return noteBuilder
                 .title(title)
                 .contentOfHtml(contentOfHtml)
                 .contentOfMd(contentOfMd)
@@ -105,6 +145,9 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         dto.setTitle(note.getTitle());
+        dto.setDigest(note.getDigest());
+        dto.setTag(note.getTag());
+        // todo 类目暂时不考虑
         dto.setContentOfHtml(note.getContentOfHtml());
         dto.setContentOfMd(note.getContentOfMd());
         dto.setModifiedTime(note.getUpdateTime());

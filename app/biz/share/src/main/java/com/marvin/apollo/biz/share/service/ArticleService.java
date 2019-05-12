@@ -12,6 +12,7 @@ import java.util.Map;
 public interface ArticleService {
     PageModel<ArticleDto> queryByPage(Long categoryId, int pageNum, int pageSize);
 
+    ArticleDto queryById(Long id);
 
     void syncArticle(Map<String, Object> payload);
 

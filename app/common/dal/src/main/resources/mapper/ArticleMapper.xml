@@ -6,6 +6,7 @@
         <result column="ref_note_id" property="refNoteId" jdbcType="INTEGER"/>
         <result column="ref_book_id" property="refBookId" jdbcType="INTEGER"/>
         <result column="title" property="title" jdbcType="INTEGER"/>
+        <result column="digest" property="digest" jdbcType="VARCHAR"/>
         <result column="content_md" property="contentOfMd" jdbcType="BLOB"/>
         <result column="content_html" property="contentOfHtml" jdbcType="BLOB"/>
         <result column="top" property="top" jdbcType="INTEGER"/>
@@ -26,6 +27,7 @@
         ref_note_id,
         ref_book_id,
         title,
+        digest,
         content_md,
         content_html,
         top,
@@ -52,7 +54,7 @@
         <include refid="AllColumnList"/>
         )
         VALUES
-        (null, #{categoryEntity.id}, #{refNoteId},#{refBookId},#{title}, #{contentOfMd},#{contentOfHtml}, #{top},
+        (null, #{categoryEntity.id}, #{refNoteId},#{refBookId},#{title},#{digest}, #{contentOfMd},#{contentOfHtml}, #{top},
         #{tag},#{invisible},#{status},#{viewCount},#{likeCount}, now(), now())
         <selectKey keyProperty="id" keyColumn="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID();
@@ -72,6 +74,7 @@
             ref_note_id  = #{refNoteId},
             ref_book_id  = #{refBookId},
             title        = #{title},
+            digest       = #{digest},
             content_md   = #{contentOfMd},
             content_html = #{contentOfHtml},
             tag          = #{tag},
@@ -91,6 +94,7 @@
         <if test="categoryId != null">
             AND a.category_id = #{categoryId}
         </if>
+        ORDER BY a.gmt_modified desc
     </select>
 
     <select id="queryByRefIdentifier" parameterType="map" resultType="ArticleEntity" resultMap="ResultMap">

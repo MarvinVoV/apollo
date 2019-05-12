@@ -43,6 +43,10 @@ public class ArticleDto implements Serializable {
      */
     private String          title;
     /**
+     * 摘要
+     */
+    private String          digest;
+    /**
      * Markdown 内容
      */
     private String          contentOfMd;

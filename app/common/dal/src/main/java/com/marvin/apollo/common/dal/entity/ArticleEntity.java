@@ -33,6 +33,10 @@ public class ArticleEntity implements Serializable {
      */
     private String         title;
     /**
+     * 摘要
+     */
+    private String         digest;
+    /**
      * markdown 内容
      */
     private byte[]         contentOfMd;

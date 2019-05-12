@@ -19,6 +19,9 @@ public class Note implements Serializable {
     private String title;
     private int    bookId;
     private int    noteId;
+    private String digest;
+    private String tag;
+    private String category;
     private String contentOfMd;
     private String contentOfHtml;
     private Date   updateTime;

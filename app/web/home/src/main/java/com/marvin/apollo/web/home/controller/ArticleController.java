@@ -30,6 +30,11 @@ public class ArticleController {
         return articleService.queryByPage(categoryId, pageNum, pageSize);
     }
 
+    @RequestMapping("/article/p/{id}")
+    public ArticleDto queryById(@PathVariable("id") Long id) {
+        return articleService.queryById(id);
+    }
+
     @PostMapping("/callback")
     public ResponseEntity syncNote(@RequestBody Map<String, Object> payload) {
         try {
