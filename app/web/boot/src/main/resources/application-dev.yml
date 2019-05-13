@@ -37,4 +37,4 @@ server:
   servlet:
     session:
       timeout: 300
-trace: true
+debug: true
