@@ -16,7 +16,10 @@ spring:
     store-type: redis
 logging:
   level:
-    org.springframework.web: debug
+    org:
+      springframework:
+        core: debug
+        web: debug
     org.mybatis: debug
     marvin.apollo.common.dal.mybatis: debug
 pagehelper:
@@ -34,3 +37,4 @@ server:
   servlet:
     session:
       timeout: 300
+trace: true
