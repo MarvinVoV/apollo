@@ -18,8 +18,7 @@ logging:
   level:
     org:
       springframework:
-        core: debug
-        web: debug
+        web: info
     org.mybatis: debug
     marvin.apollo.common.dal.mybatis: debug
 pagehelper:
@@ -37,4 +36,3 @@ server:
   servlet:
     session:
       timeout: 300
-debug: true

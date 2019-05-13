@@ -16,7 +16,7 @@
             <PatternLayout
                     pattern="${sys:CONSOLE_LOG_PATTERN}"/>
         </Console>
-        <File name="RollingFile"
+        <RollingFile name="RollingFile"
               fileName="${LOG_PATH}/apollo.log"
               filePattern="${LOG_PATH}/apollo-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
@@ -26,14 +26,14 @@
                 <SizeBasedTriggeringPolicy size="100 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-        </File>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="com.marvin.apollo" level="debug" additivity="false">
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="org.springframework.boot" level="debug" additivity="false">
+        <Logger name="org.springframework.boot" level="info" additivity="false">
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Logger>
@@ -41,24 +41,12 @@
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="org.springframework.core" level="debug" additivity="false">
-            <AppenderRef ref="RollingFile"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
         <Logger name="org.mybatis" level="debug" additivity="false">
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn" additivity="false">
-            <AppenderRef ref="RollingFile"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Logger name="com.marvin.apollo" level="debug" additivity="false">
-            <AppenderRef ref="RollingFile"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
 
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Root>
