@@ -19,6 +19,10 @@ logging:
     org:
       springframework:
         web: info
+        boot:
+          autoconfigure:
+            security: info
+        security: info
     org.mybatis: debug
     marvin.apollo.common.dal.mybatis: debug
 pagehelper:
